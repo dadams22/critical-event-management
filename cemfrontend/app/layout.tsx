@@ -32,8 +32,8 @@ export default function RootLayout({ colorScheme, children }: ComponentProps) {
   );
 }
 
-RootLayout.getInitialProps = async (appContext: AppContext) => {
+RootLayout.getInitialProps = async () => {
   return {
-    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
+    colorScheme: getCookie('mantine-color-scheme') || 'dark',
   };
 };
