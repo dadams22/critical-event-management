@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Person
-from .twilio_utls import send_twilio_message
+from .twilio_utils import send_twilio_message
 
 class MessageView(APIView):
     def post(self, request):
