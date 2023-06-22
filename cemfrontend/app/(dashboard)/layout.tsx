@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex, Title, ThemeIcon } from '@mantine/core';
+import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex, Title, ThemeIcon, Space } from '@mantine/core';
 import {
   IconBellRinging,
   IconFingerprint,
@@ -93,6 +93,8 @@ export default function DashboardLayout({ children }: ComponentProps) {
   const { classes, cx } = useStyles();
   const pathname = usePathname();
 
+  const activeLink = data.find((linkConfig) => pathname.startsWith(linkConfig.link)) || data[0];
+
   const links = data.map((item) => (
     <Link
       className={cx(classes.link, { [classes.linkActive]: pathname.startsWith(item.link) })}
@@ -123,6 +125,8 @@ export default function DashboardLayout({ children }: ComponentProps) {
             </Navbar.Section>
         </Navbar>
         <main className={classes.main}>
+            {/* <Title order={2}>{activeLink.label}</Title>
+            <Space h="md" /> */}
             {children}
         </main>
     </Flex>
