@@ -2,6 +2,7 @@ import { getCookie, setCookie } from 'cookies-next';
 import { ColorScheme } from '@mantine/core';
 import { AppContext } from 'next/app';
 import Head from 'next/head';
+import styled from '@emotion/styled';
 
 import RootStyleRegistry from './emotion';
 
@@ -19,11 +20,11 @@ export default function RootLayout({ colorScheme, children }: ComponentProps) {
   return (
    <html lang="en-US">
       <Head>
-        <title>Mantine next example</title>
+        <title>Critical Event Management</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
-      <body>
+      <body style={{ minHeight: '100vh', height: 0, minWidth: '100vw', width: 0 }}>
         <RootStyleRegistry colorScheme={colorScheme}>
          {children}
         </RootStyleRegistry>
