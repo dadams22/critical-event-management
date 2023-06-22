@@ -93,8 +93,6 @@ export default function DashboardLayout({ children }: ComponentProps) {
   const { classes, cx } = useStyles();
   const pathname = usePathname();
 
-  const activeLink = data.find((linkConfig) => pathname.startsWith(linkConfig.link)) || data[0];
-
   const links = data.map((item) => (
     <Link
       className={cx(classes.link, { [classes.linkActive]: pathname.startsWith(item.link) })}
