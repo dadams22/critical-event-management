@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie, setCookie } from 'cookies-next';
 import { produce } from 'immer';
 
-const AUTH_TOKEN_KEY = 'auth-token';
+export const AUTH_TOKEN_KEY = 'auth-token';
 
 axios.interceptors.request.use(
     (config) => {
@@ -26,9 +26,13 @@ const Api = (() => {
     });
 
     return {
-        login: (username: string, password: string) => {
+        login: async (username: string, password: string) => {
             console.log(username, password);
-            instance.post('auth', { username, password }).then(console.log);
+            const response = await instance.post<{token: string}>('auth', { username, password })
+
+            if (response.status === 200) {
+                setCookie(AUTH_TOKEN_KEY, response.data.token);
+            }
         }
     };
 })();
