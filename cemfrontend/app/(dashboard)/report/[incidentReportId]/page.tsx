@@ -1,13 +1,7 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-
-interface ComponentProps {}
-
-export const getServerSideProps: GetServerSideProps<ComponentProps> = async () => {
-    return { props: {} };
+interface ComponentProps {
+    id?: string;
 }
 
-export default function IncidentReportPage({}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-    return (
-
-    );
+export default function IncidentReportPage() {
+    return `This is the page for incident`;
 }

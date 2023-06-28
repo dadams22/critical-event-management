@@ -3,12 +3,18 @@ import { useState } from 'react';
 import { Button, Flex, SimpleGrid, Title, Center, Text, Space } from "@mantine/core";
 import { IconExclamationMark, IconFiretruck, IconStorm, IconTornado, IconUrgent } from "@tabler/icons";
 import Api from '../../../api/Api';
+import { useRouter } from 'next/navigation';
 
 export default function ReportPage() {
+    const router = useRouter();
+
     const [loading, setLoading] = useState<boolean>(false);
     const handleReportIncident = () => {
         setLoading(true);
         Api.reportIncident()
+            .then((incident_report) => {
+                router.push(`/report/${incident_report.id}`);
+            })
             .finally(() => setLoading(false));
     }
 
