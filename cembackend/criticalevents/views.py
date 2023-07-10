@@ -4,7 +4,7 @@ from rest_framework import status, viewsets
 
 from .serializers import IncidentReportSerializer
 
-from .models import Person, IncidentReport
+from .models import Person, IncidentReport, MessageReceipt
 from .twilio_utils import send_twilio_message
 
 class MessageView(APIView):
@@ -22,6 +22,10 @@ class CreateIncidentReportView(APIView):
         user = request.user
         incident_report = IncidentReport.objects.create(reporter=user)
         serializer = IncidentReportSerializer(incident_report)
+
+        for person in Person.objects.all():
+            message_body = 'An incident has been reported'
+            message_id = send_twilio_message(person.phone, message_body)
 
         return Response({ 'incident_report': serializer.data, }, status=status.HTTP_200_OK)
 

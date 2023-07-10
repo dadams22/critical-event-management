@@ -19,3 +19,13 @@ class IncidentReport(models.Model):
 
     def __str__(self) -> str:
         return f'Incident at {self.created_at.strftime("%m/%d/%Y %H:%M:%S")}'
+
+
+class MessageReceipt(models.Model):
+    """ Receipt for a message sent through twilio """
+    twilio_message_id = models.CharField(max_length=50)
+    recipient = models.ForeignKey(Person, on_delete=models.RESTRICT)
+    incident = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT)
+    body = models.TextField(max_length=500)
+    sender_phone = models.CharField(max_length=20)
+    recipient_phone = models.CharField(max_length=20)

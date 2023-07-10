@@ -2,9 +2,10 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken import views
 
-from .views import MessageView, CreateIncidentReportView
+from .views import MessageView, CreateIncidentReportView, IncidentReportViewSet
 
 router = routers.SimpleRouter()
+router.register(r'incident', IncidentReportViewSet, basename='incident')
 
 urlpatterns = [
     path('auth', views.obtain_auth_token),
