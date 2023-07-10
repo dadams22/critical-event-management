@@ -46,6 +46,12 @@ const Api = (() => {
             const { incident_report }: { incident_report: IncidentReport } = await response.json();
             return incident_report;
         },
+
+        getIncidentReport: async (incidentId: string): Promise<IncidentReport> => {
+            const response = await fetchInstance(`incident/${incidentId}/`);
+            const incident_report: IncidentReport = await response.json();
+            return incident_report;
+        }
     };
 })();
 
