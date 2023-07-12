@@ -4,7 +4,7 @@ from rest_framework import status, viewsets
 
 from .serializers import IncidentReportSerializer
 
-from .models import Person, IncidentReport, MessageReceipt
+from .models import Location, Person, IncidentReport, MessageReceipt
 from .twilio_utils import send_twilio_message
 
 class MessageView(APIView):
@@ -19,13 +19,21 @@ class MessageView(APIView):
 
 class CreateIncidentReportView(APIView):
     def post(self, request):
+
         user = request.user
-        incident_report = IncidentReport.objects.create(reporter=user)
+        location_data = request.data.get('location', None)
+
+        location = Location.objects.create(
+            latitude=location_data['latitude'], 
+            longitude=location_data['longitude']
+        ) if location_data is not None else None
+
+        incident_report = IncidentReport.objects.create(reporter=user, location=location)
         serializer = IncidentReportSerializer(incident_report)
 
-        for person in Person.objects.all():
-            message_body = 'An incident has been reported'
-            message_id = send_twilio_message(person.phone, message_body)
+        # for person in Person.objects.all():
+        #     message_body = 'An incident has been reported'
+        #     message_id = send_twilio_message(person.phone, message_body, incident=incident_report)
 
         return Response({ 'incident_report': serializer.data, }, status=status.HTTP_200_OK)
 

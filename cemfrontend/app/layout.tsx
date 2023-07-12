@@ -3,6 +3,7 @@ import { ColorScheme } from '@mantine/core';
 import { AppContext } from 'next/app';
 import Head from 'next/head';
 import styled from '@emotion/styled';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 import RootStyleRegistry from './emotion';
 

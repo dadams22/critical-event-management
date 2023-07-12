@@ -1,17 +1,37 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, SimpleGrid, Title, Center, Text, Space } from "@mantine/core";
 import { IconExclamationMark, IconFiretruck, IconStorm, IconTornado, IconUrgent } from "@tabler/icons";
 import Api from '../../../api/Api';
 import { useRouter } from 'next/navigation';
+import { Location } from '../../../api/types';
+
+
 
 export default function ReportPage() {
     const router = useRouter();
 
+    const [location, setLocation] = useState<Location | undefined>();
+
+    const getLocation = () => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            setLocation({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            });
+        });
+    };
+
+    useEffect(() => {
+        getLocation();
+    }, []);
+
+    console.log(location);
+
     const [loading, setLoading] = useState<boolean>(false);
     const handleReportIncident = () => {
         setLoading(true);
-        Api.reportIncident()
+        Api.reportIncident({ location })
             .then((incident_report) => {
                 router.push(`/report/${incident_report.id}`);
             })

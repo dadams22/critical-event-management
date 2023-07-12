@@ -12,10 +12,20 @@ class Person(models.Model):
         return f'{self.first_name} {self.last_name}'
 
 
+class Location(models.Model):
+    """ Represents a latitude, longitude location """
+    latitude = models.DecimalField(max_digits=18, decimal_places=15)
+    longitude = models.DecimalField(max_digits=18, decimal_places=15)
+
+    def __str__(self):
+        return f'Location ({self.latitude}, {self.longitude})'
+
+
 class IncidentReport(models.Model):
     """ Represents an initial incident report, before information has been gathered """
     reporter = models.ForeignKey(User, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(auto_now_add=True)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self) -> str:
         return f'Incident at {self.created_at.strftime("%m/%d/%Y %H:%M:%S")}'
