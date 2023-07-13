@@ -51,7 +51,7 @@ export default function SearchBar({}: ComponentProps) {
                                         <Text fz="sm" fw={500}>{name}</Text>
                                         <Badge color={color}>{label}</Badge>
                                     </Flex>
-                                )
+                                );
                             })}
                         </Stack>
                     </Paper>
