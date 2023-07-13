@@ -1,132 +1,152 @@
 'use client';
 import { useState } from 'react';
-import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex, Title, ThemeIcon, Space } from '@mantine/core';
 import {
-  IconBellRinging,
-  IconFingerprint,
-  IconKey,
-  IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
-  IconSwitchHorizontal,
-  IconLogout,
-} from '@tabler/icons-react';
-import { IconAlertTriangle, IconMessage2, IconUrgent } from '@tabler/icons';
-import Image from 'next/image';
-import iconMessageBolt from '../../public/icons/message-2-bolt.svg';
+  createStyles,
+  Header,
+  Container,
+  Group,
+  Burger,
+  Paper,
+  Transition,
+  rem,
+  Title,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+// import { MantineLogo } from '@mantine/ds';
+
+const HEADER_HEIGHT = rem(60);
 
 const useStyles = createStyles((theme) => ({
-  header: {
-    paddingBottom: theme.spacing.md,
-    marginBottom: `calc(${theme.spacing.md} * 1.5)`,
-    borderBottom: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
-    }`,
+    pageContainer: {
+        height: 0,
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+
+    main: {
+        flexGrow: 2,
+    },
+
+  root: {
+    position: 'relative',
+    zIndex: 1,
   },
 
-  footer: {
-    paddingTop: theme.spacing.md,
-    marginTop: theme.spacing.md,
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
-    }`,
+  dropdown: {
+    position: 'absolute',
+    top: HEADER_HEIGHT,
+    left: 0,
+    right: 0,
+    zIndex: 0,
+    borderTopRightRadius: 0,
+    borderTopLeftRadius: 0,
+    borderTopWidth: 0,
+    overflow: 'hidden',
+
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '100%',
+  },
+
+  links: {
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  burger: {
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
   },
 
   link: {
-    ...theme.fn.focusStyles(),
-    display: 'flex',
-    alignItems: 'center',
-    textDecoration: 'none',
-    fontSize: theme.fontSizes.sm,
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.colors.gray[7],
-    padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+    display: 'block',
+    lineHeight: 1,
+    padding: `${rem(8)} ${rem(12)}`,
     borderRadius: theme.radius.sm,
+    textDecoration: 'none',
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    fontSize: theme.fontSizes.sm,
     fontWeight: 500,
 
     '&:hover': {
       backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-
-      [`& .${getStylesRef('icon')}`]: {
-        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-      },
     },
-  },
 
-  linkIcon: {
-    ref: getStylesRef('icon'),
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[6],
-    marginRight: theme.spacing.sm,
+    [theme.fn.smallerThan('sm')]: {
+      borderRadius: 0,
+      padding: theme.spacing.md,
+    },
   },
 
   linkActive: {
     '&, &:hover': {
       backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
       color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
-      [`& .${getStylesRef('icon')}`]: {
-        color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
-      },
     },
-  },
-
-  main: {
-    padding: theme.spacing.md,
-    display: 'flex',
-    flexDirection: 'column',
-    flexGrow: 2,
   },
 }));
 
-const data = [
-  { link: '/report', label: 'Report', icon: IconUrgent },
-  { link: '/notify', label: 'Notify', icon: IconMessage2 },
-];
+interface HeaderResponsiveProps {
+  links: { link: string; label: string }[];
+}
+
+const links: { link: string; label: string }[] = [
+    { label: 'Report', link: '/report' }
+]
 
 interface ComponentProps {
     children: React.ReactNode;
 }
 
-export default function DashboardLayout({ children }: ComponentProps) {
+export default function AppLayout({ children }: ComponentProps) {
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const [active, setActive] = useState(links[0].link);
   const { classes, cx } = useStyles();
-  const pathname = usePathname();
 
-  const links = data.map((item) => (
+  const items = links.map((link) => (
     <Link
-      className={cx(classes.link, { [classes.linkActive]: pathname.startsWith(item.link) })}
-      href={item.link}
-      key={item.label}
+      key={link.label}
+      href={link.link}
+      className={cx(classes.link, { [classes.linkActive]: active === link.link })}
     >
-        <item.icon className={classes.linkIcon} />
-      <span>{item.label}</span>
+      {link.label}
     </Link>
   ));
 
   return (
-    <Flex miw="100%" w={0} mih="100%" h={0}>
-        <Navbar height="100%" width={{ sm: 300 }} p="md">
-            <Navbar.Section grow>
-                <Group className={classes.header} position="apart">
-                    <Title order={3}>SimpleCEM</Title>
-                    <Code sx={{ fontWeight: 700 }}>v0.0.1</Code>
+    <div className={classes.pageContainer}>
+        <Header height={HEADER_HEIGHT} className={classes.root} px="md">
+            <div className={classes.header}>
+                <Title color="blue" order={3}>SimpleCEM</Title>
+                <Group spacing={5} className={classes.links}>
+                    {items}
                 </Group>
-                {links}
-            </Navbar.Section>
 
-            <Navbar.Section className={classes.footer}>
-                <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-                <IconLogout className={classes.linkIcon} stroke={1.5} />
-                <span>Logout</span>
-                </a>
-            </Navbar.Section>
-        </Navbar>
+                <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+
+                <Transition transition="pop-top-right" duration={200} mounted={opened}>
+                {(styles) => (
+                    <Paper className={classes.dropdown} withBorder style={styles}>
+                    {items}
+                    </Paper>
+                )}
+                </Transition>
+            </div>
+        </Header>
         <main className={classes.main}>
-            {/* <Title order={2}>{activeLink.label}</Title>
-            <Space h="md" /> */}
             {children}
         </main>
-    </Flex>
+    </div>
   );
 }

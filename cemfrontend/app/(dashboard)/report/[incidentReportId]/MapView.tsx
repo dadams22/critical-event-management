@@ -7,17 +7,8 @@ import { useMantineTheme, Text } from '@mantine/core';
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
 
 const MapContainer = styled.div`
-    position: relative;
     width: 100%;
-    height: 400px;
-    border-radius: 8px;
-`;
-
-const TitlePositioner = styled.div`
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 200;
+    height: 100%;
 `;
 
 interface ComponentProps{
@@ -47,10 +38,6 @@ export default function MapView({ location }: ComponentProps) {
     });
 
     return (
-        <MapContainer ref={mapContainer}>
-            <TitlePositioner>
-                <Text fw={700}>Incident Location</Text>
-            </TitlePositioner>
-        </MapContainer>
+        <MapContainer ref={mapContainer} />
     )
 }
