@@ -62,7 +62,7 @@ export default function SearchBar({}: ComponentProps) {
 				<Box pos="absolute" top="100%" left={0} right={0}>
 					<Space h="xs" />
 					<Paper shadow="sm">
-						<Stack>
+						<Stack spacing={0}>
 							{searchResults.map(({ name, status }) => {
 								const { label, color } = STATUS_CONFIG[status];
 								return (

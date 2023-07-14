@@ -1,5 +1,18 @@
 'use client';
-import { Center, Loader, Space, Title, Text, Timeline, Grid, Card } from '@mantine/core';
+import {
+	Center,
+	Loader,
+	Space,
+	Title,
+	Text,
+	Timeline,
+	Grid,
+	Card,
+	Group,
+	ActionIcon,
+	HoverCard,
+	Button,
+} from '@mantine/core';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
 import MapView from './MapView';
@@ -8,6 +21,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
 import SearchBar from './SearchBar';
+import { IconSpeakerphone } from '@tabler/icons';
+import { modals } from '@mantine/modals';
+import { ModalNames } from '../../../(modals)';
 
 dayjs.extend(relativeTime);
 
@@ -27,7 +43,7 @@ const OverlayGrid = styled.div`
 	padding: 16px;
 
 	display: grid;
-	grid-template-areas: 'sidebar search' 'sidebar .' 'sidebar footer';
+	grid-template-areas: 'sidebar actions' 'sidebar .' 'sidebar footer';
 	grid-template-columns: 300px 1fr;
 	grid-template-rows: min-content 1fr min-content;
 	gap: 10px;
@@ -39,15 +55,17 @@ const OverlayGrid = styled.div`
 	}
 `;
 
-const SideBar = styled.div`
-	grid-area: sidebar;
-`;
-
-const Search = styled.div`
-	grid-area: search;
+const ActionBar = styled.div`
+	grid-area: actions;
+	width: 100%;
 
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
+	align-items: center;
+`;
+
+const SideBar = styled.div`
+	grid-area: sidebar;
 `;
 
 const Footer = styled.div`
@@ -79,6 +97,14 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 
 	const incidentTime = dayjs(created_at);
 
+	const handleClickSendAlert = () => {
+		modals.openContextModal({
+			modal: ModalNames.SendAlert,
+			title: 'Send Alert',
+			innerProps: {},
+		});
+	};
+
 	return (
 		<MapContainer>
 			{location && <MapView location={location} />}
@@ -97,9 +123,20 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 						</Timeline>
 					</Card>
 				</SideBar>
-				<Search>
+				<ActionBar>
+					<div />
 					<SearchBar />
-				</Search>
+					<Group>
+						<Button
+							variant="filled"
+							color="red"
+							leftIcon={<IconSpeakerphone size="20" />}
+							onClick={handleClickSendAlert}
+						>
+							Send Alert
+						</Button>
+					</Group>
+				</ActionBar>
 				<Footer>
 					<ImpactedIndividualsStats />
 				</Footer>

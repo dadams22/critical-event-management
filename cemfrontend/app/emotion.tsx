@@ -4,6 +4,14 @@ import { CacheProvider } from '@emotion/react';
 import { useEmotionCache, MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { useServerInsertedHTML } from 'next/navigation';
 import { setCookie } from 'cookies-next';
+import { ModalsProvider } from '@mantine/modals';
+import SendAlertModal from './(modals)/SendAlertModal';
+import { APP_MODALS } from './(modals)';
+import { ModalSettings } from '@mantine/modals/lib/context';
+
+const DEFAULT_MODAL_SETTINGS: ModalSettings = {
+	centered: true,
+};
 
 interface ComponentProps {
 	colorScheme: ColorScheme;
@@ -38,7 +46,9 @@ export default function RootStyleRegistry({
 		<CacheProvider value={cache}>
 			<ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
 				<MantineProvider withGlobalStyles withNormalizeCSS>
-					{children}
+					<ModalsProvider modals={APP_MODALS} modalProps={DEFAULT_MODAL_SETTINGS}>
+						{children}
+					</ModalsProvider>
 				</MantineProvider>
 			</ColorSchemeProvider>
 		</CacheProvider>

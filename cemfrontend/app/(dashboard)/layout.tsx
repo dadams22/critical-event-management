@@ -124,7 +124,7 @@ export default function AppLayout({ children }: ComponentProps) {
 
 	return (
 		<div className={classes.pageContainer}>
-			<Header height={HEADER_HEIGHT} className={classes.root} px="md">
+			<Header height={HEADER_HEIGHT} className={classes.root} px="lg">
 				<div className={classes.header}>
 					<Title color="blue" order={3}>
 						SimpleCEM
