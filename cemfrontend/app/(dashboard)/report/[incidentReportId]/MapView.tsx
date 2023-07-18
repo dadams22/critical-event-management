@@ -24,13 +24,16 @@ export default function MapView({ location }: ComponentProps) {
 	const map = useRef(null);
 	const mapContainer = useRef<HTMLDivElement>(null);
 
-    const colorScheme = 'dark';
+	const colorScheme = 'dark';
 
 	useEffect(() => {
 		if (map.current) return; // initialize map only once
 		map.current = new mapboxgl.Map({
 			container: mapContainer.current,
-			style: colorScheme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/light-v11',
+			style:
+				colorScheme === 'dark'
+					? 'mapbox://styles/mapbox/dark-v11'
+					: 'mapbox://styles/mapbox/light-v11',
 			center: [location.longitude, location.latitude],
 			zoom: 18,
 		});

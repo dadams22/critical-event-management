@@ -1,5 +1,5 @@
 'use client';
 
 export default function TemplatesPage() {
-    return 'Templates';
+	return 'Templates';
 }

@@ -1,3 +1,3 @@
 export default function PreparePage() {
-    return <div />;
+	return <div />;
 }

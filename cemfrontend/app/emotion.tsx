@@ -26,8 +26,8 @@ export default function RootStyleRegistry({
 	const cache = useEmotionCache();
 	cache.compat = true;
 
-    const colorScheme = 'dark';
-    const toggleColorScheme = _.noop();
+	const colorScheme = 'dark';
+	const toggleColorScheme = _.noop();
 	// const [colorScheme, setColorScheme] = useState<ColorScheme>(initialColorScheme);
 
 	// const toggleColorScheme = (value?: ColorScheme) => {
@@ -45,7 +45,7 @@ export default function RootStyleRegistry({
 		/>
 	));
 
-    console.log(colorScheme);
+	console.log(colorScheme);
 
 	return (
 		<CacheProvider value={cache}>

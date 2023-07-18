@@ -1,14 +1,5 @@
 'use client';
-import {
-	createStyles,
-	Header,
-	Group,
-	Burger,
-	Paper,
-	Transition,
-	rem,
-	Title,
-} from '@mantine/core';
+import { createStyles, Header, Group, Burger, Paper, Transition, rem, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -100,8 +91,8 @@ interface HeaderResponsiveProps {
 }
 
 const links: { link: string; label: string }[] = [
-    { label: 'Report', link: '/report', },
-    { label: 'Prepare', link: '/prepare', }
+	{ label: 'Report', link: '/report' },
+	{ label: 'Prepare', link: '/prepare' },
 ];
 
 interface ComponentProps {
@@ -109,7 +100,7 @@ interface ComponentProps {
 }
 
 export default function AppLayout({ children }: ComponentProps) {
-    const { classes, cx } = useStyles();
+	const { classes, cx } = useStyles();
 
 	const [opened, { toggle, close }] = useDisclosure(false);
 
