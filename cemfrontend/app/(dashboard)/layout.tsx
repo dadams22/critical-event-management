@@ -1,9 +1,7 @@
 'use client';
-import { useState } from 'react';
 import {
 	createStyles,
 	Header,
-	Container,
 	Group,
 	Burger,
 	Paper,
@@ -13,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
-// import { MantineLogo } from '@mantine/ds';
+import { usePathname } from 'next/navigation';
 
 const HEADER_HEIGHT = rem(60);
 
@@ -101,22 +99,27 @@ interface HeaderResponsiveProps {
 	links: { link: string; label: string }[];
 }
 
-const links: { link: string; label: string }[] = [{ label: 'Report', link: '/report' }];
+const links: { link: string; label: string }[] = [
+    { label: 'Report', link: '/report', },
+    { label: 'Prepare', link: '/prepare', }
+];
 
 interface ComponentProps {
 	children: React.ReactNode;
 }
 
 export default function AppLayout({ children }: ComponentProps) {
+    const { classes, cx } = useStyles();
+
 	const [opened, { toggle, close }] = useDisclosure(false);
-	const [active, setActive] = useState(links[0].link);
-	const { classes, cx } = useStyles();
+
+	const pathname = usePathname();
 
 	const items = links.map((link) => (
 		<Link
 			key={link.label}
 			href={link.link}
-			className={cx(classes.link, { [classes.linkActive]: active === link.link })}
+			className={cx(classes.link, { [classes.linkActive]: pathname.startsWith(link.link) })}
 		>
 			{link.label}
 		</Link>

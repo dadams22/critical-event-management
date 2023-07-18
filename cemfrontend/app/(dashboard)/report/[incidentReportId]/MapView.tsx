@@ -1,8 +1,10 @@
+'use client';
 import React, { useEffect, useRef } from 'react';
 import { Location } from '../../../../api/types';
 import mapboxgl from 'mapbox-gl';
 import styled from '@emotion/styled';
 import { useMantineTheme, Text } from '@mantine/core';
+import { useColorScheme } from '@mantine/hooks';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -22,11 +24,13 @@ export default function MapView({ location }: ComponentProps) {
 	const map = useRef(null);
 	const mapContainer = useRef<HTMLDivElement>(null);
 
+    const colorScheme = 'dark';
+
 	useEffect(() => {
 		if (map.current) return; // initialize map only once
 		map.current = new mapboxgl.Map({
 			container: mapContainer.current,
-			style: 'mapbox://styles/mapbox/streets-v12',
+			style: colorScheme === 'dark' ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/light-v11',
 			center: [location.longitude, location.latitude],
 			zoom: 18,
 		});
