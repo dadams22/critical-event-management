@@ -10,9 +10,17 @@ export type Location = {
 	longitude: number;
 };
 
+export interface Alert {
+    id: string;
+    body: string;
+    created_at: number;
+    sender: MinimalUser;
+}
+
 export interface IncidentReport {
 	id: string;
 	reporter: MinimalUser;
 	created_at: number;
 	location?: Location;
+    alerts: Alert[];
 }

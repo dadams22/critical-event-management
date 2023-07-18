@@ -20,7 +20,7 @@ def send_twilio_message(recipient: Person, message_body: str, incident: Incident
         twilio_message_id=message.sid, 
         recipient=recipient,
         body=message_body,
-        incident=IncidentReport,
+        incident=incident,
         sender_phone=phone_number,
         recipient_phone=recipient.phone
     )

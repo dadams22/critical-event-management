@@ -31,6 +31,14 @@ class IncidentReport(models.Model):
         return f'Incident at {self.created_at.strftime("%m/%d/%Y %H:%M:%S")}'
 
 
+class Alert(models.Model):
+    """ Represents an alert sent regarding an incident """
+    incident_report = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT, related_name='alerts')
+    created_at = models.DateTimeField(auto_now_add=True)
+    body = models.TextField(max_length=500)
+    sender = models.ForeignKey(User, on_delete=models.RESTRICT)
+
+
 class MessageReceipt(models.Model):
     """ Receipt for a message sent through twilio """
     twilio_message_id = models.CharField(max_length=50)

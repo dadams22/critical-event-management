@@ -21,9 +21,11 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
 import SearchBar from './SearchBar';
-import { IconSpeakerphone } from '@tabler/icons';
+import { IconAlarm, IconSpeakerphone, IconUrgent } from '@tabler/icons';
 import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
+import { Alert } from '../../../../api/types';
+import { produce } from 'immer';
 
 dayjs.extend(relativeTime);
 
@@ -66,6 +68,9 @@ const ActionBar = styled.div`
 
 const SideBar = styled.div`
 	grid-area: sidebar;
+    overflow-y: auto;
+    margin: -16px -10px;
+    padding: 16px 10px;
 `;
 
 const Footer = styled.div`
@@ -79,7 +84,7 @@ interface ComponentProps {
 }
 
 export default function IncidentReportPage({ params: { incidentReportId } }: ComponentProps) {
-	const { data: incident_report, error } = useSWR(`incident/${incidentReportId}`, () =>
+	const { data: incident_report, error, mutate, } = useSWR(`incident/${incidentReportId}`, () =>
 		Api.getIncidentReport(incidentReportId)
 	);
 
@@ -97,11 +102,20 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 
 	const incidentTime = dayjs(created_at);
 
+    const sendAlertCallback = (alert: Alert) => {
+        mutate(produce((incident_report) => {
+            incident_report.alerts.push(alert);
+        }, incident_report));
+    };
+
 	const handleClickSendAlert = () => {
 		modals.openContextModal({
 			modal: ModalNames.SendAlert,
 			title: 'Send Alert',
-			innerProps: {},
+			innerProps: {
+                incidentId: incidentReportId,
+                doneCallback: sendAlertCallback,
+            },
 		});
 	};
 
@@ -111,13 +125,30 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 			<OverlayGrid>
 				<SideBar>
 					<Card shadow="sm">
-						<Timeline active={1} bulletSize={24} lineWidth={2}>
-							<Timeline.Item title="Incident Reported">
+						<Timeline bulletSize={24} lineWidth={2}>
+                            {incident_report.alerts.slice().reverse().map((alert) => {
+                                const alertTime = dayjs(alert.created_at);
+                                return (
+                                    <Timeline.Item title="Alert Sent" bullet={<IconSpeakerphone size="16" />}>
+                                        <Text size="xs" mt={4}>
+                                            {alertTime.format('HH:MM A')} ({alertTime.fromNow()})
+                                        </Text>
+                                        <Text color="dimmed" size="sm">
+                                            {alert.sender.first_name} {alert.sender.last_name} sent an alert.
+                                        </Text>
+                                        <Space h="sm" />
+                                        <Text size="sm">
+                                            {alert.body}
+                                        </Text>
+                                    </Timeline.Item>
+                                );
+                            })}
+							<Timeline.Item title="Incident Reported" bullet={<IconUrgent size="16" />}>
+                                <Text size="xs" mt={4}>
+									{incidentTime.format('HH:MM A')} ({incidentTime.fromNow()})
+								</Text>
 								<Text color="dimmed" size="sm">
 									{reporter.first_name} {reporter.last_name} reported an incident.
-								</Text>
-								<Text size="xs" mt={4}>
-									{incidentTime.format('HH:MM A')} ({incidentTime.fromNow()})
 								</Text>
 							</Timeline.Item>
 						</Timeline>

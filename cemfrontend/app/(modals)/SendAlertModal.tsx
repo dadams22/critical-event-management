@@ -4,6 +4,8 @@ import { Button, NativeSelect, Select, SelectItem, Stack, Textarea } from '@mant
 import { ContextModalProps } from '@mantine/modals';
 import { IconSpeakerphone } from '@tabler/icons';
 import { useState } from 'react';
+import Api from '../../api/Api';
+import { Alert } from '../../api/types';
 
 const MESSAGE_TEMPLATES: SelectItem[] = [
 	{
@@ -18,10 +20,14 @@ const MESSAGE_TEMPLATES: SelectItem[] = [
 	},
 ];
 
-interface ComponentProps {}
+interface ComponentProps {
+    incidentId: string;
+    doneCallback: (alert: Alert) => void;
+}
 
-export default function SendAlertModal({}: ContextModalProps<ComponentProps>) {
+export default function SendAlertModal({ innerProps: { incidentId, doneCallback, }, context, id, }: ContextModalProps<ComponentProps>) {
 	const [message, setMessage] = useState<string>('');
+    const [sending, setSending] = useState<boolean>(false);
 
 	const handleSelectTemplate = (value: string | null) => {
 		setMessage(value || '');
@@ -31,23 +37,33 @@ export default function SendAlertModal({}: ContextModalProps<ComponentProps>) {
 		setMessage(event.target.value);
 	};
 
+    const handleClickSendAlert = async () => {
+        setSending(true);
+        const alert = await Api.sendAlert(incidentId, message);
+        setSending(false);
+        doneCallback(alert);
+        context.closeModal(id);
+    };
+
 	return (
 		<Stack>
 			<Select
 				label="Template"
 				placeholder="No template selected"
 				data={MESSAGE_TEMPLATES}
+                disabled={sending}
 				onChange={handleSelectTemplate}
 			/>
 			<Textarea
 				label="Message"
 				value={message}
+                disabled={sending}
 				onChange={handleMessageChange}
 				placeholder="Message..."
 				minRows={5}
 				withAsterisk
 			/>
-			<Button color="red" leftIcon={<IconSpeakerphone size={20} />}>
+			<Button color="red" leftIcon={<IconSpeakerphone size={20} />} loading={sending} disabled={!message} onClick={handleClickSendAlert}>
 				Send Alert
 			</Button>
 		</Stack>

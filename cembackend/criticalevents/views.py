@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 
-from .serializers import IncidentReportSerializer
+from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer
 
 from .models import Location, Person, IncidentReport, MessageReceipt
 from .twilio_utils import send_twilio_message
@@ -50,3 +50,19 @@ class IncidentReportViewSet(viewsets.ViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+class AlertViewSet(viewsets.ViewSet):
+    def create(self, request):
+        user = request.user
+        serializer = AlertSerializer(data={ 'sender': user.id, **request.data })
+
+        if serializer.is_valid():
+            alert = serializer.save()
+
+            for person in Person.objects.all():
+                send_twilio_message(person, alert.body, alert.incident_report)
+
+            return Response({ 'alert': serializer.data }, status=201)
+
+        print(serializer.errors)
+
+        return Response(serializer.errors, status=400)

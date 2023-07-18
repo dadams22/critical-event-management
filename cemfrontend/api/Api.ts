@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
 import { produce } from 'immer';
-import { IncidentReport } from './types';
+import { Alert, IncidentReport } from './types';
 import { Location } from './types';
 
 const BASE_URL = 'http://127.0.0.1:8000/api';
@@ -46,6 +46,11 @@ const Api = (() => {
 			const response = await axiosInstance.get(`incident/${incidentId}/`);
 			return response.data;
 		},
+
+        sendAlert: async (incidentId: string, body: string): Promise<Alert> => {
+            const response = await axiosInstance.post<{ alert: Alert }>('alert/', { incident_report: incidentId, body });
+            return response.data.alert;
+        }
 	};
 })();
 
