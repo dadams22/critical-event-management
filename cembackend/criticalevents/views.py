@@ -89,11 +89,11 @@ class ResolveIncidentView(APIView):
 
 class TwilioWebhookView(APIView):
     def post(self, request):
-        body = request.data.get('Body', None)
+        body: str = request.data.get('Body', None)
         sender_phone_number = request.data.get('From', None)
 
-        is_safe = 'safe' in  body.lower()
-        needs_help = 'help' in body.lower()
+        is_safe = 'safe' in  body.lower() or body.strip() == '1'
+        needs_help = 'danger' in body.lower() or body.strip() == '2'
 
         twiml_response = MessagingResponse()
         

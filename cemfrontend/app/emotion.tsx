@@ -12,6 +12,7 @@ import _ from 'lodash';
 
 const DEFAULT_MODAL_SETTINGS: ModalSettings = {
 	centered: true,
+	zIndex: 2000,
 };
 
 interface ComponentProps {

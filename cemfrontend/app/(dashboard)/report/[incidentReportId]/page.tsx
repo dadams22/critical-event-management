@@ -194,7 +194,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 								})}
 							<Timeline.Item
 								title="Incident Reported"
-								bullet={<IconUrgent size="16" color={theme.colors.red[7]} />}
+								bullet={<IconUrgent size="16" color={theme.colors.blue[7]} />}
 							>
 								<Text size="xs" mt={4}>
 									{incidentTime.format('HH:MM A')} ({incidentTime.fromNow()})

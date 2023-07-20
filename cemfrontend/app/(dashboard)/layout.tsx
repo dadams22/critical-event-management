@@ -1,6 +1,18 @@
 'use client';
-import { createStyles, Header, Group, Burger, Paper, Transition, rem, Title } from '@mantine/core';
+import {
+	createStyles,
+	Header,
+	Group,
+	Burger,
+	Paper,
+	Transition,
+	rem,
+	Title,
+	useMantineColorScheme,
+	useMantineTheme,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconShieldHalfFilled } from '@tabler/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -101,6 +113,7 @@ interface ComponentProps {
 
 export default function AppLayout({ children }: ComponentProps) {
 	const { classes, cx } = useStyles();
+	const theme = useMantineTheme();
 
 	const [opened, { toggle, close }] = useDisclosure(false);
 
@@ -120,9 +133,12 @@ export default function AppLayout({ children }: ComponentProps) {
 		<div className={classes.pageContainer}>
 			<Header height={HEADER_HEIGHT} className={classes.root} px="lg">
 				<div className={classes.header}>
-					<Title color="blue" order={3}>
-						SimpleCEM
-					</Title>
+					<Group>
+						<IconShieldHalfFilled color={theme.colors.blue[8]} />
+						<Title color="blue" order={3}>
+							SimpleCEM
+						</Title>
+					</Group>
 					<Group spacing={5} className={classes.links}>
 						{items}
 					</Group>

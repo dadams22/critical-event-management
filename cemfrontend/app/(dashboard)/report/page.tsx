@@ -57,6 +57,12 @@ export default function ReportPage() {
 			>
 				Report Emergency
 			</Button>
+			<Space h="sm" />
+			{location && (
+				<Text size="xs" c="dimmed">
+					Location: {location.latitude}, {location.longitude}
+				</Text>
+			)}
 		</Flex>
 	);
 }
