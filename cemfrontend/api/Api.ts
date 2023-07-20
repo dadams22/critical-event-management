@@ -67,6 +67,27 @@ const Api = (() => {
 			const response = await axiosInstance.get<Person[]>('person/');
 			return response.data;
 		},
+
+		createPerson: async ({
+			firstName,
+			lastName,
+			phone,
+		}: {
+			firstName: string;
+			lastName: string;
+			phone: string;
+		}): Promise<Person> => {
+			const response = await axiosInstance.post<Person>(
+				'person/',
+				{ first_name: firstName, last_name: lastName, phone },
+				{ method: 'CREATE' }
+			);
+			return response.data;
+		},
+
+		deletePerson: async (personId: string): Promise<void> => {
+			await axiosInstance.delete(`person/${personId}/`);
+		},
 	};
 })();
 
