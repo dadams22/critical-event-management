@@ -9,6 +9,8 @@ def send_twilio_message(recipient: Person, message_body: str, incident: Incident
     phone_number = config('TWILIO_PHONE_NUMBER')
 
     client = Client(account_sid, auth_token)
+
+    message_body = f'TEST: {message_body}\n\nRespond SAFE if you are not in danger, or HELP if you need assistance.'
     
     message = client.messages.create(
         body=message_body,
@@ -19,7 +21,7 @@ def send_twilio_message(recipient: Person, message_body: str, incident: Incident
     message_receipt = MessageReceipt(
         twilio_message_id=message.sid, 
         recipient=recipient,
-        body=f'TEST: {message_body}\n\nRespond SAFE if you are not in danger, or HELP if you need assistance.',
+        body=message_body,
         incident=incident,
         sender_phone=phone_number,
         recipient_phone=recipient.phone

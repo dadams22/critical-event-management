@@ -26,6 +26,7 @@ import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
 import { Alert } from '../../../../api/types';
 import { produce } from 'immer';
+import _ from 'lodash';
 
 dayjs.extend(relativeTime);
 
@@ -88,12 +89,21 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 		data: incident_report,
 		error,
 		mutate,
-	} = useSWR(`incident/${incidentReportId}`, () => Api.getIncidentReport(incidentReportId));
+	} = useSWR(
+        `incident/${incidentReportId}`, 
+        () => Api.getIncidentReport(incidentReportId), 
+        { refreshInterval: 2000 },
+    );
 
+    const {
+        data: people,
+    } = useSWR('people', Api.getPeople);
+
+    console.log(people);
 	console.log(incident_report);
 
 	if (error) return <div>Error loading data</div>;
-	if (!incident_report)
+	if (!incident_report || !people)
 		return (
 			<Center h="100%">
 				<Loader variant="bars" />
@@ -103,6 +113,8 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 	const { reporter, location, created_at } = incident_report;
 
 	const incidentTime = dayjs(created_at);
+
+    const statusByPerson = _.keyBy(_.sortBy(incident_report.statuses, 'created_at'), 'person');
 
 	const sendAlertCallback = (alert: Alert) => {
 		mutate(
@@ -136,7 +148,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 								.map((alert) => {
 									const alertTime = dayjs(alert.created_at);
 									return (
-										<Timeline.Item title="Alert Sent" bullet={<IconSpeakerphone size="16" />}>
+										<Timeline.Item key={alert.id} title="Alert Sent" bullet={<IconSpeakerphone size="16" />}>
 											<Text size="xs" mt={4}>
 												{alertTime.format('HH:MM A')} ({alertTime.fromNow()})
 											</Text>
@@ -161,7 +173,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 				</SideBar>
 				<ActionBar>
 					<div />
-					<SearchBar />
+					<SearchBar people={people} statusByPerson={statusByPerson} />
 					<Group>
 						<Button
 							variant="filled"
@@ -174,7 +186,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 					</Group>
 				</ActionBar>
 				<Footer>
-					<ImpactedIndividualsStats />
+					<ImpactedIndividualsStats people={people} statusByPerson={statusByPerson} />
 				</Footer>
 			</OverlayGrid>
 		</MapContainer>

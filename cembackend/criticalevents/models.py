@@ -52,6 +52,8 @@ class MessageReceipt(models.Model):
 class PersonStatus(models.Model):
     """ Represents the status of a Person in relation to an IncidentReport """
     person = models.ForeignKey(Person, on_delete=models.RESTRICT)
-    incident_report = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT)
+    incident_report = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT, related_name='statuses')
     safe = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    verbose_plural_name = 'Person statuses'

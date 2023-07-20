@@ -7,49 +7,64 @@ import {
 	Group,
 	MantineColor,
 	Card,
+    useMantineTheme,
 } from '@mantine/core';
 import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react';
+import { Person, PersonStatus } from '../../../../api/types';
+import _ from 'lodash';
+import { IconQuestionMark, IconShieldCheck, IconSos, IconUsers, TablerIcon } from '@tabler/icons';
 
 interface StatDisplayProps {
 	label: string;
 	progress: number;
 	count: number;
 	color: MantineColor;
+    Icon: TablerIcon;
 }
 
-const data: StatDisplayProps[] = [
-	{
-		label: 'Impacted',
-		progress: 100,
-		count: 255,
-		color: 'blue',
-	},
-	{
-		label: 'Safe',
-		progress: 65,
-		count: 165,
-		color: 'green',
-	},
-	{
-		label: 'Awaiting',
-		progress: 23,
-		count: 85,
-		color: 'yellow',
-	},
-	{
-		label: 'Require Help',
-		progress: 2,
-		count: 5,
-		color: 'red',
-	},
-];
+interface ComponentProps {
+    people: Person[];
+    statusByPerson: { [personId: string]: PersonStatus };
+}
 
-const icons = {
-	up: IconArrowUpRight,
-	down: IconArrowDownRight,
-};
+export function ImpactedIndividualsStats({ people, statusByPerson }: ComponentProps) {
+    const theme = useMantineTheme();
 
-export function ImpactedIndividualsStats() {
+    const safe = people.filter((person) => statusByPerson[person.id] && statusByPerson[person.id].safe);
+    const awaiting = people.filter((person) => !statusByPerson[person.id]);
+    const needHelp = people.filter((person) => statusByPerson[person.id] && !statusByPerson[person.id].safe);
+
+    const data: StatDisplayProps[] = [
+        {
+            label: 'Impacted',
+            progress: 100,
+            count: people.length,
+            color: 'blue',
+            Icon: IconUsers,
+        },
+        {
+            label: 'Safe',
+            progress: (safe.length / people.length) * 100,
+            count: safe.length,
+            color: 'green',
+            Icon: IconShieldCheck,
+        },
+        {
+            label: 'Awaiting',
+            progress: (awaiting.length / people.length) * 100,
+            count: awaiting.length,
+            color: 'yellow',
+            Icon: IconQuestionMark,
+        },
+        {
+            label: 'Require Help',
+            progress: (needHelp.length / people.length) * 100,
+            count: needHelp.length,
+            color: 'red',
+            Icon: IconSos,
+        },
+    ];
+
 	const stats = data.map((stat) => {
 		return (
 			<Card
@@ -67,7 +82,11 @@ export function ImpactedIndividualsStats() {
 						roundCaps
 						thickness={8}
 						sections={[{ value: stat.progress, color: stat.color }]}
-						label={<Center>{/* <Icon size="1.4rem" stroke={1.5} /> */}</Center>}
+						label={
+                            <Center>
+                                <stat.Icon size="1.4rem" stroke={1.5} color={theme.colors[stat.color][7]} />
+                            </Center>
+                        }
 					/>
 
 					<div>

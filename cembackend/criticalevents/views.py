@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from twilio.twiml.messaging_response import MessagingResponse
 
-from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer
+from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer, PersonSerializer
 
 from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus
 from .twilio_utils import send_twilio_message
@@ -67,6 +67,11 @@ class AlertViewSet(viewsets.ViewSet):
         print(serializer.errors)
 
         return Response(serializer.errors, status=400)
+
+
+class PersonViewSet(viewsets.ModelViewSet):
+    serializer_class = PersonSerializer
+    queryset = Person.objects.all()
 
 
 class TwilioWebhookView(APIView):

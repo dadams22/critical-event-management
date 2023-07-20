@@ -5,6 +5,19 @@ export interface MinimalUser {
 	last_name: string;
 }
 
+export interface Person {
+    id: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+}
+
+export interface PersonStatus {
+    id: string;
+    person: string;
+    safe: boolean;
+}
+
 export type Location = {
 	latitude: number;
 	longitude: number;
@@ -23,4 +36,5 @@ export interface IncidentReport {
 	created_at: number;
 	location?: Location;
 	alerts: Alert[];
+    statuses: PersonStatus[];
 }
