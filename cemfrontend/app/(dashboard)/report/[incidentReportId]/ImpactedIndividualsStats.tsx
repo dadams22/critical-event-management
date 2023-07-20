@@ -7,7 +7,7 @@ import {
 	Group,
 	MantineColor,
 	Card,
-    useMantineTheme,
+	useMantineTheme,
 } from '@mantine/core';
 import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react';
 import { Person, PersonStatus } from '../../../../api/types';
@@ -19,51 +19,55 @@ interface StatDisplayProps {
 	progress: number;
 	count: number;
 	color: MantineColor;
-    Icon: TablerIcon;
+	Icon: TablerIcon;
 }
 
 interface ComponentProps {
-    people: Person[];
-    statusByPerson: { [personId: string]: PersonStatus };
+	people: Person[];
+	statusByPerson: { [personId: string]: PersonStatus };
 }
 
 export function ImpactedIndividualsStats({ people, statusByPerson }: ComponentProps) {
-    const theme = useMantineTheme();
+	const theme = useMantineTheme();
 
-    const safe = people.filter((person) => statusByPerson[person.id] && statusByPerson[person.id].safe);
-    const awaiting = people.filter((person) => !statusByPerson[person.id]);
-    const needHelp = people.filter((person) => statusByPerson[person.id] && !statusByPerson[person.id].safe);
+	const safe = people.filter(
+		(person) => statusByPerson[person.id] && statusByPerson[person.id].safe
+	);
+	const awaiting = people.filter((person) => !statusByPerson[person.id]);
+	const needHelp = people.filter(
+		(person) => statusByPerson[person.id] && !statusByPerson[person.id].safe
+	);
 
-    const data: StatDisplayProps[] = [
-        {
-            label: 'Impacted',
-            progress: 100,
-            count: people.length,
-            color: 'blue',
-            Icon: IconUsers,
-        },
-        {
-            label: 'Safe',
-            progress: (safe.length / people.length) * 100,
-            count: safe.length,
-            color: 'green',
-            Icon: IconShieldCheck,
-        },
-        {
-            label: 'Awaiting',
-            progress: (awaiting.length / people.length) * 100,
-            count: awaiting.length,
-            color: 'yellow',
-            Icon: IconQuestionMark,
-        },
-        {
-            label: 'Require Help',
-            progress: (needHelp.length / people.length) * 100,
-            count: needHelp.length,
-            color: 'red',
-            Icon: IconSos,
-        },
-    ];
+	const data: StatDisplayProps[] = [
+		{
+			label: 'Impacted',
+			progress: 100,
+			count: people.length,
+			color: 'blue',
+			Icon: IconUsers,
+		},
+		{
+			label: 'Safe',
+			progress: (safe.length / people.length) * 100,
+			count: safe.length,
+			color: 'green',
+			Icon: IconShieldCheck,
+		},
+		{
+			label: 'Awaiting',
+			progress: (awaiting.length / people.length) * 100,
+			count: awaiting.length,
+			color: 'yellow',
+			Icon: IconQuestionMark,
+		},
+		{
+			label: 'Require Help',
+			progress: (needHelp.length / people.length) * 100,
+			count: needHelp.length,
+			color: 'red',
+			Icon: IconSos,
+		},
+	];
 
 	const stats = data.map((stat) => {
 		return (
@@ -83,10 +87,10 @@ export function ImpactedIndividualsStats({ people, statusByPerson }: ComponentPr
 						thickness={8}
 						sections={[{ value: stat.progress, color: stat.color }]}
 						label={
-                            <Center>
-                                <stat.Icon size="1.4rem" stroke={1.5} color={theme.colors[stat.color][7]} />
-                            </Center>
-                        }
+							<Center>
+								<stat.Icon size="1.4rem" stroke={1.5} color={theme.colors[stat.color][7]} />
+							</Center>
+						}
 					/>
 
 					<div>

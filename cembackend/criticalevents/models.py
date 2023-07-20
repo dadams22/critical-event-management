@@ -26,6 +26,7 @@ class IncidentReport(models.Model):
     reporter = models.ForeignKey(User, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(auto_now_add=True)
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
+    resolved_at = models.DateTimeField(null=True)
 
     def __str__(self) -> str:
         return f'Incident at {self.created_at.strftime("%m/%d/%Y %H:%M:%S")}'

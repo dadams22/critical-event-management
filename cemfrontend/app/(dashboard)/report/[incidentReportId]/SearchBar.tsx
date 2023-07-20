@@ -42,24 +42,28 @@ const searchResults: { name: string; status: Status }[] = [
 ];
 
 interface ComponentProps {
-    people: Person[];
-    statusByPerson: { [personId: string]: PersonStatus };
+	people: Person[];
+	statusByPerson: { [personId: string]: PersonStatus };
 }
 
 export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 	const [menuOpen, setMenuOpen] = useState<boolean>(false);
-    const [searchValue, setSearchValue] = useState<string>('');
+	const [searchValue, setSearchValue] = useState<string>('');
 
-    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(event.target.value);
-    };
+	const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchValue(event.target.value);
+	};
 
 	const handleFocus = () => setMenuOpen(true);
 	const handleBlur = () => setMenuOpen(false);
 
-    const searchResults = people.filter(
-        (person) => !!searchValue && `${person.first_name} ${person.last_name}`.toLowerCase().includes(searchValue.toLowerCase())
-    ).slice(0, 5);
+	const searchResults = people
+		.filter(
+			(person) =>
+				!!searchValue &&
+				`${person.first_name} ${person.last_name}`.toLowerCase().includes(searchValue.toLowerCase())
+		)
+		.slice(0, 5);
 
 	return (
 		<Box w={400} pos="relative">
@@ -70,8 +74,8 @@ export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 				opacity={0.8}
 				onFocus={handleFocus}
 				onBlur={handleBlur}
-                value={searchValue}
-                onChange={handleSearchChange}
+				value={searchValue}
+				onChange={handleSearchChange}
 			/>
 			{menuOpen && (
 				<Box pos="absolute" top="100%" left={0} right={0}>
@@ -79,11 +83,16 @@ export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 					<Paper shadow="sm">
 						<Stack spacing={0}>
 							{searchResults.map(({ id, first_name, last_name }) => {
-								const status: Status = statusByPerson[id] === undefined ? 'awaiting' : statusByPerson[id] ? 'safe' : 'help';
-                                const { label, color } = STATUS_CONFIG[status];
+								const status: Status =
+									statusByPerson[id] === undefined
+										? 'awaiting'
+										: statusByPerson[id]
+										? 'safe'
+										: 'help';
+								const { label, color } = STATUS_CONFIG[status];
 								return (
 									<Flex dir="row" justify="space-between" align="center" px="sm" py="xs">
-										<Text fz="sm" fw={500} transform='capitalize'>
+										<Text fz="sm" fw={500} transform="capitalize">
 											{first_name} {last_name}
 										</Text>
 										<Badge color={color}>{label}</Badge>

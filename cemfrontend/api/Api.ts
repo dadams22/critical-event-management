@@ -35,9 +35,17 @@ const Api = (() => {
 		},
 
 		reportIncident: async ({ location }: { location?: Location }): Promise<IncidentReport> => {
-			const response = await axiosInstance.post(
+			const response = await axiosInstance.post<{ incident_report: IncidentReport }>(
 				'report-incident',
 				location ? { location } : undefined
+			);
+			return response.data.incident_report;
+		},
+
+		resolveIncident: async (incidentId: string): Promise<IncidentReport> => {
+			const response = await axiosInstance.post<{ incident_report: IncidentReport }>(
+				'resolve-incident',
+				{ incident_id: incidentId }
 			);
 			return response.data.incident_report;
 		},
@@ -55,10 +63,10 @@ const Api = (() => {
 			return response.data.alert;
 		},
 
-        getPeople: async (): Promise<Person[]> => {
-            const response = await axiosInstance.get<Person[]>('person/');
-            return response.data;
-        }
+		getPeople: async (): Promise<Person[]> => {
+			const response = await axiosInstance.get<Person[]>('person/');
+			return response.data;
+		},
 	};
 })();
 

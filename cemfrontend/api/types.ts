@@ -6,16 +6,16 @@ export interface MinimalUser {
 }
 
 export interface Person {
-    id: string;
-    first_name: string;
-    last_name: string;
-    phone: string;
+	id: string;
+	first_name: string;
+	last_name: string;
+	phone: string;
 }
 
 export interface PersonStatus {
-    id: string;
-    person: string;
-    safe: boolean;
+	id: string;
+	person: string;
+	safe: boolean;
 }
 
 export type Location = {
@@ -34,7 +34,8 @@ export interface IncidentReport {
 	id: string;
 	reporter: MinimalUser;
 	created_at: number;
+	resolved_at?: string;
 	location?: Location;
 	alerts: Alert[];
-    statuses: PersonStatus[];
+	statuses: PersonStatus[];
 }

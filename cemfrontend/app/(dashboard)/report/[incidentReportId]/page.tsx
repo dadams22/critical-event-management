@@ -12,6 +12,7 @@ import {
 	ActionIcon,
 	HoverCard,
 	Button,
+	useMantineTheme,
 } from '@mantine/core';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
@@ -21,7 +22,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
 import SearchBar from './SearchBar';
-import { IconAlarm, IconSpeakerphone, IconUrgent } from '@tabler/icons';
+import { IconAlarm, IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons';
 import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
 import { Alert } from '../../../../api/types';
@@ -85,21 +86,19 @@ interface ComponentProps {
 }
 
 export default function IncidentReportPage({ params: { incidentReportId } }: ComponentProps) {
+	const theme = useMantineTheme();
+
 	const {
 		data: incident_report,
 		error,
 		mutate,
-	} = useSWR(
-        `incident/${incidentReportId}`, 
-        () => Api.getIncidentReport(incidentReportId), 
-        { refreshInterval: 2000 },
-    );
+	} = useSWR(`incident/${incidentReportId}`, () => Api.getIncidentReport(incidentReportId), {
+		refreshInterval: 2000,
+	});
 
-    const {
-        data: people,
-    } = useSWR('people', Api.getPeople);
+	const { data: people } = useSWR('people', Api.getPeople);
 
-    console.log(people);
+	console.log(people);
 	console.log(incident_report);
 
 	if (error) return <div>Error loading data</div>;
@@ -114,7 +113,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 
 	const incidentTime = dayjs(created_at);
 
-    const statusByPerson = _.keyBy(_.sortBy(incident_report.statuses, 'created_at'), 'person');
+	const statusByPerson = _.keyBy(_.sortBy(incident_report.statuses, 'created_at'), 'person');
 
 	const sendAlertCallback = (alert: Alert) => {
 		mutate(
@@ -135,6 +134,20 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 		});
 	};
 
+	const handleClickResolve = () => {
+		const onConfirm = async () => {
+			await Api.resolveIncident(incident_report.id);
+		};
+
+		modals.openConfirmModal({
+			title: 'Resove Incident',
+			children: <Text size="sm">Are you sure you want to mark this incident as resolved?</Text>,
+			labels: { confirm: 'Mark Resolved', cancel: 'Cancel' },
+			confirmProps: { color: 'green', leftIcon: <IconCheck size={20} /> },
+			onConfirm,
+		});
+	};
+
 	return (
 		<MapContainer>
 			{location && <MapView location={location} />}
@@ -142,13 +155,32 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 				<SideBar>
 					<Card shadow="sm">
 						<Timeline bulletSize={24} lineWidth={2}>
+							{incident_report.resolved_at && (
+								<Timeline.Item
+									key="resolved"
+									title="Incident Resolved"
+									bullet={<IconCheck size={16} color={theme.colors.green[7]} />}
+								>
+									<Text size="xs" mt={4}>
+										{dayjs(incident_report.resolved_at).format('HH:MM A')} (
+										{dayjs(incident_report.resolved_at).fromNow()})
+									</Text>
+									<Text color="dimmed" size="sm">
+										The incident was marked resolved and closed.
+									</Text>
+								</Timeline.Item>
+							)}
 							{incident_report.alerts
 								.slice()
 								.reverse()
 								.map((alert) => {
 									const alertTime = dayjs(alert.created_at);
 									return (
-										<Timeline.Item key={alert.id} title="Alert Sent" bullet={<IconSpeakerphone size="16" />}>
+										<Timeline.Item
+											key={alert.id}
+											title="Alert Sent"
+											bullet={<IconSpeakerphone size="16" color={theme.colors.red[7]} />}
+										>
 											<Text size="xs" mt={4}>
 												{alertTime.format('HH:MM A')} ({alertTime.fromNow()})
 											</Text>
@@ -160,7 +192,10 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 										</Timeline.Item>
 									);
 								})}
-							<Timeline.Item title="Incident Reported" bullet={<IconUrgent size="16" />}>
+							<Timeline.Item
+								title="Incident Reported"
+								bullet={<IconUrgent size="16" color={theme.colors.red[7]} />}
+							>
 								<Text size="xs" mt={4}>
 									{incidentTime.format('HH:MM A')} ({incidentTime.fromNow()})
 								</Text>
@@ -174,16 +209,30 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 				<ActionBar>
 					<div />
 					<SearchBar people={people} statusByPerson={statusByPerson} />
-					<Group>
-						<Button
-							variant="filled"
-							color="red"
-							leftIcon={<IconSpeakerphone size="20" />}
-							onClick={handleClickSendAlert}
-						>
-							Send Alert
-						</Button>
-					</Group>
+					{!incident_report.resolved_at ? (
+						<Group>
+							<Button
+								key="resolve"
+								variant="filled"
+								color="green"
+								leftIcon={<IconCheck size="20" />}
+								onClick={handleClickResolve}
+							>
+								Resolve
+							</Button>
+							<Button
+								key="alert"
+								variant="filled"
+								color="red"
+								leftIcon={<IconSpeakerphone size="20" />}
+								onClick={handleClickSendAlert}
+							>
+								Send Alert
+							</Button>
+						</Group>
+					) : (
+						<div />
+					)}
 				</ActionBar>
 				<Footer>
 					<ImpactedIndividualsStats people={people} statusByPerson={statusByPerson} />
