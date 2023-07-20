@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex } from '@mantine/core';
+import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex, Stack } from '@mantine/core';
 import { IconTemplate, IconUsers, TablerIcon } from '@tabler/icons';
 import { usePathname } from 'next/navigation';
 
@@ -93,7 +93,10 @@ export default function NavbarSimple({ children }: ComponentProps) {
             </a>
         </Navbar.Section> */}
 			</Navbar>
-			{children}
+
+			<Stack p="lg" w="100%">
+				{children}
+			</Stack>
 		</Flex>
 	);
 }

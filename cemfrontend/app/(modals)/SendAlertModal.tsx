@@ -21,13 +21,17 @@ const MESSAGE_TEMPLATES: SelectItem[] = [
 ];
 
 interface ComponentProps {
-    incidentId: string;
-    doneCallback: (alert: Alert) => void;
+	incidentId: string;
+	doneCallback: (alert: Alert) => void;
 }
 
-export default function SendAlertModal({ innerProps: { incidentId, doneCallback, }, context, id, }: ContextModalProps<ComponentProps>) {
+export default function SendAlertModal({
+	innerProps: { incidentId, doneCallback },
+	context,
+	id,
+}: ContextModalProps<ComponentProps>) {
 	const [message, setMessage] = useState<string>('');
-    const [sending, setSending] = useState<boolean>(false);
+	const [sending, setSending] = useState<boolean>(false);
 
 	const handleSelectTemplate = (value: string | null) => {
 		setMessage(value || '');
@@ -37,13 +41,13 @@ export default function SendAlertModal({ innerProps: { incidentId, doneCallback,
 		setMessage(event.target.value);
 	};
 
-    const handleClickSendAlert = async () => {
-        setSending(true);
-        const alert = await Api.sendAlert(incidentId, message);
-        setSending(false);
-        doneCallback(alert);
-        context.closeModal(id);
-    };
+	const handleClickSendAlert = async () => {
+		setSending(true);
+		const alert = await Api.sendAlert(incidentId, message);
+		setSending(false);
+		doneCallback(alert);
+		context.closeModal(id);
+	};
 
 	return (
 		<Stack>
@@ -51,19 +55,25 @@ export default function SendAlertModal({ innerProps: { incidentId, doneCallback,
 				label="Template"
 				placeholder="No template selected"
 				data={MESSAGE_TEMPLATES}
-                disabled={sending}
+				disabled={sending}
 				onChange={handleSelectTemplate}
 			/>
 			<Textarea
 				label="Message"
 				value={message}
-                disabled={sending}
+				disabled={sending}
 				onChange={handleMessageChange}
 				placeholder="Message..."
 				minRows={5}
 				withAsterisk
 			/>
-			<Button color="red" leftIcon={<IconSpeakerphone size={20} />} loading={sending} disabled={!message} onClick={handleClickSendAlert}>
+			<Button
+				color="red"
+				leftIcon={<IconSpeakerphone size={20} />}
+				loading={sending}
+				disabled={!message}
+				onClick={handleClickSendAlert}
+			>
 				Send Alert
 			</Button>
 		</Stack>

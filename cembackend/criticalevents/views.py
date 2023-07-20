@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
+from twilio.twiml.messaging_response import MessagingResponse
 
 from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer
 
-from .models import Location, Person, IncidentReport, MessageReceipt
+from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus
 from .twilio_utils import send_twilio_message
 
 class MessageView(APIView):
@@ -66,3 +67,24 @@ class AlertViewSet(viewsets.ViewSet):
         print(serializer.errors)
 
         return Response(serializer.errors, status=400)
+
+
+class TwilioWebhookView(APIView):
+    def post(self, request):
+        body = request.data.get('Body', None)
+        sender_phone_number = request.data.get('From', None)
+
+        is_safe = 'safe' in  body.lower()
+        needs_help = 'help' in body.lower()
+
+        twiml_response = MessagingResponse()
+        
+        if body is None or sender_phone_number is None or not (is_safe or needs_help):
+            twiml_response.message('Please response with SAFE or HELP to indicate your status.')
+        else:
+            person = Person.objects.filter(phone=sender_phone_number).first()
+            incident_report = IncidentReport.objects.latest('created_at')
+            safe_status = PersonStatus.objects.create(person=person, incident_report=incident_report, safe=is_safe)
+            twiml_response.message('Thanks, your status has been recorded.')
+
+        return Response(str(twiml_response))

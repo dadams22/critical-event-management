@@ -19,7 +19,7 @@ def send_twilio_message(recipient: Person, message_body: str, incident: Incident
     message_receipt = MessageReceipt(
         twilio_message_id=message.sid, 
         recipient=recipient,
-        body=message_body,
+        body=f'TEST: {message_body}\n\nRespond SAFE if you are not in danger, or HELP if you need assistance.',
         incident=incident,
         sender_phone=phone_number,
         recipient_phone=recipient.phone

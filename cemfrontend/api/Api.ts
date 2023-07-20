@@ -47,10 +47,13 @@ const Api = (() => {
 			return response.data;
 		},
 
-        sendAlert: async (incidentId: string, body: string): Promise<Alert> => {
-            const response = await axiosInstance.post<{ alert: Alert }>('alert/', { incident_report: incidentId, body });
-            return response.data.alert;
-        }
+		sendAlert: async (incidentId: string, body: string): Promise<Alert> => {
+			const response = await axiosInstance.post<{ alert: Alert }>('alert/', {
+				incident_report: incidentId,
+				body,
+			});
+			return response.data.alert;
+		},
 	};
 })();
 

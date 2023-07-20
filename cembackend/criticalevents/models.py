@@ -47,3 +47,11 @@ class MessageReceipt(models.Model):
     body = models.TextField(max_length=500)
     sender_phone = models.CharField(max_length=20)
     recipient_phone = models.CharField(max_length=20)
+
+
+class PersonStatus(models.Model):
+    """ Represents the status of a Person in relation to an IncidentReport """
+    person = models.ForeignKey(Person, on_delete=models.RESTRICT)
+    incident_report = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT)
+    safe = models.BooleanField()
+    created_at = models.DateTimeField(auto_now_add=True)
