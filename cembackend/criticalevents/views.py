@@ -93,7 +93,7 @@ class TwilioWebhookView(APIView):
         sender_phone_number = request.data.get('From', None)
 
         is_safe = 'safe' in  body.lower() or body.strip() == '1'
-        needs_help = 'danger' in body.lower() or body.strip() == '2'
+        needs_help = 'sos' in body.lower() or body.strip() == '2'
 
         twiml_response = MessagingResponse()
         

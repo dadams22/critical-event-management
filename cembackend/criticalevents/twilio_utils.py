@@ -10,7 +10,7 @@ def send_twilio_message(recipient: Person, message_body: str, incident: Incident
 
     client = Client(account_sid, auth_token)
 
-    message_body = f'TEST: {message_body}\n\nRespond with:\n1. "SAFE" if you are not in danger\n2. "DANGER" if you need assistance'
+    message_body = f'TEST: {message_body}\n\nRespond with:\n1. "SAFE" if you are not in danger\n2. "SOS" if you need assistance'
     
     message = client.messages.create(
         body=message_body,
