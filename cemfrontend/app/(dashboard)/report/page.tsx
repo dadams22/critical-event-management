@@ -52,10 +52,10 @@ export default function ReportPage() {
 				onClick={handleReportIncident}
 				loading={loading}
 				size="lg"
-				color="red"
+				color="blue"
 				leftIcon={<IconUrgent />}
 			>
-				Report Emergency
+				Report Incident
 			</Button>
 			<Space h="sm" />
 			{location && (

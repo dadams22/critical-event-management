@@ -65,6 +65,8 @@ export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 		)
 		.slice(0, 5);
 
+        console.log(statusByPerson)
+
 	return (
 		<Box w={400} pos="relative">
 			<Input
@@ -86,7 +88,7 @@ export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 								const status: Status =
 									statusByPerson[id] === undefined
 										? 'awaiting'
-										: statusByPerson[id]
+										: statusByPerson[id].safe
 										? 'safe'
 										: 'help';
 								const { label, color } = STATUS_CONFIG[status];

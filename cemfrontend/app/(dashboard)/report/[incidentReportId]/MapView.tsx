@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { Location } from '../../../../api/types';
 import mapboxgl from 'mapbox-gl';
 import styled from '@emotion/styled';
-import { useMantineTheme, Text } from '@mantine/core';
+import { useMantineTheme, Text, ColorScheme } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
 
 mapboxgl.accessToken =
@@ -24,7 +24,7 @@ export default function MapView({ location }: ComponentProps) {
 	const map = useRef(null);
 	const mapContainer = useRef<HTMLDivElement>(null);
 
-	const colorScheme = 'dark';
+	const colorScheme: ColorScheme = 'dark';
 
 	useEffect(() => {
 		if (map.current) return; // initialize map only once
