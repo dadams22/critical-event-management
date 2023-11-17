@@ -9,6 +9,11 @@ from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserS
 from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus
 from .twilio_utils import send_twilio_message
 
+class CheckAuthView(APIView):
+    def get(self, request):
+        return Response({ 'message': 'You are authenticated' })
+
+
 class MessageView(APIView):
     def post(self, request):
         recipients = Person.objects.all()

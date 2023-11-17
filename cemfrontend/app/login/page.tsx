@@ -13,15 +13,22 @@ import {
 } from '@mantine/core';
 import { useState } from 'react';
 import Api from '../../api/Api';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+	const router = useRouter();
+
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
+	const [authenticating, setAuthenticating] = useState<boolean>(false);
 
 	const handleLogin = () => {
 		if (!username || !password) return;
 
-		Api.login(username, password);
+		setAuthenticating(true);
+		Api.login(username, password)
+			.then(() => router.push('/report'))
+			.finally(() => setAuthenticating(false));
 	};
 
 	return (
@@ -61,7 +68,7 @@ export default function LoginPage() {
             Forgot password?
           </Anchor> */}
 				</Group>
-				<Button fullWidth mt="xl" onClick={handleLogin}>
+				<Button fullWidth mt="xl" onClick={handleLogin} disabled={!username || !password || authenticating}>
 					Sign in
 				</Button>
 			</Paper>

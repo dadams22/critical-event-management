@@ -34,6 +34,18 @@ const Api = (() => {
 			}
 		},
 
+		checkAuth: async (): Promise<boolean> => {
+			let authenticated = false;
+			const response = await axiosInstance.get('check-auth')
+				.then(() => {
+					authenticated = true
+				})
+				.catch(() => {
+					authenticated = false;
+				});
+			return authenticated;
+		},
+
 		reportIncident: async ({ location }: { location?: Location }): Promise<IncidentReport> => {
 			const response = await axiosInstance.post<{ incident_report: IncidentReport }>(
 				'report-incident',

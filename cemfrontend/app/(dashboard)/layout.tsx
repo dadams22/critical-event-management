@@ -13,8 +13,11 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconShieldHalfFilled } from '@tabler/icons';
+import { getCookie } from 'cookies-next';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import Api, { AUTH_TOKEN_KEY } from '../../api/Api';
+import { useEffect } from 'react';
 
 const HEADER_HEIGHT = rem(60);
 
@@ -128,6 +131,15 @@ export default function AppLayout({ children }: ComponentProps) {
 			{link.label}
 		</Link>
 	));
+
+	const router = useRouter();
+	const token = getCookie(AUTH_TOKEN_KEY);
+	useEffect(() => {
+		Api.checkAuth()
+			.then((authenticated) => {
+				if (!authenticated) router.replace('/login')
+			});
+	}, [token]);
 
 	return (
 		<div className={classes.pageContainer}>

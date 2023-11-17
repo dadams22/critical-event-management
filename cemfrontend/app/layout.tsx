@@ -1,11 +1,14 @@
 import { getCookie, setCookie } from 'cookies-next';
-import { ColorScheme } from '@mantine/core';
+import { ColorScheme, Loader } from '@mantine/core';
 import { AppContext } from 'next/app';
 import Head from 'next/head';
 import styled from '@emotion/styled';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 import RootStyleRegistry from './emotion';
+import { useEffect, useState } from 'react';
+import Api from '../api/Api';
+import { useRouter } from 'next/navigation';
 
 export const metadata = {
 	title: 'SimpleCEM',
