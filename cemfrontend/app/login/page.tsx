@@ -68,7 +68,12 @@ export default function LoginPage() {
             Forgot password?
           </Anchor> */}
 				</Group>
-				<Button fullWidth mt="xl" onClick={handleLogin} disabled={!username || !password || authenticating}>
+				<Button
+					fullWidth
+					mt="xl"
+					onClick={handleLogin}
+					disabled={!username || !password || authenticating}
+				>
 					Sign in
 				</Button>
 			</Paper>

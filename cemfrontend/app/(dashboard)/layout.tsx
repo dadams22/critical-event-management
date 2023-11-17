@@ -135,10 +135,9 @@ export default function AppLayout({ children }: ComponentProps) {
 	const router = useRouter();
 	const token = getCookie(AUTH_TOKEN_KEY);
 	useEffect(() => {
-		Api.checkAuth()
-			.then((authenticated) => {
-				if (!authenticated) router.replace('/login')
-			});
+		Api.checkAuth().then((authenticated) => {
+			if (!authenticated) router.replace('/login');
+		});
 	}, [token]);
 
 	return (

@@ -36,9 +36,10 @@ const Api = (() => {
 
 		checkAuth: async (): Promise<boolean> => {
 			let authenticated = false;
-			const response = await axiosInstance.get('check-auth')
+			const response = await axiosInstance
+				.get('check-auth')
 				.then(() => {
-					authenticated = true
+					authenticated = true;
 				})
 				.catch(() => {
 					authenticated = false;

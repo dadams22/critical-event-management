@@ -18,10 +18,11 @@ const MESSAGE_TEMPLATES: SelectItem[] = [
 		value:
 			'TORNADO: A tornado warning has been put in place. Please proceed to the first floor and shelter in place. Avoid any windows and use the desks and tables as shelter.',
 	},
-    {
-        label: 'Lockdown',
-        value: 'LOCKDOWN: A lockdown has been put into place. Please proceed to your assigned classroom and remain silent. Shelter in place until the lockdown has been lifted.'
-    }
+	{
+		label: 'Lockdown',
+		value:
+			'LOCKDOWN: A lockdown has been put into place. Please proceed to your assigned classroom and remain silent. Shelter in place until the lockdown has been lifted.',
+	},
 ];
 
 interface ComponentProps {
