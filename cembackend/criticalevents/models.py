@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -58,3 +59,10 @@ class PersonStatus(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     verbose_plural_name = 'Person statuses'
+
+
+class ShortToken(models.Model):
+    """ A token scoped to a particular person and a particular incident """
+    person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='short_tokens')
+    incident_report = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name="short_tokens")
+    token = models.CharField(max_length=10)
