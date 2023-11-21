@@ -46,8 +46,6 @@ export default function RootStyleRegistry({
 		/>
 	));
 
-	console.log(colorScheme);
-
 	return (
 		<CacheProvider value={cache}>
 			<ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>

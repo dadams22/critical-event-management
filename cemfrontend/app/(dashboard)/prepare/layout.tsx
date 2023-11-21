@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex, Stack } from '@mantine/core';
-import { IconTemplate, IconUsers, TablerIcon } from '@tabler/icons';
+import { IconBuildingCommunity, IconTemplate, IconUsers, TablerIcon } from '@tabler/icons';
 import { usePathname } from 'next/navigation';
 
 const useStyles = createStyles((theme) => ({
@@ -52,6 +52,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data: { link: string; label: string; icon: TablerIcon }[] = [
+	{ link: '/prepare/sites', label: 'Sites', icon: IconBuildingCommunity },
 	{ link: '/prepare/people', label: 'People', icon: IconUsers },
 	{ link: '/prepare/templates', label: 'Message Templates', icon: IconTemplate },
 ];

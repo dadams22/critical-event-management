@@ -98,9 +98,6 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 
 	const { data: people } = useSWR('people', Api.getPeople);
 
-	console.log(people);
-	console.log(incident_report);
-
 	if (error) return <div>Error loading data</div>;
 	if (!incident_report || !people)
 		return (
