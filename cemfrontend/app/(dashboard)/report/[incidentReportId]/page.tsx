@@ -3,14 +3,10 @@ import {
 	Center,
 	Loader,
 	Space,
-	Title,
 	Text,
 	Timeline,
-	Grid,
 	Card,
 	Group,
-	ActionIcon,
-	HoverCard,
 	Button,
 	useMantineTheme,
 } from '@mantine/core';
@@ -22,7 +18,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
 import SearchBar from './SearchBar';
-import { IconAlarm, IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons';
+import { IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons';
 import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
 import { Alert } from '../../../../api/types';

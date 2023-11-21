@@ -1,36 +1,16 @@
 'use client';
 
 import { Button, Center, Flex, Loader, Space, Title } from '@mantine/core';
-import {
-	Avatar,
-	Badge,
-	Table,
-	Group,
-	Text,
-	ActionIcon,
-	Anchor,
-	ScrollArea,
-	useMantineTheme,
-} from '@mantine/core';
-import { IconPencil, IconTrash } from '@tabler/icons-react';
+import { Avatar, Table, Group, Text, ActionIcon, ScrollArea, useMantineTheme } from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
-import { IconPlus, IconUserPlus } from '@tabler/icons';
+import { IconUserPlus } from '@tabler/icons';
 import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
 import { produce } from 'immer';
 import { Person } from '../../../../api/types';
 import { useState } from 'react';
-
-const data: { first_name: string; last_name: string; role: string; phone: string }[] = [
-	{ first_name: 'David', last_name: 'Adams', role: 'Student', phone: '+1 (860) 817-2974' },
-];
-
-const jobColors: Record<string, string> = {
-	admin: 'cyan',
-	teacher: 'purple',
-	student: 'pink',
-};
 
 export default function PeoplePage() {
 	const theme = useMantineTheme();

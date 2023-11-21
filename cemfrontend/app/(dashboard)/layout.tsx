@@ -8,7 +8,6 @@ import {
 	Transition,
 	rem,
 	Title,
-	useMantineColorScheme,
 	useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';

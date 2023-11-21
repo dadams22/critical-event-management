@@ -1,15 +1,15 @@
+'use client';
+
 import {
 	RingProgress,
 	Text,
 	SimpleGrid,
-	Paper,
 	Center,
 	Group,
 	MantineColor,
 	Card,
 	useMantineTheme,
 } from '@mantine/core';
-import { IconArrowUpRight, IconArrowDownRight } from '@tabler/icons-react';
 import { Person, PersonStatus } from '../../../../api/types';
 import _ from 'lodash';
 import { IconQuestionMark, IconShieldCheck, IconSos, IconUsers, TablerIcon } from '@tabler/icons';
@@ -77,7 +77,6 @@ export function ImpactedIndividualsStats({ people, statusByPerson }: ComponentPr
 				shadow="sm"
 				p="xs"
 				key={stat.label}
-				onClick={console.log}
 				style={{ cursor: 'pointer' }}
 			>
 				<Group>

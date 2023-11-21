@@ -1,16 +1,5 @@
 'use client';
-import {
-	TextInput,
-	PasswordInput,
-	Checkbox,
-	Anchor,
-	Paper,
-	Title,
-	Text,
-	Container,
-	Group,
-	Button,
-} from '@mantine/core';
+import { TextInput, PasswordInput, Paper, Title, Container, Group, Button } from '@mantine/core';
 import { useState } from 'react';
 import Api from '../../api/Api';
 import { useRouter } from 'next/navigation';

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
-import { produce } from 'immer';
 import { Alert, IncidentReport, Person } from './types';
 import { Location } from './types';
 

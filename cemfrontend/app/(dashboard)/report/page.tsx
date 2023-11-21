@@ -1,13 +1,7 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
-import { Button, Flex, SimpleGrid, Title, Center, Text, Space } from '@mantine/core';
-import {
-	IconExclamationMark,
-	IconFiretruck,
-	IconStorm,
-	IconTornado,
-	IconUrgent,
-} from '@tabler/icons';
+import { useEffect, useState } from 'react';
+import { Button, Flex, Title, Text, Space } from '@mantine/core';
+import { IconUrgent } from '@tabler/icons';
 import Api from '../../../api/Api';
 import { useRouter } from 'next/navigation';
 import { Location } from '../../../api/types';

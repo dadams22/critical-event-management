@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Flex, Group, Input, Stack, TextInput } from '@mantine/core';
+import { Button, Flex, Group, Stack, TextInput } from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import { useState } from 'react';
 import Api from '../../api/Api';

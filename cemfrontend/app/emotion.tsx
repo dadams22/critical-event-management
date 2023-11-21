@@ -1,11 +1,9 @@
 'use client';
-import { useState } from 'react';
+
 import { CacheProvider } from '@emotion/react';
 import { useEmotionCache, MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { useServerInsertedHTML } from 'next/navigation';
-import { setCookie } from 'cookies-next';
 import { ModalsProvider } from '@mantine/modals';
-import SendAlertModal from './(modals)/SendAlertModal';
 import { APP_MODALS } from './(modals)';
 import { ModalSettings } from '@mantine/modals/lib/context';
 import _ from 'lodash';

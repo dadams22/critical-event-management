@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, NativeSelect, Select, SelectItem, Stack, Textarea } from '@mantine/core';
+import { Button, Select, SelectItem, Stack, Textarea } from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import { IconSpeakerphone } from '@tabler/icons';
 import { useState } from 'react';

@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
-import { createStyles, Navbar, Group, Code, getStylesRef, rem, Flex, Stack } from '@mantine/core';
+
+import { createStyles, Navbar, getStylesRef, rem, Flex, Stack } from '@mantine/core';
 import { IconBuildingCommunity, IconTemplate, IconUsers, TablerIcon } from '@tabler/icons';
 import { usePathname } from 'next/navigation';
 

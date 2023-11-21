@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 interface ComponentProps {
 	params: {
@@ -7,7 +7,7 @@ interface ComponentProps {
 }
 
 export default function LivePage({ params: { shortToken } }: ComponentProps) {
-    console.log(shortToken);
+	console.log(shortToken);
 
-    return null;
+	return null;
 }

@@ -1,10 +1,10 @@
 'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { Location } from '../../../../api/types';
 import mapboxgl from 'mapbox-gl';
 import styled from '@emotion/styled';
 import { useMantineTheme, Text, ColorScheme } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
