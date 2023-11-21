@@ -1,12 +1,12 @@
 from decouple import config
-from twilio.rest import Client
+import boto3
 
 from .models import MessageReceipt, IncidentReport, Person
 from .token_utils import create_short_token
 
 def send_twilio_message(recipient: Person, message_body: str, incident: IncidentReport) -> str:
-    account_sid = config('TWILIO_ACCOUNT_SID')
-    auth_token = config('TWILIO_AUTH_TOKEN')
+    access_key = config('AWS_ACCESS_KEY_ID')
+    secret_access_key = config('AWS_SECRET_ACCESS_KEY')
     phone_number = config('TWILIO_PHONE_NUMBER')
 
     client = Client(account_sid, auth_token)
