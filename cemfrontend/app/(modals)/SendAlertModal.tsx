@@ -6,6 +6,7 @@ import { IconSpeakerphone } from '@tabler/icons';
 import { useState } from 'react';
 import Api from '../../api/Api';
 import { Alert } from '../../api/types';
+import _ from 'lodash';
 
 const MESSAGE_TEMPLATES: SelectItem[] = [
 	{

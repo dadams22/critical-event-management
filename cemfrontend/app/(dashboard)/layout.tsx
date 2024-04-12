@@ -146,7 +146,7 @@ export default function AppLayout({ children }: ComponentProps) {
 					<Group>
 						<IconShieldHalfFilled color={theme.colors.blue[8]} />
 						<Title color="blue" order={3}>
-							SimpleCEM
+							PYRITE
 						</Title>
 					</Group>
 					<Group spacing={5} className={classes.links}>
