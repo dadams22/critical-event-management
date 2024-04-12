@@ -65,8 +65,8 @@ class AlertViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             alert = serializer.save()
 
-            for person in Person.objects.all():
-                send_twilio_message(person, alert.body, alert.incident_report)
+            # for person in Person.objects.all():
+            #     send_twilio_message(person, alert.body, alert.incident_report)
 
             return Response({ 'alert': serializer.data }, status=201)
 
