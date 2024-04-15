@@ -4,8 +4,13 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { AddressAutofillCore, AddressAutofillSuggestion, SessionToken } from '@mapbox/search-js-core';
 import { useEffect, useMemo, useState } from 'react';
 
-export default function AddressField() {
-  const [searchValue, setSearchValue] = useState<string>('');
+interface ComponentProps {
+  value?: string;
+  onSelectAddress: (address: AddressAutofillSuggestion) => void;
+}
+
+export default function AddressField({ value='', onSelectAddress }: ComponentProps) {
+  const [searchValue, setSearchValue] = useState<string>(value);
   const [loading, setLoading] = useState(false);
   const [addressResults, setAddressResults] = useState<AddressAutofillSuggestion[]>([]);
 
@@ -34,6 +39,7 @@ export default function AddressField() {
       data={addressResults} 
       value={searchValue} 
       onChange={setSearchValue} 
+      onItemSubmit={onSelectAddress}
       filter={() => true}
       dropdownPosition='bottom'
       required 
