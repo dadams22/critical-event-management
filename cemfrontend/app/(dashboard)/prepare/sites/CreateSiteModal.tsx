@@ -1,23 +1,20 @@
 'use client';
-
-import { Autocomplete, Button, Flex, Group, Stack, TextInput } from '@mantine/core';
+import React from 'react';
+import { Autocomplete, Button, Flex, Group, Modal, Stack, Stepper, TextInput } from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import Api from '../../api/Api';
-import { Person } from '../../api/types';
+import Api from '../../../../api/Api';
+import { Person } from '../../../../api/types';
 import { AddressAutofillCore, SessionToken } from '@mapbox/search-js-core';
 import _ from 'lodash';
-import AddressField from '../../components/AddressField';
+import AddressField from '../../../../components/AddressField';
 
 interface ComponentProps {
-	// doneCallback: (person: Person) => void;
+	opened: boolean;
+	onClose: () => void;
 }
 
-export default function CreateSiteModal({
-	// innerProps: { doneCallback },
-	context,
-	id,
-}: ContextModalProps<ComponentProps>) {
+export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const [saving, setSaving] = useState<boolean>(false);
 	const [siteName, setSiteName] = useState<string>('');
 	const [address, setAddress] = useState<string>('');
@@ -46,28 +43,35 @@ export default function CreateSiteModal({
 	};
 
 	return (
-		<Stack>
-			<TextInput
-				label="Site Name"
-				required
-				disabled={saving}
-				value={siteName}
-				onChange={(e) => setSiteName(e.target.value)}
-			/>
-			<AddressField />
-            <Autocomplete
-				label="Address"
-				data={[]}
-				required
-				disabled={saving}
-				value={address}
-				onChange={setAddress}
-			/>
-			<Flex justify="flex-end">
-				<Button loading={saving} onClick={handleSave}>
-					Save
-				</Button>
-			</Flex>
-		</Stack>
+		<Modal opened={opened} onClose={onClose} size="xl" zIndex={2000} centered>
+			<Stack>
+				<Stepper active={0}>
+					<Stepper.Step label="Site Info">
+						<Stack align='center'>
+							<TextInput
+								label="Site Name"
+								required
+								disabled={saving}
+								value={siteName}
+								onChange={(e) => setSiteName(e.target.value)}
+								size="lg"
+							/>
+							<AddressField />
+							<Flex justify="flex-end">
+								<Button loading={saving} onClick={handleSave}>
+									Save
+								</Button>
+							</Flex>
+						</Stack>
+					</Stepper.Step>
+					<Stepper.Step label="Define Site Bounds">
+						
+					</Stepper.Step>
+					<Stepper.Step label="Add Floor Plans">
+
+					</Stepper.Step>
+				</Stepper>
+			</Stack>
+		</Modal>
 	);
 }

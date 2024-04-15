@@ -1,74 +1,45 @@
 'use client';
-import { useState } from 'react';
-import { Combobox, Input, InputBase, Loader, useCombobox } from '@mantine/core';
-
-const MOCKDATA = [
-  '🍎 Apples',
-  '🍌 Bananas',
-  '🥦 Broccoli',
-  '🥕 Carrots',
-  '🍫 Chocolate',
-  '🍇 Grapes',
-];
-
-function getAsyncData() {
-  return new Promise<string[]>((resolve) => {
-    setTimeout(() => resolve(MOCKDATA), 2000);
-  });
-}
+import { Autocomplete, Loader } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { AddressAutofillCore, AddressAutofillSuggestion, SessionToken } from '@mapbox/search-js-core';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function AddressField() {
-  const [value, setValue] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<string[]>([]);
+  const [addressResults, setAddressResults] = useState<AddressAutofillSuggestion[]>([]);
 
-  const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
-    onDropdownOpen: () => {
-      if (data.length === 0 && !loading) {
-        setLoading(true);
-        getAsyncData().then((response) => {
-          setData(response);
-          setLoading(false);
-          combobox.resetSelectedOption();
-        });
-      }
-    },
-  });
+  const [debouncedSearchValue] = useDebouncedValue(searchValue, 300);
 
-  const options = data.map((item) => (
-    <Combobox.Option value={item} key={item}>
-      {item}
-    </Combobox.Option>
-  ));
+  const addressAutofill = useMemo(
+    () => new AddressAutofillCore({ accessToken: 'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg' 
+  }), []);
+	const mapboxSessionToken = useMemo(() => new SessionToken(), []);
+
+  useEffect(() => {
+    if (!searchValue) return;
+    
+    setLoading(true);
+    addressAutofill.suggest(searchValue, { sessionToken: mapboxSessionToken})
+      .then((response) => {
+        console.log(response.suggestions);
+        setAddressResults(response.suggestions.map((suggestion) => ({ ...suggestion, value: suggestion.full_address || '' })))
+      })
+      .finally(() => setLoading(false));
+  }, [debouncedSearchValue]);
 
   return (
-    <Combobox
-      store={combobox}
-      withinPortal={false}
-      onOptionSubmit={(val) => {
-        setValue(val);
-        combobox.closeDropdown();
-      }}
-    >
-      <Combobox.Target>
-        <InputBase
-          component="button"
-          type="button"
-          pointer
-          rightSection={loading ? <Loader size={18} /> : <Combobox.Chevron />}
-          onClick={() => combobox.toggleDropdown()}
-          rightSectionPointerEvents="none"
-        >
-          {value || <Input.Placeholder>Pick value</Input.Placeholder>}
-        </InputBase>
-      </Combobox.Target>
-
-      <Combobox.Dropdown>
-        <Combobox.Options>
-          {loading ? <Combobox.Empty>Loading....</Combobox.Empty> : options}
-        </Combobox.Options>
-      </Combobox.Dropdown>
-    </Combobox>
+    <Autocomplete 
+      label="Address" 
+      data={addressResults} 
+      value={searchValue} 
+      onChange={setSearchValue} 
+      filter={() => true}
+      dropdownPosition='bottom'
+      required 
+      withinPortal
+      zIndex={2001}
+      rightSection={loading ? <Loader size="xs" /> : undefined}
+    />
   );
 }
