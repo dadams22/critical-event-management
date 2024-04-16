@@ -1,12 +1,12 @@
 'use client';
 import { Autocomplete, Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { AddressAutofillCore, AddressAutofillSuggestion, SessionToken } from '@mapbox/search-js-core';
+import { AddressAutofillCore, AddressAutofillRetrieveResponse, AddressAutofillSuggestion, SessionToken } from '@mapbox/search-js-core';
 import { useEffect, useMemo, useState } from 'react';
 
 interface ComponentProps {
   value?: string;
-  onSelectAddress: (address: AddressAutofillSuggestion) => void;
+  onSelectAddress: (address: AddressAutofillRetrieveResponse) => void;
 }
 
 export default function AddressField({ value='', onSelectAddress }: ComponentProps) {
@@ -33,19 +33,28 @@ export default function AddressField({ value='', onSelectAddress }: ComponentPro
       .finally(() => setLoading(false));
   }, [debouncedSearchValue]);
 
+  const [retrieving, setRetrieving] = useState<boolean>(false);
+  const handleSelectAddress = (address: AddressAutofillSuggestion) => {
+    setRetrieving(true);
+    addressAutofill.retrieve(address, { sessionToken: mapboxSessionToken })
+      .then(onSelectAddress)
+      .finally(() => setRetrieving(false));
+  };
+
   return (
     <Autocomplete 
       label="Address" 
       data={addressResults} 
       value={searchValue} 
       onChange={setSearchValue} 
-      onItemSubmit={onSelectAddress}
+      onItemSubmit={handleSelectAddress}
       filter={() => true}
       dropdownPosition='bottom'
       required 
       withinPortal
       zIndex={2001}
-      rightSection={loading ? <Loader size="xs" /> : undefined}
+      rightSection={(loading || retrieving) ? <Loader size="xs" /> : undefined}
+      disabled={retrieving}
     />
   );
 }
