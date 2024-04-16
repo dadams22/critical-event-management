@@ -76,8 +76,8 @@ export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 									statusByPerson[id] === undefined
 										? 'awaiting'
 										: statusByPerson[id].safe
-										  ? 'safe'
-										  : 'help';
+											? 'safe'
+											: 'help';
 								const { label, color } = STATUS_CONFIG[status];
 								return (
 									<Flex dir="row" justify="space-between" align="center" px="sm" py="xs">
