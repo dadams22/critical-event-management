@@ -28,6 +28,7 @@
 		"@mantine/next": "6.0.2",
 		"@mantine/notifications": "6.0.2",
 		"@mantine/prism": "6.0.2",
+		"@mapbox/mapbox-gl-draw": "^1.4.3",
 		"@next/bundle-analyzer": "^13.1.6",
 		"@tabler/icons": "^1.107.0",
 		"@tabler/icons-react": "^2.22.0",

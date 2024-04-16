@@ -59,7 +59,8 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 						{address && (
 							<MapContainer>
 								<MapView 
-									location={{ longitude: address.features?.[0]?.geometry?.coordinates?.[0], latitude: address.features?.[0]?.geometry?.coordinates?.[1] }} 
+									location={{ longitude: address.features?.[0]?.geometry?.coordinates?.[0], latitude: address.features?.[0]?.geometry?.coordinates?.[1] }}
+									onUpdateBounds={console.log} 
 								/>
 							</MapContainer>
 						)}
