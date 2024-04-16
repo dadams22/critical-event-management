@@ -8,7 +8,7 @@ import { Person } from '../../../../api/types';
 import { AddressAutofillCore, AddressAutofillRetrieveResponse, AddressAutofillSuggestion, SessionToken } from '@mapbox/search-js-core';
 import _ from 'lodash';
 import AddressField from '../../../../components/AddressField';
-import MapView from '../../report/[incidentReportId]/MapView';
+import MapView, { Bounds } from '../../report/[incidentReportId]/MapView';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
 
@@ -28,16 +28,18 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const [saving, setSaving] = useState<boolean>(false);
 	const [siteName, setSiteName] = useState<string>('');
 	const [address, setAddress] = useState<AddressAutofillRetrieveResponse>();
-
-	console.log(address);
+	const [siteBounds, setSiteBounds] = useState<Bounds>();
+	
+	console.log(siteBounds);
 
 	const [step, stepHandlers] = useCounter(0, { min: 0, max: 3 });
 
 	const nextDisabled = useMemo(() => {
 		if (step === 0) return !siteName || !address;
+		if (step === 1) return !siteBounds;
 
 		return false;
-	}, [step, siteName, address]);
+	}, [step, siteName, address, siteBounds]);
 
 	return (
 		<Modal opened={opened} onClose={onClose} size="xl" zIndex={2000} centered>
@@ -60,7 +62,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 							<MapContainer>
 								<MapView 
 									location={{ longitude: address.features?.[0]?.geometry?.coordinates?.[0], latitude: address.features?.[0]?.geometry?.coordinates?.[1] }}
-									onUpdateBounds={console.log} 
+									onUpdateBounds={setSiteBounds} 
 								/>
 							</MapContainer>
 						)}

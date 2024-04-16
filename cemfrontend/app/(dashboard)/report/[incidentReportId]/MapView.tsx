@@ -16,9 +16,11 @@ const MapContainer = styled.div`
 	height: 100%;
 `;
 
+export type Bounds = [number, number][];
+
 interface ComponentProps {
 	location: Location;
-	onUpdateBounds: () => void;
+	onUpdateBounds: (bounds?: Bounds) => void;
 }
 
 export default function MapView({ location, onUpdateBounds }: ComponentProps) {
@@ -61,10 +63,12 @@ export default function MapView({ location, onUpdateBounds }: ComponentProps) {
 				defaultMode: 'draw_polygon'
 			});
 			map.current.addControl(draw);
+
+			const handleUpdateBounds = (e) => onUpdateBounds(e.features?.[0]?.geometry?.coordinates)
 		
-			map.current.on('draw.create', onUpdateBounds);
-			map.current.on('draw.delete', onUpdateBounds);
-			map.current.on('draw.update', onUpdateBounds);
+			map.current.on('draw.create', handleUpdateBounds);
+			map.current.on('draw.delete', () => onUpdateBounds(undefined));
+			map.current.on('draw.update', handleUpdateBounds);
 		
 		}
 	});

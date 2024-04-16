@@ -26,10 +26,9 @@ export default function AddressField({ value='', onSelectAddress }: ComponentPro
     
     setLoading(true);
     addressAutofill.suggest(searchValue, { sessionToken: mapboxSessionToken})
-      .then((response) => {
-        console.log(response.suggestions);
+      .then((response) => 
         setAddressResults(response.suggestions.map((suggestion) => ({ ...suggestion, value: suggestion.full_address || '' })))
-      })
+      )
       .finally(() => setLoading(false));
   }, [debouncedSearchValue]);
 
