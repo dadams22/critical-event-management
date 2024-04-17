@@ -36,6 +36,7 @@
 		"dayjs": "^1.11.9",
 		"embla-carousel-react": "^7.0.3",
 		"mapbox-gl": "^2.15.0",
+		"mapbox-gl-draw-rotate-scale-rect-mode": "git+https://github.com/drykovanov/mapbox-gl-draw-rotate-scale-rect-mode#0.1.10",
 		"next": "13.2.4",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",

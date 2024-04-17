@@ -6,6 +6,7 @@ import mapboxgl from 'mapbox-gl';
 import styled from '@emotion/styled';
 import { useMantineTheme, Text, ColorScheme } from '@mantine/core';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import { TxRectMode, TxCenter } from 'mapbox-gl-draw-rotate-scale-rect-mode';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
 mapboxgl.accessToken =
@@ -68,6 +69,9 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlanI
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
+				modes: Object.assign({
+					tx_poly: TxRectMode,
+				}, MapboxDraw.modes),
 			});
 			map.current.addControl(draw);
 
