@@ -55,17 +55,19 @@ export default function MapView({ location, onUpdateBounds, polygons }: Componen
 			const draw = new MapboxDraw({
 				displayControlsDefault: false,
 				// Select which mapbox-gl-draw control buttons to add to the map.
-				controls: !!onUpdateBounds ? {
-					polygon: true,
-					trash: true,
-				} : {},
+				controls: !!onUpdateBounds
+					? {
+							polygon: true,
+							trash: true,
+						}
+					: {},
 				touchEnabled: !!onUpdateBounds,
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
 			});
 			map.current.addControl(draw);
-			
+
 			if (!!polygons) {
 				polygons.forEach((bounds, i) => {
 					draw.add({
@@ -75,8 +77,8 @@ export default function MapView({ location, onUpdateBounds, polygons }: Componen
 							type: 'Polygon',
 							coordinates: bounds,
 						},
-					})
-				})
+					});
+				});
 
 				draw.changeMode('simple_select', {
 					featureIds: ['polygon-0'],
@@ -85,7 +87,7 @@ export default function MapView({ location, onUpdateBounds, polygons }: Componen
 
 			const handleUpdateBounds = (e) => {
 				console.log(e);
-				onUpdateBounds(e.features?.[0]?.geometry?.coordinates)
+				onUpdateBounds(e.features?.[0]?.geometry?.coordinates);
 			};
 
 			map.current.on('draw.create', handleUpdateBounds);
@@ -95,29 +97,28 @@ export default function MapView({ location, onUpdateBounds, polygons }: Componen
 			map.current!.on('load', () => {
 				polygons.forEach((bounds, i) => {
 					map.current!.addSource(`polygon-${i}`, {
-						'type': 'geojson',
-						'data': {
-							'type': 'Feature',
-							'geometry': {
-								'type': 'Polygon',
+						type: 'geojson',
+						data: {
+							type: 'Feature',
+							geometry: {
+								type: 'Polygon',
 								// These coordinates outline Maine.
-								'coordinates': bounds,
+								coordinates: bounds,
 							},
 						},
 					});
 					map.current!.addLayer({
-						'id': `polygon-${i}`,
-						'type': 'fill',
-						'source': `polygon-${i}`, // reference the data source
-						'layout': {},
-						'paint': {
+						id: `polygon-${i}`,
+						type: 'fill',
+						source: `polygon-${i}`, // reference the data source
+						layout: {},
+						paint: {
 							'fill-color': '#0080ff', // blue color fill
-							'fill-opacity': 0.5
-						}
+							'fill-opacity': 0.5,
+						},
 					});
-				   
-				})		
-			})
+				});
+			});
 		}
 	});
 
@@ -126,7 +127,7 @@ export default function MapView({ location, onUpdateBounds, polygons }: Componen
 			const polygonButton = document.getElementsByClassName('mapbox-gl-draw_polygon')[0];
 			polygonButton.disabled = !!polygons;
 		}
-	}, [onUpdateBounds, polygons, map.current])
+	}, [onUpdateBounds, polygons, map.current]);
 
 	return <MapContainer ref={mapContainer} />;
 }
