@@ -1,9 +1,7 @@
 'use client';
 
 import { Title, Text, Button, Flex } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import { IconPlus } from '@tabler/icons';
-import { ModalNames } from '../../../(modals)';
 import CreateSiteModal from './CreateSiteModal';
 import { useDisclosure } from '@mantine/hooks';
 

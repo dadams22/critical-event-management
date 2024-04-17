@@ -1,15 +1,9 @@
 'use client';
 import React from 'react';
-import { Autocomplete, Button, Flex, Group, Modal, Stack, Stepper, TextInput } from '@mantine/core';
-import { ContextModalProps } from '@mantine/modals';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import Api from '../../../../api/Api';
-import { Person } from '../../../../api/types';
+import { Button, Flex, Group, Modal, Stack, Stepper, TextInput } from '@mantine/core';
+import { useMemo, useState } from 'react';
 import {
-	AddressAutofillCore,
 	AddressAutofillRetrieveResponse,
-	AddressAutofillSuggestion,
-	SessionToken,
 } from '@mapbox/search-js-core';
 import _ from 'lodash';
 import AddressField from '../../../../components/AddressField';
@@ -37,7 +31,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 
 	console.log(siteBounds);
 
-	const [step, stepHandlers] = useCounter(0, { min: 0, max: 3 });
+	const [step, stepHandlers] = useCounter(0, { min: 0, max: 2 });
 
 	const nextDisabled = useMemo(() => {
 		if (step === 0) return !siteName || !address;
@@ -100,7 +94,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 							Previous
 						</Button>
 						<Button variant="filled" onClick={stepHandlers.increment} disabled={nextDisabled}>
-							{step === 3 ? 'Save' : 'Next'}
+							{step === 2 ? 'Save' : 'Next'}
 						</Button>
 					</Group>
 				</Flex>
