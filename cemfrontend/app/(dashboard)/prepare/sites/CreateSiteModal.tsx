@@ -74,11 +74,25 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
 									}}
 									onUpdateBounds={setSiteBounds}
+									polygons={siteBounds ? [siteBounds] : undefined}
 								/>
 							</MapContainer>
 						)}
 					</Stepper.Step>
-					<Stepper.Step label="Add Floor Plans"></Stepper.Step>
+					<Stepper.Step label="Add Floor Plans">
+						{address && (
+							<MapContainer>
+								<MapView
+									key="new"
+									location={{
+										longitude: address.features?.[0]?.geometry?.coordinates?.[0],
+										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
+									}}
+									polygons={siteBounds ? [siteBounds] : undefined}
+								/>
+							</MapContainer>
+						)}
+					</Stepper.Step>
 				</Stepper>
 				<Flex justify="flex-end">
 					<Group>

@@ -21,9 +21,10 @@ export type Bounds = [number, number][];
 interface ComponentProps {
 	location: Location;
 	onUpdateBounds: (bounds?: Bounds) => void;
+	polygons?: Bounds[];
 }
 
-export default function MapView({ location, onUpdateBounds }: ComponentProps) {
+export default function MapView({ location, onUpdateBounds, polygons }: ComponentProps) {
 	const theme = useMantineTheme();
 
 	const map = useRef(null);
@@ -54,23 +55,78 @@ export default function MapView({ location, onUpdateBounds }: ComponentProps) {
 			const draw = new MapboxDraw({
 				displayControlsDefault: false,
 				// Select which mapbox-gl-draw control buttons to add to the map.
-				controls: {
+				controls: !!onUpdateBounds ? {
 					polygon: true,
 					trash: true,
-				},
+				} : {},
+				touchEnabled: !!onUpdateBounds,
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
 			});
 			map.current.addControl(draw);
+			
+			if (!!polygons) {
+				polygons.forEach((bounds, i) => {
+					draw.add({
+						id: `polygon-${i}`,
+						type: 'Feature',
+						geometry: {
+							type: 'Polygon',
+							coordinates: bounds,
+						},
+					})
+				})
 
-			const handleUpdateBounds = (e) => onUpdateBounds(e.features?.[0]?.geometry?.coordinates);
+				draw.changeMode('simple_select', {
+					featureIds: ['polygon-0'],
+				});
+			}
+
+			const handleUpdateBounds = (e) => {
+				console.log(e);
+				onUpdateBounds(e.features?.[0]?.geometry?.coordinates)
+			};
 
 			map.current.on('draw.create', handleUpdateBounds);
 			map.current.on('draw.delete', () => onUpdateBounds(undefined));
 			map.current.on('draw.update', handleUpdateBounds);
+		} else if (!!polygons) {
+			map.current!.on('load', () => {
+				polygons.forEach((bounds, i) => {
+					map.current!.addSource(`polygon-${i}`, {
+						'type': 'geojson',
+						'data': {
+							'type': 'Feature',
+							'geometry': {
+								'type': 'Polygon',
+								// These coordinates outline Maine.
+								'coordinates': bounds,
+							},
+						},
+					});
+					map.current!.addLayer({
+						'id': `polygon-${i}`,
+						'type': 'fill',
+						'source': `polygon-${i}`, // reference the data source
+						'layout': {},
+						'paint': {
+							'fill-color': '#0080ff', // blue color fill
+							'fill-opacity': 0.5
+						}
+					});
+				   
+				})		
+			})
 		}
 	});
+
+	useEffect(() => {
+		if (!!onUpdateBounds) {
+			const polygonButton = document.getElementsByClassName('mapbox-gl-draw_polygon')[0];
+			polygonButton.disabled = !!polygons;
+		}
+	}, [onUpdateBounds, polygons, map.current])
 
 	return <MapContainer ref={mapContainer} />;
 }
