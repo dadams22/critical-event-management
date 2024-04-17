@@ -22,15 +22,18 @@ interface ComponentProps {
 	location: Location;
 	onUpdateBounds: (bounds?: Bounds) => void;
 	polygons?: Bounds[];
+	floorPlanImageUrl?: string;
 }
 
-export default function MapView({ location, onUpdateBounds, polygons }: ComponentProps) {
+export default function MapView({ location, onUpdateBounds, polygons, floorPlanImageUrl }: ComponentProps) {
 	const theme = useMantineTheme();
 
 	const map = useRef(null);
 	const mapContainer = useRef<HTMLDivElement>(null);
 
 	const colorScheme: ColorScheme = 'dark';
+
+	console.log(map.current?.getBounds())
 
 	useEffect(() => {
 		if (map.current) return; // initialize map only once

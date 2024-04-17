@@ -62,10 +62,25 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	}, [step, siteName, address, siteBounds]);
 
 	const floorPlanInputRef = useRef<HTMLInputElement>(null);
+	const [floorPlanImageUrl, setFloorPlanImageUrl] = useState<string>();
+	console.log(floorPlanImageUrl);
+
 	const handleFloorPlanOverlayClick = () => {
-		console.log(floorPlanInputRef.current);
 		floorPlanInputRef.current?.click();
 	};
+
+	const handleFloorPlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (!e.target.files?.[0]) return;
+
+		const imageFile = e.target.files[0];
+		const reader = new FileReader();
+
+		reader.onload = (event: ProgressEvent<FileReader>) => {
+			setFloorPlanImageUrl(String(event.target?.result));
+		}
+
+		reader.readAsDataURL(imageFile);
+	}
 
 	return (
 		<Modal title="Create Site" opened={opened} onClose={onClose} size="xl" zIndex={2000} centered>
@@ -111,17 +126,20 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 									}}
 									polygons={siteBounds ? [siteBounds] : undefined}
 								/>
-								<Overlay center className={classes.overlay} onClick={handleFloorPlanOverlayClick}>
-									<Stack align='center'>
-										<IconPhotoPlus size={80} />
-										<Text>Add a floor plan.</Text>
-									</Stack>
-									<FloorPlanInput 
-										type='file'
-										accept='.svg .png'
-										ref={floorPlanInputRef} 
-									/>
-								</Overlay>
+								{!floorPlanImageUrl && (
+									<Overlay center className={classes.overlay} onClick={handleFloorPlanOverlayClick}>
+										<Stack align='center'>
+											<IconPhotoPlus size={80} />
+											<Text>Add a floor plan.</Text>
+										</Stack>
+										<FloorPlanInput 
+											type='file'
+											accept='.svg, .png'
+											ref={floorPlanInputRef}
+											onChange={handleFloorPlanUpload}
+										/>
+									</Overlay>
+								)}
 							</MapContainer>
 						)}
 					</Stepper.Step>
