@@ -1,6 +1,6 @@
 'use client';
-import React from 'react';
-import { Button, Flex, Group, Modal, Stack, Stepper, TextInput } from '@mantine/core';
+import React, { useRef } from 'react';
+import { Button, Center, createStyles, Flex, Group, Modal, Overlay, Stack, Stepper, Text, TextInput } from '@mantine/core';
 import { useMemo, useState } from 'react';
 import {
 	AddressAutofillRetrieveResponse,
@@ -10,12 +10,33 @@ import AddressField from '../../../../components/AddressField';
 import MapView, { Bounds } from '../../report/[incidentReportId]/MapView';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
+import { IconPhotoPlus } from '@tabler/icons';
+
+const useStyles = createStyles((theme) => ({
+	overlay: {
+		cursor: 'pointer',
+		opacity: 0.75,
+		border: `1px solid transparent`,
+		'&:hover': {
+			opacity: 0.85,
+			border: `1px solid ${theme.colors.blue[6]}`
+		},
+		borderRadius: '8px',
+		transitionProperty: 'opacity border',
+		transitionDuration: '300ms',
+	}
+}));
 
 const MapContainer = styled.div`
+	position: relative;
 	width: 100%;
 	height: 400px;
 	border-radius: 8px;
 	overflow: hidden;
+`;
+
+const FloorPlanInput = styled.input`
+	display: none;
 `;
 
 interface ComponentProps {
@@ -24,12 +45,12 @@ interface ComponentProps {
 }
 
 export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
+	const { classes } = useStyles();
+
 	const [saving, setSaving] = useState<boolean>(false);
 	const [siteName, setSiteName] = useState<string>('');
 	const [address, setAddress] = useState<AddressAutofillRetrieveResponse>();
 	const [siteBounds, setSiteBounds] = useState<Bounds>();
-
-	console.log(siteBounds);
 
 	const [step, stepHandlers] = useCounter(0, { min: 0, max: 2 });
 
@@ -40,8 +61,14 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 		return false;
 	}, [step, siteName, address, siteBounds]);
 
+	const floorPlanInputRef = useRef<HTMLInputElement>(null);
+	const handleFloorPlanOverlayClick = () => {
+		console.log(floorPlanInputRef.current);
+		floorPlanInputRef.current?.click();
+	};
+
 	return (
-		<Modal opened={opened} onClose={onClose} size="xl" zIndex={2000} centered>
+		<Modal title="Create Site" opened={opened} onClose={onClose} size="xl" zIndex={2000} centered>
 			<Stack>
 				<Stepper active={step}>
 					<Stepper.Step label="Site Info">
@@ -84,6 +111,17 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 									}}
 									polygons={siteBounds ? [siteBounds] : undefined}
 								/>
+								<Overlay center className={classes.overlay} onClick={handleFloorPlanOverlayClick}>
+									<Stack align='center'>
+										<IconPhotoPlus size={80} />
+										<Text>Add a floor plan.</Text>
+									</Stack>
+									<FloorPlanInput 
+										type='file'
+										accept='.svg .png'
+										ref={floorPlanInputRef} 
+									/>
+								</Overlay>
 							</MapContainer>
 						)}
 					</Stepper.Step>
