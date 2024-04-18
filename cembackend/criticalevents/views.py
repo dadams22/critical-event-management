@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from twilio.twiml.messaging_response import MessagingResponse
 
-from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer, PersonSerializer
+from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer, PersonSerializer, SiteSerializer
 
-from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus
+from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus, Site
 from .twilio_utils import send_twilio_message
 
 class CheckAuthView(APIView):
@@ -111,3 +111,8 @@ class TwilioWebhookView(APIView):
             twiml_response.message('Thanks, your status has been recorded.')
 
         return Response(str(twiml_response))
+
+
+class SiteViewSet(viewsets.ModelViewSet):
+    queryset = Site.objects.all()
+    serializer_class = SiteSerializer

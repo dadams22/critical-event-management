@@ -2,12 +2,13 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken import views
 
-from .views import AlertViewSet, MessageView, CreateIncidentReportView, IncidentReportViewSet, PersonViewSet, ResolveIncidentView, TwilioWebhookView, CheckAuthView
+from .views import AlertViewSet, MessageView, CreateIncidentReportView, IncidentReportViewSet, PersonViewSet, ResolveIncidentView, TwilioWebhookView, CheckAuthView, SiteViewSet
 
 router = routers.SimpleRouter()
 router.register(r'incident', IncidentReportViewSet, basename='incident')
 router.register(r'alert', AlertViewSet, basename='alert')
 router.register(r'person', PersonViewSet, basename='person')
+router.register(r'site', SiteViewSet, basename='site')
 
 urlpatterns = [
     path('auth', views.obtain_auth_token),

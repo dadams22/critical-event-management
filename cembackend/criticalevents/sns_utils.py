@@ -4,7 +4,7 @@ import boto3
 from .models import MessageReceipt, IncidentReport, Person
 from .token_utils import create_short_token
 
-def send_twilio_message(recipient: Person, message_body: str, incident: IncidentReport) -> str:
+def send_sns_message(recipient: Person, message_body: str, incident: IncidentReport) -> str:
     access_key = config('AWS_ACCESS_KEY_ID')
     secret_access_key = config('AWS_SECRET_ACCESS_KEY')
     phone_number = config('TWILIO_PHONE_NUMBER')

@@ -66,3 +66,13 @@ class ShortToken(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='short_tokens')
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name="short_tokens")
     token = models.CharField(max_length=10)
+
+
+class Site(models.Model):
+    """ A site with a floor plan """
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    location = models.OneToOneField(Location, on_delete=models.CASCADE)
+    bounds = models.JSONField()
+    floor_plan = models.ImageField(upload_to='floor_plans/')
+    floor_plan_bounds = models.JSONField()
