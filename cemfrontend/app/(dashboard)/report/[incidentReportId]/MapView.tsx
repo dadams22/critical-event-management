@@ -9,6 +9,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { TxRectMode, TxCenter } from 'mapbox-gl-draw-rotate-scale-rect-mode';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import { polygon } from '@turf/helpers';
+import { Site } from '../../../../api/types';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -30,9 +31,10 @@ interface ComponentProps {
 		height: number;
 		onUpdateFloorPlanBounds: (bounds: Bounds[]) => void;
 	};
+	sites?: Site[];
 }
 
-export default function MapView({ location, onUpdateBounds, polygons, floorPlan }: ComponentProps) {
+export default function MapView({ location, onUpdateBounds, polygons, floorPlan, sites, }: ComponentProps) {
 	const theme = useMantineTheme();
 
 	const map = useRef(null);
@@ -281,6 +283,52 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 		draw.current,
 		map.current,
 	]);
+
+	useEffect(() => {
+		if (!sites || !map.current) return;
+
+		map.current!.on('load', () => {
+			sites.forEach((site, i) => {
+				map.current!.addSource(`site-bounds-${site.id}`, {
+					type: 'geojson',
+					data: {
+						type: 'Feature',
+						geometry: {
+							type: 'Polygon',
+							// These coordinates outline Maine.
+							coordinates: site.bounds,
+						},
+					},
+				});
+				map.current!.addLayer({
+					id: `site-bounds-${site.id}`,
+					type: 'fill',
+					source: `site-bounds-${site.id}`, // reference the data source
+					layout: {},
+					paint: {
+						'fill-color': '#0080ff', // blue color fill
+						'fill-opacity': 0.5,
+					},
+				});
+
+				// floor plan
+				map.current.addSource(`site-floor-plan-${site.id}`, {
+					'type': 'image',
+					'url': site.floor_plan,
+					'coordinates': site.floor_plan_bounds
+				});
+				map.current.addLayer({
+					id: `site-floor-plan-${site.id}-layer`,
+					'type': 'raster',
+					'source': `site-floor-plan-${site.id}`,
+					'paint': {
+						'raster-fade-duration': 0
+					}
+				});
+		
+			});
+		});
+	}, [sites, map.current])
 
 	return <MapContainer ref={mapContainer} />;
 }

@@ -5,6 +5,7 @@ import { IconUrgent } from '@tabler/icons';
 import Api from '../../../api/Api';
 import { useRouter } from 'next/navigation';
 import { Location } from '../../../api/types';
+import useSWR from 'swr';
 
 export default function ReportPage() {
 	const router = useRouter();

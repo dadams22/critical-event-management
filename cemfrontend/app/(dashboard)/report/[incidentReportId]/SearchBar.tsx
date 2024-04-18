@@ -52,8 +52,6 @@ export default function SearchBar({ people, statusByPerson }: ComponentProps) {
 		)
 		.slice(0, 5);
 
-	console.log(statusByPerson);
-
 	return (
 		<Box w={400} pos="relative">
 			<Input
