@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Location } from '../../../../api/types';
 import mapboxgl from 'mapbox-gl';
 import styled from '@emotion/styled';
@@ -26,9 +26,9 @@ interface ComponentProps {
 	polygons?: Bounds[];
 	floorPlan?: {
 		floorPlanImageUrl: string;
-		floorPlanBounds: Polygon;
 		width: number;
 		height: number;
+		onUpdateFloorPlanBounds: (bounds: Bounds[]) => void;
 	}
 }
 
@@ -141,8 +141,10 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 		}
 	}, [onUpdateBounds, polygons, map.current]);
 
+	const [floorPlanDrawn, setFloorPlanDraw] = useState<boolean>(false);
+
 	useEffect(() => {
-		if (!floorPlan || !map.current) return;
+		if (!floorPlan || !map.current || floorPlanDrawn) return;
 
 		if (!draw.current) {
 			draw.current = new MapboxDraw({
@@ -165,7 +167,7 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 			map.current.addControl(draw.current);
 		}
 
-		const { floorPlanImageUrl, floorPlanBounds, width, height } = floorPlan;
+		const { floorPlanImageUrl, width, height, onUpdateFloorPlanBounds } = floorPlan;
 
 		const computeRect = (center, size) => {
 			const cUL = map.current.unproject ([center[0] - size[0]/2, center[1] - size[1]/2]).toArray();
@@ -181,6 +183,7 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 			// TODO: Change this
 			var overlaySourceId = 'floorPlanImage';
 			map.current.getSource(overlaySourceId).setCoordinates(coordinates);
+			onUpdateFloorPlanBounds(coordinates);
 		};
 
 		const canvas = map.current.getCanvas();
@@ -220,8 +223,8 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 
 		const poly = polygon([cPoly]);
 		poly.id = 'floorPlanPoly';
-		floorPlanBounds.properties.overlaySourceId = 'floorPlanImage';
-    	floorPlanBounds.properties.type = 'overlay';
+		poly.properties.overlaySourceId = 'floorPlanImage';
+    	poly.properties.type = 'overlay';
 		draw.current.add(poly)
 		draw.current.changeMode('tx_poly', {
 			featureId: poly.id, // required
@@ -239,7 +242,6 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 					// var source = this.map.getSource(e.sourceId);
 					//var geojson = source._data;
 					var geojson = e.source.data;
-					console.log(geojson);
 					if (geojson && geojson.features && geojson.features.length > 0
 						&& geojson.features[0].properties) {
 						drawUpdateOverlayByFeature(geojson.features[0]);
@@ -249,7 +251,16 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 		};
 
 		map.current.on('data', onData);
-	}, [floorPlan, draw.current, map.current]);
+
+		setFloorPlanDraw(true);
+	}, [
+			floorPlan?.onUpdateFloorPlanBounds,
+			floorPlan?.floorPlanImageUrl,
+			floorPlan?.width,
+			floorPlan?.height, 
+			draw.current, 
+			map.current
+		]);
 
 	return <MapContainer ref={mapContainer} />;
 }

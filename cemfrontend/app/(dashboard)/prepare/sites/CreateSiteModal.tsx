@@ -44,7 +44,7 @@ const useStyles = createStyles((theme) => ({
 const MapContainer = styled.div`
 	position: relative;
 	width: 100%;
-	height: 400px;
+	height: 420px;
 	border-radius: 8px;
 	overflow: hidden;
 `;
@@ -85,48 +85,6 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const [floorPlanBounds, setFloorPlanBounds] = useState<Polygon>();
 	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{ width: Number; height: number }>();
 	const floorPlanMeasurerRef = useRef<HTMLImageElement>(null);
-
-	const calculateInitialFloorPlanBounds = (aspectRatio: number) => {
-		const siteLocation = address?.features?.[0]?.geometry?.coordinates;
-		if (!siteLocation) return;
-
-		const siteLocationPoint = point(siteLocation)
-
-		const topLimit = destination(
-			siteLocationPoint, // Mouse cursor location (in latlng),
-			0.02,
-			0,
-			'kilometers'
-		);
-		
-		const rightLimit = destination(
-			siteLocationPoint, // Mouse cursor location (in latlng),
-			0.02 * aspectRatio,
-			90,
-			'kilometers'
-		);
-		
-		const bottomLimit = destination(
-			siteLocationPoint, // Mouse cursor location (in latlng),
-			0.02,
-			180,
-			'kilometers'
-		);
-		
-		const leftLimit = destination(
-			siteLocationPoint, // Mouse cursor location (in latlng),
-			0.02 * aspectRatio,
-			-90,
-			'kilometers'
-		);
-		
-		setFloorPlanBounds(envelope(featureCollection([ // Resultant rectangle
-			topLimit,
-			rightLimit,
-			bottomLimit,
-			leftLimit
-		])));
-	};
 
 	const handleFloorPlanOverlayClick = () => {
 		floorPlanInputRef.current?.click();
@@ -189,8 +147,8 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 									}}
 									polygons={siteBounds ? [siteBounds] : undefined}
 									floorPlan={
-										(!!floorPlanImageUrl && !!floorPlanBounds && !!floorPlanDimensions) 
-											? { floorPlanBounds, floorPlanImageUrl, ...floorPlanDimensions } 
+										(!!floorPlanImageUrl && !!floorPlanDimensions) 
+											? { onUpdateFloorPlanBounds: setFloorPlanBounds, floorPlanImageUrl, ...floorPlanDimensions } 
 											: undefined
 									}
 								/>
@@ -220,7 +178,6 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 												width: image.naturalWidth,
 												height: image.naturalHeight,
 											});
-											console.log(calculateInitialFloorPlanBounds(aspectRatio));
 										}}
 									/>
 								)}
