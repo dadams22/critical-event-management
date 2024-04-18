@@ -55,33 +55,6 @@ class IncidentReportSerializer(serializers.ModelSerializer):
 
 
 class SiteSerializer(serializers.ModelSerializer):
-    location = LocationSerializer()
-
     class Meta:
         model = Site
-        fields = ['id', 'name', 'address', 'location', 'bounds', 'floor_plan', 'floor_plan_bounds']
-
-    def create(self, validated_data):
-        location_data = validated_data.pop('location')
-        location = Location.objects.create(**location_data)
-        site = Site.objects.create(location=location, **validated_data)
-        return site
-
-    def update(self, instance, validated_data):
-        location_data = validated_data.pop('location')
-        location = instance.location
-
-        instance.name = validated_data.get('name', instance.name)
-        instance.address = validated_data.get('address', instance.address)
-        instance.bounds = validated_data.get('bounds', instance.bounds)
-        instance.floor_plan = validated_data.get('floor_plan', instance.floor_plan)
-        instance.floor_plan_bounds = validated_data.get('floor_plan_bounds', instance.floor_plan_bounds)
-        instance.save()
-
-        # Update location only if location_data is provided
-        if location_data:
-            for attr, value in location_data.items():
-                setattr(location, attr, value)
-            location.save()
-
-        return instance
+        fields = ['id', 'name', 'address', 'longitude', 'latitude', 'bounds', 'floor_plan', 'floor_plan_bounds']

@@ -39,3 +39,13 @@ export interface IncidentReport {
 	alerts: Alert[];
 	statuses: PersonStatus[];
 }
+
+export interface Site {
+	id: string;
+	name: string;
+	address: string;
+	location: Location;
+	bounds: string;
+	floor_plan: string;
+	floor_plan_bounds: string;
+}

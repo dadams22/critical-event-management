@@ -25,6 +25,7 @@ import { point, featureCollection } from '@turf/helpers';
 import destination from '@turf/destination';
 import envelope from '@turf/envelope';
 import { Polygon } from '@turf/helpers';
+import Api from '../../../../api/Api';
 
 const useStyles = createStyles((theme) => ({
 	overlay: {
@@ -72,13 +73,6 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 
 	const [step, stepHandlers] = useCounter(0, { min: 0, max: 2 });
 
-	const nextDisabled = useMemo(() => {
-		if (step === 0) return !siteName || !address;
-		if (step === 1) return !siteBounds;
-
-		return false;
-	}, [step, siteName, address, siteBounds]);
-
 	const floorPlanInputRef = useRef<HTMLInputElement>(null);
 	const [floorPlanImageUrl, setFloorPlanImageUrl] = useState<string>();
 	const [floorPlanAspectRatio, setFloorPlanAspectRatio] = useState<number>();
@@ -87,6 +81,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 		width: Number;
 		height: number;
 	}>();
+	const [floorPlanFile, setFloorPlanFile] = useState<File>();
 	const floorPlanMeasurerRef = useRef<HTMLImageElement>(null);
 
 	const handleFloorPlanOverlayClick = () => {
@@ -97,6 +92,8 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 		if (!e.target.files?.[0]) return;
 
 		const imageFile = e.target.files[0];
+		setFloorPlanFile(imageFile);
+
 		const reader = new FileReader();
 
 		reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -104,6 +101,42 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 		};
 
 		reader.readAsDataURL(imageFile);
+	};
+
+	const nextDisabled = useMemo(() => {
+		if (step === 0) return !siteName || !address;
+		if (step === 1) return !siteBounds;
+		if (step === 2) return !address 
+			|| !address?.features?.[0]?.properties?.full_address
+			|| !siteBounds
+			|| !floorPlanFile;
+
+		return false;
+	}, [step, siteName, address, siteBounds, siteBounds, floorPlanFile]);
+
+	const handleSave = () => {
+		if (
+			!address 
+			|| !address?.features?.[0]?.properties?.full_address
+			|| !siteBounds
+			|| !floorPlanFile
+		) return;
+
+		setSaving(true);
+		Api.createSite({
+			name: siteName,
+			address: address?.features?.[0]?.properties?.full_address,
+			bounds: siteBounds,
+			longitude: address?.features?.[0]?.geometry?.coordinates?.[0],
+			latitude: address?.features?.[0]?.geometry?.coordinates?.[1],
+			floorPlan: floorPlanFile,
+			floorPlanBounds: floorPlanBounds,
+		})
+			.then((site) => {
+				console.log(site);
+				onClose();
+			})
+			.finally(() => setSaving(false));
 	};
 
 	return (
@@ -197,7 +230,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 						<Button variant="outline" onClick={stepHandlers.decrement} disabled={step === 0}>
 							Previous
 						</Button>
-						<Button variant="filled" onClick={stepHandlers.increment} disabled={nextDisabled}>
+						<Button variant="filled" onClick={step === 2 ? handleSave : stepHandlers.increment} disabled={nextDisabled}>
 							{step === 2 ? 'Save' : 'Next'}
 						</Button>
 					</Group>

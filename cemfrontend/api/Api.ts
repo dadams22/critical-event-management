@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
 import { Alert, IncidentReport, Person } from './types';
-import { Location } from './types';
+import { Location, Site } from './types';
+import { Bounds } from '../app/(dashboard)/report/[incidentReportId]/MapView';
 
 const BASE_URL = 'http://127.0.0.1:8000/api';
 export const AUTH_TOKEN_KEY = 'auth-token';
@@ -99,6 +100,45 @@ const Api = (() => {
 
 		deletePerson: async (personId: string): Promise<void> => {
 			await axiosInstance.delete(`person/${personId}/`);
+		},
+
+		createSite: async ({
+			name,
+			address,
+			bounds,
+			longitude,
+			latitude,
+			floorPlan,
+			floorPlanBounds
+		}: {
+			name: string;
+			address: string;
+			bounds: Bounds;
+			longitude: number;
+			latitude: number;
+			floorPlan: File;
+			floorPlanBounds: Bounds;
+		}): Promise<Site> => {
+			const formData = new FormData();
+			formData.append('name', name);  // Add other fields as required
+			formData.append('address', address);
+			formData.append('longitude', String(longitude));
+			formData.append('latitude', String(latitude));
+			formData.append('bounds', JSON.stringify(bounds));
+			formData.append('floor_plan_bounds', JSON.stringify(floorPlanBounds));
+			formData.append('floor_plan', floorPlan);
+
+			const response = await axiosInstance.post<Site>(
+				'site/',
+				formData,
+				{ 
+					method: 'CREATE',
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+			return response.data;
 		},
 	};
 })();

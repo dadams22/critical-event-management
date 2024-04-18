@@ -85,5 +85,8 @@ target/
 __pycache__/
 local_settings.py
 
+# Saved images
+media/
+
 .env
 db.sqlite3
