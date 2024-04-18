@@ -140,6 +140,11 @@ const Api = (() => {
 			);
 			return response.data;
 		},
+
+		getSites: async (): Promise<Site[]> => {
+			const response = await axios.get<Site[]>('site/');
+			return response.data;
+		}
 	};
 })();
 
