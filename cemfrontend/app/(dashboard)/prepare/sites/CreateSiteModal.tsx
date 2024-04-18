@@ -1,16 +1,30 @@
 'use client';
 import React, { useRef } from 'react';
-import { Button, Center, createStyles, Flex, Group, Modal, Overlay, Stack, Stepper, Text, TextInput } from '@mantine/core';
-import { useMemo, useState } from 'react';
 import {
-	AddressAutofillRetrieveResponse,
-} from '@mapbox/search-js-core';
+	Button,
+	Center,
+	createStyles,
+	Flex,
+	Group,
+	Modal,
+	Overlay,
+	Stack,
+	Stepper,
+	Text,
+	TextInput,
+} from '@mantine/core';
+import { useMemo, useState } from 'react';
+import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
 import _ from 'lodash';
 import AddressField from '../../../../components/AddressField';
 import MapView, { Bounds } from '../../report/[incidentReportId]/MapView';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
 import { IconPhotoPlus } from '@tabler/icons';
+import { point, featureCollection } from '@turf/helpers';
+import destination from '@turf/destination';
+import envelope from '@turf/envelope';
+import { Polygon } from '@turf/helpers';
 
 const useStyles = createStyles((theme) => ({
 	overlay: {
@@ -19,12 +33,12 @@ const useStyles = createStyles((theme) => ({
 		border: `1px solid transparent`,
 		'&:hover': {
 			opacity: 0.85,
-			border: `1px solid ${theme.colors.blue[6]}`
+			border: `1px solid ${theme.colors.blue[6]}`,
 		},
 		borderRadius: '8px',
 		transitionProperty: 'opacity border',
 		transitionDuration: '300ms',
-	}
+	},
 }));
 
 const MapContainer = styled.div`
@@ -37,6 +51,10 @@ const MapContainer = styled.div`
 
 const FloorPlanInput = styled.input`
 	display: none;
+`;
+
+const ImageMeasurer = styled.img`
+	visibility: hidden;
 `;
 
 interface ComponentProps {
@@ -63,7 +81,52 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 
 	const floorPlanInputRef = useRef<HTMLInputElement>(null);
 	const [floorPlanImageUrl, setFloorPlanImageUrl] = useState<string>();
-	console.log(floorPlanImageUrl);
+	const [floorPlanAspectRatio, setFloorPlanAspectRatio] = useState<number>();
+	const [floorPlanBounds, setFloorPlanBounds] = useState<Polygon>();
+	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{ width: Number; height: number }>();
+	const floorPlanMeasurerRef = useRef<HTMLImageElement>(null);
+
+	const calculateInitialFloorPlanBounds = (aspectRatio: number) => {
+		const siteLocation = address?.features?.[0]?.geometry?.coordinates;
+		if (!siteLocation) return;
+
+		const siteLocationPoint = point(siteLocation)
+
+		const topLimit = destination(
+			siteLocationPoint, // Mouse cursor location (in latlng),
+			0.02,
+			0,
+			'kilometers'
+		);
+		
+		const rightLimit = destination(
+			siteLocationPoint, // Mouse cursor location (in latlng),
+			0.02 * aspectRatio,
+			90,
+			'kilometers'
+		);
+		
+		const bottomLimit = destination(
+			siteLocationPoint, // Mouse cursor location (in latlng),
+			0.02,
+			180,
+			'kilometers'
+		);
+		
+		const leftLimit = destination(
+			siteLocationPoint, // Mouse cursor location (in latlng),
+			0.02 * aspectRatio,
+			-90,
+			'kilometers'
+		);
+		
+		setFloorPlanBounds(envelope(featureCollection([ // Resultant rectangle
+			topLimit,
+			rightLimit,
+			bottomLimit,
+			leftLimit
+		])));
+	};
 
 	const handleFloorPlanOverlayClick = () => {
 		floorPlanInputRef.current?.click();
@@ -77,10 +140,10 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 
 		reader.onload = (event: ProgressEvent<FileReader>) => {
 			setFloorPlanImageUrl(String(event.target?.result));
-		}
+		};
 
 		reader.readAsDataURL(imageFile);
-	}
+	};
 
 	return (
 		<Modal title="Create Site" opened={opened} onClose={onClose} size="xl" zIndex={2000} centered>
@@ -125,20 +188,41 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
 									}}
 									polygons={siteBounds ? [siteBounds] : undefined}
+									floorPlan={
+										(!!floorPlanImageUrl && !!floorPlanBounds && !!floorPlanDimensions) 
+											? { floorPlanBounds, floorPlanImageUrl, ...floorPlanDimensions } 
+											: undefined
+									}
 								/>
 								{!floorPlanImageUrl && (
 									<Overlay center className={classes.overlay} onClick={handleFloorPlanOverlayClick}>
-										<Stack align='center'>
+										<Stack align="center">
 											<IconPhotoPlus size={80} />
 											<Text>Add a floor plan.</Text>
 										</Stack>
-										<FloorPlanInput 
-											type='file'
-											accept='.svg, .png'
+										<FloorPlanInput
+											type="file"
+											accept=".svg, .png"
 											ref={floorPlanInputRef}
 											onChange={handleFloorPlanUpload}
 										/>
 									</Overlay>
+								)}
+								{!!floorPlanImageUrl && !floorPlanAspectRatio && (
+									<ImageMeasurer
+										ref={floorPlanMeasurerRef}
+										src={floorPlanImageUrl}
+										onLoad={(e) => {
+											const image = e.target as HTMLImageElement;
+											const aspectRatio = image.naturalWidth / image.naturalHeight;
+											setFloorPlanAspectRatio(aspectRatio);
+											setFloorPlanDimensions({
+												width: image.naturalWidth,
+												height: image.naturalHeight,
+											});
+											console.log(calculateInitialFloorPlanBounds(aspectRatio));
+										}}
+									/>
 								)}
 							</MapContainer>
 						)}
