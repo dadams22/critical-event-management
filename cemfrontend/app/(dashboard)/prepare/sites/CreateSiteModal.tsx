@@ -83,7 +83,10 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const [floorPlanImageUrl, setFloorPlanImageUrl] = useState<string>();
 	const [floorPlanAspectRatio, setFloorPlanAspectRatio] = useState<number>();
 	const [floorPlanBounds, setFloorPlanBounds] = useState<Polygon>();
-	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{ width: Number; height: number }>();
+	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{
+		width: Number;
+		height: number;
+	}>();
 	const floorPlanMeasurerRef = useRef<HTMLImageElement>(null);
 
 	const handleFloorPlanOverlayClick = () => {
@@ -147,8 +150,12 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 									}}
 									polygons={siteBounds ? [siteBounds] : undefined}
 									floorPlan={
-										(!!floorPlanImageUrl && !!floorPlanDimensions) 
-											? { onUpdateFloorPlanBounds: setFloorPlanBounds, floorPlanImageUrl, ...floorPlanDimensions } 
+										!!floorPlanImageUrl && !!floorPlanDimensions
+											? {
+													onUpdateFloorPlanBounds: setFloorPlanBounds,
+													floorPlanImageUrl,
+													...floorPlanDimensions,
+												}
 											: undefined
 									}
 								/>

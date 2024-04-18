@@ -29,7 +29,7 @@ interface ComponentProps {
 		width: number;
 		height: number;
 		onUpdateFloorPlanBounds: (bounds: Bounds[]) => void;
-	}
+	};
 }
 
 export default function MapView({ location, onUpdateBounds, polygons, floorPlan }: ComponentProps) {
@@ -74,9 +74,12 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
-				modes: Object.assign({
-					tx_poly: TxRectMode,
-				}, MapboxDraw.modes),
+				modes: Object.assign(
+					{
+						tx_poly: TxRectMode,
+					},
+					MapboxDraw.modes
+				),
 			});
 			map.current.addControl(draw.current);
 
@@ -160,9 +163,12 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
-				modes: Object.assign({
-					tx_poly: TxRectMode,
-				}, MapboxDraw.modes),
+				modes: Object.assign(
+					{
+						tx_poly: TxRectMode,
+					},
+					MapboxDraw.modes
+				),
 			});
 			map.current.addControl(draw.current);
 		}
@@ -170,12 +176,20 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 		const { floorPlanImageUrl, width, height, onUpdateFloorPlanBounds } = floorPlan;
 
 		const computeRect = (center, size) => {
-			const cUL = map.current.unproject ([center[0] - size[0]/2, center[1] - size[1]/2]).toArray();
-			const cUR = map.current.unproject ([center[0] + size[0]/2, center[1] - size[1]/2]).toArray();
-			const cLR = map.current.unproject ([center[0] + size[0]/2, center[1] + size[1]/2]).toArray();
-			const cLL = map.current.unproject ([center[0] - size[0]/2, center[1] + size[1]/2]).toArray();
-		
-			return [cUL,cUR,cLR,cLL,cUL];
+			const cUL = map.current
+				.unproject([center[0] - size[0] / 2, center[1] - size[1] / 2])
+				.toArray();
+			const cUR = map.current
+				.unproject([center[0] + size[0] / 2, center[1] - size[1] / 2])
+				.toArray();
+			const cLR = map.current
+				.unproject([center[0] + size[0] / 2, center[1] + size[1] / 2])
+				.toArray();
+			const cLL = map.current
+				.unproject([center[0] - size[0] / 2, center[1] + size[1] / 2])
+				.toArray();
+
+			return [cUL, cUR, cLR, cLL, cUL];
 		};
 
 		const drawUpdateOverlayByFeature = (feature) => {
@@ -194,38 +208,38 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 		const w = rect.width;
 		const h = rect.height;
 		// console.log('canvas: ' + w + 'x' + h);
-	
+
 		let im_w = width;
 		let im_h = height;
-		while (im_w >= (0.8 * w) || im_h >= (0.8 * h)) {
+		while (im_w >= 0.8 * w || im_h >= 0.8 * h) {
 			im_w = Math.round(0.8 * im_w);
 			im_h = Math.round(0.8 * im_h);
 		}
-	
-		const cPoly = computeRect([w/2, h/2], [im_w, im_h]);
+
+		const cPoly = computeRect([w / 2, h / 2], [im_w, im_h]);
 		const cBox = cPoly.slice(0, 4);
 
-		map.current.addSource("floorPlanImage", {
-			"type": "image",
-			"url": floorPlanImageUrl,
-			"coordinates": cBox,
+		map.current.addSource('floorPlanImage', {
+			type: 'image',
+			url: floorPlanImageUrl,
+			coordinates: cBox,
 		});
-	
+
 		map.current.addLayer({
-			"id": "floorPlanImageLayer",
-			"type": "raster",
-			"source": "floorPlanImage",
-			"paint": {
-				"raster-opacity": 0.90,
-				"raster-fade-duration": 0
+			id: 'floorPlanImageLayer',
+			type: 'raster',
+			source: 'floorPlanImage',
+			paint: {
+				'raster-opacity': 0.9,
+				'raster-fade-duration': 0,
 			},
 		});
 
 		const poly = polygon([cPoly]);
 		poly.id = 'floorPlanPoly';
 		poly.properties.overlaySourceId = 'floorPlanImage';
-    	poly.properties.type = 'overlay';
-		draw.current.add(poly)
+		poly.properties.type = 'overlay';
+		draw.current.add(poly);
 		draw.current.changeMode('tx_poly', {
 			featureId: poly.id, // required
 			canRotate: true,
@@ -233,8 +247,10 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 
 		const onData = (e) => {
 			if (e.sourceId && e.sourceId.startsWith('mapbox-gl-draw-')) {
-				if (e.type && e.type == 'data'
-					&& e.source.data
+				if (
+					e.type &&
+					e.type == 'data' &&
+					e.source.data
 					// && e.sourceDataType && e.sourceDataType == 'content'
 					// && e.sourceDataType == undefined
 					// && e.isSourceLoaded
@@ -242,8 +258,12 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 					// var source = this.map.getSource(e.sourceId);
 					//var geojson = source._data;
 					var geojson = e.source.data;
-					if (geojson && geojson.features && geojson.features.length > 0
-						&& geojson.features[0].properties) {
+					if (
+						geojson &&
+						geojson.features &&
+						geojson.features.length > 0 &&
+						geojson.features[0].properties
+					) {
 						drawUpdateOverlayByFeature(geojson.features[0]);
 					}
 				}
@@ -254,13 +274,13 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan 
 
 		setFloorPlanDraw(true);
 	}, [
-			floorPlan?.onUpdateFloorPlanBounds,
-			floorPlan?.floorPlanImageUrl,
-			floorPlan?.width,
-			floorPlan?.height, 
-			draw.current, 
-			map.current
-		]);
+		floorPlan?.onUpdateFloorPlanBounds,
+		floorPlan?.floorPlanImageUrl,
+		floorPlan?.width,
+		floorPlan?.height,
+		draw.current,
+		map.current,
+	]);
 
 	return <MapContainer ref={mapContainer} />;
 }
