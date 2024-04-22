@@ -21,10 +21,7 @@ import MapView, { Bounds } from '../../report/[incidentReportId]/MapView';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
 import { IconPhotoPlus } from '@tabler/icons';
-import { point, featureCollection } from '@turf/helpers';
-import destination from '@turf/destination';
-import envelope from '@turf/envelope';
-import { Polygon } from '@turf/helpers';
+import { Polygon } from '@turf/helpers/dist/es';
 import Api from '../../../../api/Api';
 
 const useStyles = createStyles((theme) => ({
