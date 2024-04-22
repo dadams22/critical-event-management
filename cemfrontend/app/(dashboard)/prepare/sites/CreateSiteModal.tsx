@@ -117,6 +117,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 			|| !address?.features?.[0]?.properties?.full_address
 			|| !siteBounds
 			|| !floorPlanFile
+			|| !floorPlanBounds
 		) return;
 
 		setSaving(true);
