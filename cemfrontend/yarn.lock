@@ -9359,9 +9359,9 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-"mapbox-gl-draw-rotate-scale-rect-mode@git+https://github.com/drykovanov/mapbox-gl-draw-rotate-scale-rect-mode#0.1.10":
+"mapbox-gl-draw-rotate-scale-rect-mode@git+https://github.com/dadams22/mapbox-gl-draw-rotate-scale-rect-mode#0.1.0":
   version "0.1.10"
-  resolved "git+https://github.com/drykovanov/mapbox-gl-draw-rotate-scale-rect-mode#527c5aa4fd927a1b6cca0b320b1c28714f31d8b8"
+  resolved "git+https://github.com/dadams22/mapbox-gl-draw-rotate-scale-rect-mode#8a5aa3cd3398058fdf825dafdc2161eae6db44ce"
   dependencies:
     "@mapbox/mapbox-gl-draw" "^1.1.2"
     "@turf/bearing" "^6.0.1"
