@@ -75,7 +75,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const [floorPlanAspectRatio, setFloorPlanAspectRatio] = useState<number>();
 	const [floorPlanBounds, setFloorPlanBounds] = useState();
 	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{
-		width: Number;
+		width: number;
 		height: number;
 	}>();
 	const [floorPlanFile, setFloorPlanFile] = useState<File>();
