@@ -36,6 +36,7 @@
 		"@turf/destination": "^6.5.0",
 		"@turf/envelope": "^6.5.0",
 		"@turf/helpers": "^6.5.0",
+		"@turf/invariant": "^6.5.0",
 		"cookies-next": "^2.1.1",
 		"dayjs": "^1.11.9",
 		"embla-carousel-react": "^7.0.3",
