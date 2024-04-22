@@ -21,7 +21,7 @@ import MapView, { Bounds } from '../../report/[incidentReportId]/MapView';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
 import { IconPhotoPlus } from '@tabler/icons';
-import { Polygon } from '@turf/helpers/dist/es';
+// import { Polygon } from '@turf/helpers/dist/es';
 import Api from '../../../../api/Api';
 
 const useStyles = createStyles((theme) => ({
@@ -73,7 +73,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const floorPlanInputRef = useRef<HTMLInputElement>(null);
 	const [floorPlanImageUrl, setFloorPlanImageUrl] = useState<string>();
 	const [floorPlanAspectRatio, setFloorPlanAspectRatio] = useState<number>();
-	const [floorPlanBounds, setFloorPlanBounds] = useState<Polygon>();
+	const [floorPlanBounds, setFloorPlanBounds] = useState();
 	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{
 		width: Number;
 		height: number;
