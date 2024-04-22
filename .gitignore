@@ -5,7 +5,9 @@
 .vscode
 
 # Saved django images
-media/# Created by https://www.toptal.com/developers/gitignore/api/python,macos,nodejs,js
+media/
+
+# Created by https://www.toptal.com/developers/gitignore/api/python,macos,nodejs,js
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,macos,nodejs,js
 
 #!! ERROR: js is undefined. Use list command to see defined gitignore types !!#
@@ -17,7 +19,8 @@ media/# Created by https://www.toptal.com/developers/gitignore/api/python,macos,
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
