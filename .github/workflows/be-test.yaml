@@ -26,7 +26,8 @@ jobs:
       run: |
         cd cembackend
         python -m venv ./.venv && . ./.venv/bin/activate && python -m pip install --upgrade pip && pip install -e .[dev]
+        cp cembackend/test.env cembackend/.env
     - name: Test with pytest
       run: |
         cd cembackend
-        . ./.venv/bin/activate && pytest test
+        . ./.venv/bin/activate && python manage.py test

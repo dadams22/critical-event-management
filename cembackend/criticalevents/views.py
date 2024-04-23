@@ -9,6 +9,13 @@ from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserS
 from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus, Site
 from .twilio_utils import send_twilio_message
 
+class PingView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request):
+        return Response({ 'message': 'pong' })
+
 class CheckAuthView(APIView):
     def get(self, request):
         return Response({ 'message': 'You are authenticated' })
@@ -20,10 +27,10 @@ class MessageView(APIView):
 
         for recipient in recipients:
             send_twilio_message(
-                recipient.phone, 
+                recipient.phone,
                 f'TWILIO TEST: Hello, {recipient.first_name} {recipient.last_name}. This is a test message.'
             )
-        
+
         return Response({"message": "Message sent successfully"}, status=status.HTTP_200_OK)
 
 
@@ -34,7 +41,7 @@ class CreateIncidentReportView(APIView):
         location_data = request.data.get('location', None)
 
         location = Location.objects.create(
-            latitude=location_data['latitude'], 
+            latitude=location_data['latitude'],
             longitude=location_data['longitude']
         ) if location_data is not None else None
 
@@ -86,9 +93,9 @@ class ResolveIncidentView(APIView):
         incident = IncidentReport.objects.get(id=incident_id)
         incident.resolved_at = timezone.now()
         incident.save()
-        
+
         incident_serializer = IncidentReportSerializer(incident)
-        
+
         return Response({ 'incident_report': incident_serializer.data }, status=200)
 
 
@@ -101,7 +108,7 @@ class TwilioWebhookView(APIView):
         needs_help = 'sos' in body.lower() or body.strip() == '2'
 
         twiml_response = MessagingResponse()
-        
+
         if body is None or sender_phone_number is None or not (is_safe or needs_help):
             twiml_response.message('Please response with SAFE or HELP to indicate your status.')
         else:
