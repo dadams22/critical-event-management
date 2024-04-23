@@ -23,7 +23,7 @@ export type Bounds = [number, number][];
 
 interface ComponentProps {
 	location: Location;
-	onUpdateBounds: (bounds?: Bounds) => void;
+	onUpdateBounds?: (bounds?: Bounds) => void;
 	polygons?: Bounds[];
 	floorPlan?: {
 		floorPlanImageUrl: string;
