@@ -1,3 +1,4 @@
+import git
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,7 +15,9 @@ class PingView(APIView):
     permission_classes = []
 
     def get(self, request):
-        return Response({ 'message': 'pong' })
+        repo = git.Repo(search_parent_directories=True)
+        sha = repo.head.object.hexsha
+        return Response({ 'health': 'ok', 'hash': sha })
 
 class CheckAuthView(APIView):
     def get(self, request):
