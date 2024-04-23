@@ -79,17 +79,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cembackend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -124,8 +113,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static')
 MEDIA_ROOT =  os.path.join(os.path.dirname(BASE_DIR), 'media')
 
@@ -157,3 +146,7 @@ TWILIO_PHONE_NUMBER = config('TWILIO_PHONE_NUMBER')
 # CORS TODO: remove this it is dangerous
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://cembackend.fly.dev"
+]
