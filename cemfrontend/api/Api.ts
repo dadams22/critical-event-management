@@ -4,7 +4,7 @@ import { Alert, IncidentReport, Person } from './types';
 import { Location, Site } from './types';
 import { Bounds } from '../app/(dashboard)/report/[incidentReportId]/MapView';
 
-const BASE_URL = 'http://127.0.0.1:8000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 export const AUTH_TOKEN_KEY = 'auth-token';
 
 const Api = (() => {
