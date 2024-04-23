@@ -51,7 +51,8 @@ setup(
         "twilio==8.3.0",
         "typing_extensions==4.6.3",
         "urllib3==2.0.3",
-        "yarl==1.9.2"
+        "yarl==1.9.2",
+        "GitPython==3.1.43",
     ],
     extras_require={
         "dev": [
