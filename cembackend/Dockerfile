@@ -7,14 +7,10 @@ ENV PYTHONUNBUFFERED 1
 
 RUN mkdir -p /code
 
-WORKDIR /code
 
-COPY requirements.txt /tmp/requirements.txt
-RUN set -ex && \
-    pip install --upgrade pip && \
-    pip install -r /tmp/requirements.txt && \
-    rm -rf /root/.cache/
-COPY . /code
+ADD . /code
+WORKDIR /code
+RUN pip install -e .
 
 RUN python manage.py collectstatic --noinput
 
