@@ -2,15 +2,16 @@
 
 import styled from "@emotion/styled";
 import mapboxgl from "mapbox-gl";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Location } from "../../api/types";
 import React from "react";
 import { ColorScheme } from "@mantine/core";
+import Marker from './components/Marker';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
 
-const MapContext = React.createContext<mapboxgl.Map | null>(null);
+export const MapContext = React.createContext<mapboxgl.Map | null>(null);
 
 const MapContainer = styled.div`
 	width: 100%;
@@ -22,28 +23,27 @@ interface ComponentProps {
 }
 
 export default function MapView({ location }: ComponentProps) {
-    const map = useRef<mapboxgl.Map>(null);
-    const mapContainer = useRef(null);
-
+    const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const colorScheme: ColorScheme = 'dark';
 
-    useEffect(() => {
-		if (map.current || !location || !mapContainer.current) return; // initialize map only once
-		map.current = new mapboxgl.Map({
-			container: mapContainer.current,
+	const map = useMemo<mapboxgl.Map | null>(() => {
+		if (!mapContainer) return null;
+
+		return new mapboxgl.Map({
+			container: mapContainer,
 			style:
 				colorScheme === 'dark'
 					? 'mapbox://styles/mapbox/dark-v11'
 					: 'mapbox://styles/mapbox/light-v11',
 			center: [location.longitude, location.latitude],
 			zoom: 18,
-		});
-    }, [location, mapContainer.current]);
+		})
+	}, [mapContainer]);
 
     return (
-        <MapContainer ref={mapContainer}>
-			<MapContext.Provider value={map.current}>
-
+        <MapContainer ref={(elem) => setMapContainer(elem)}>
+			<MapContext.Provider value={map}>
+				<Marker location={location} />
 			</MapContext.Provider>
 		</MapContainer>
     )
