@@ -96,5 +96,50 @@ class Site(BaseModel):
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
     bounds = models.JSONField()
+
+    # TODO: Remove floor plan stuff from site, move to floors
     floor_plan = models.ImageField(upload_to='floor_plans/')
     floor_plan_bounds = models.JSONField()
+
+
+class Floor(BaseModel):
+    """ A floor within a site """
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='floors')
+    name = models.CharField(max_length=255)
+    sort_order = models.IntegerField()
+
+    floor_plan = models.ImageField(upload_to='floor_plans/')
+    floor_plan_bounds = models.JSONField()
+
+
+class AssetTypes(BaseModel):
+    """ A type of asset that can be placed on a floor
+
+    Note that asset types are Organization-scoped, so that different
+    organizations can have different types of assets"""
+
+    name = models.CharField(max_length=255)
+
+
+class Asset(BaseModel):
+    """ An asset within a site """
+    floor = models.ForeignKey(Floor, on_delete=models.RESTRICT)
+    name = models.CharField(max_length=255)
+    asset_type = models.ForeignKey(AssetTypes, on_delete=models.RESTRICT)
+    longitude = models.DecimalField(max_digits=18, decimal_places=15)
+    latitude = models.DecimalField(max_digits=18, decimal_places=15)
+
+
+class AssetProperty(BaseModel):
+    """ A property of an asset
+
+    Use a star* style property table here because we want to allow users to
+    define their own properties for assets.
+
+    TODO: Add some sort of validation so that we can know that all "fire
+    extinguisher" assets have a "expiration" property, for example.
+    TODO: Add some sort of type field"""
+
+    asset = models.ForeignKey(Asset, on_delete=models.RESTRICT)
+    key = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
