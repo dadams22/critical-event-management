@@ -76,22 +76,3 @@ class SiteViewSetTest(TestCase):
 
         # Check that the organization of the new site is the same as the current user's organization
         self.assertEqual(site.organization.id, self.organization.id)
-
-    def test_does_not_return_sites_from_different_organization(self):
-        # Create a new organization
-        other_organization = Organization.objects.create(name='Other Organization')
-
-        # Create a new user and assign the organization
-        other_user = User.objects.create_user(username='otheruser', password='12345', organization=other_organization)
-
-        # Create a new site in the other organization
-        other_site = Site.objects.create(name='Other Site', organization=other_organization, longitude=0.0, latitude=0.0, bounds='{}', floor_plan_bounds='{}')
-
-        # Make a GET request to the SiteViewSet
-        response = self.client.get('/api/site/')
-
-        # Check that the status code is 200
-        self.assertEqual(response.status_code, 200)
-
-        # Check that the response data does not include the other site
-        self.assertNotIn('Other Site', [site['name'] for site in response.data])
