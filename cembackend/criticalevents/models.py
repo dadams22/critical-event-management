@@ -9,6 +9,9 @@ class Organization(models.Model):
 
     name = models.CharField(max_length=100)
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class BaseModel(models.Model):
     """Base model for all models in the application. Provides common fields,
@@ -123,6 +126,9 @@ class Site(BaseModel):
     floor_plan = models.ImageField(upload_to="floor_plans/")
     floor_plan_bounds = models.JSONField()
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Floor(BaseModel):
     """A floor within a site"""
@@ -133,6 +139,9 @@ class Floor(BaseModel):
 
     floor_plan = models.ImageField(upload_to="floor_plans/")
     floor_plan_bounds = models.JSONField()
+
+    def __str__(self) -> str:
+        return self.site.name + ": " + self.name
 
 
 class AssetType(BaseModel):
@@ -152,6 +161,9 @@ class Asset(BaseModel):
     asset_type = models.ForeignKey(AssetType, on_delete=models.RESTRICT)
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class AssetProperty(BaseModel):

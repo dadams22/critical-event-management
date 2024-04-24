@@ -53,6 +53,8 @@ setup(
         "urllib3==2.0.3",
         "yarl==1.9.2",
         "GitPython==3.1.43",
+        "django-storages==1.14.2",
+        "dj_inmemorystorage==2.1.0",
     ],
     extras_require={
         "dev": [
