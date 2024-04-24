@@ -1,7 +1,7 @@
 'use client';
 
 import { createStyles, Navbar, getStylesRef, rem, Flex, Stack } from '@mantine/core';
-import { IconBuildingCommunity, IconTemplate, IconUsers, TablerIcon } from '@tabler/icons';
+import { IconBuildingCommunity, IconUsers, TablerIcon } from '@tabler/icons';
 import { usePathname } from 'next/navigation';
 
 const useStyles = createStyles((theme) => ({
