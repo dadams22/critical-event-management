@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class CriticaleventsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'criticalevents'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "criticalevents"

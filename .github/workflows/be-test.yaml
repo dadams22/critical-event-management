@@ -27,6 +27,10 @@ jobs:
         cd cembackend
         python -m venv ./.venv && . ./.venv/bin/activate && python -m pip install --upgrade pip && pip install -e .[dev]
         cp cembackend/test.env cembackend/.env
+    - name: Check formatting with `black`
+      run: |
+        cd cembackend
+        . ./.venv/bin/activate && black --diff --check --color .
     - name: Test with pytest
       run: |
         cd cembackend

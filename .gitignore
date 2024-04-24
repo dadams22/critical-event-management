@@ -1,9 +1,6 @@
 # MacOS System Files
 .DS_Store
 
-# VS Code
-.vscode
-
 # Saved django images
 media/
 

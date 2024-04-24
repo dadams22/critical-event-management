@@ -7,74 +7,145 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('criticalevents', '0002_create_superuser_org'),
+        ("criticalevents", "0002_create_superuser_org"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Asset',
+            name="Asset",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('longitude', models.DecimalField(decimal_places=15, max_digits=18)),
-                ('latitude', models.DecimalField(decimal_places=15, max_digits=18)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("longitude", models.DecimalField(decimal_places=15, max_digits=18)),
+                ("latitude", models.DecimalField(decimal_places=15, max_digits=18)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Floor',
+            name="Floor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('sort_order', models.IntegerField()),
-                ('floor_plan', models.ImageField(upload_to='floor_plans/')),
-                ('floor_plan_bounds', models.JSONField()),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='criticalevents.organization')),
-                ('site', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='floors', to='criticalevents.site')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("sort_order", models.IntegerField()),
+                ("floor_plan", models.ImageField(upload_to="floor_plans/")),
+                ("floor_plan_bounds", models.JSONField()),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="criticalevents.organization",
+                    ),
+                ),
+                (
+                    "site",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="floors",
+                        to="criticalevents.site",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='AssetTypes',
+            name="AssetTypes",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='criticalevents.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="criticalevents.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='AssetProperty',
+            name="AssetProperty",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=255)),
-                ('value', models.CharField(max_length=255)),
-                ('asset', models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='criticalevents.asset')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='criticalevents.organization')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("key", models.CharField(max_length=255)),
+                ("value", models.CharField(max_length=255)),
+                (
+                    "asset",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        to="criticalevents.asset",
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="criticalevents.organization",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.AddField(
-            model_name='asset',
-            name='asset_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='criticalevents.assettypes'),
+            model_name="asset",
+            name="asset_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT,
+                to="criticalevents.assettypes",
+            ),
         ),
         migrations.AddField(
-            model_name='asset',
-            name='floor',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.RESTRICT, to='criticalevents.floor'),
+            model_name="asset",
+            name="floor",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.RESTRICT, to="criticalevents.floor"
+            ),
         ),
         migrations.AddField(
-            model_name='asset',
-            name='organization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='criticalevents.organization'),
+            model_name="asset",
+            name="organization",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="criticalevents.organization",
+            ),
         ),
     ]

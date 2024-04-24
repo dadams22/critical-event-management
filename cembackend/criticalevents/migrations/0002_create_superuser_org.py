@@ -2,14 +2,16 @@
 
 from django.db import migrations
 
+
 def create_initial_organization(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Organization = apps.get_model("criticalevents", "Organization")
     Organization.objects.using(db_alias).create(name="Superuser Organization")
 
+
 class Migration(migrations.Migration):
     dependencies = [
-        ('criticalevents', '0001_initial'),
+        ("criticalevents", "0001_initial"),
     ]
 
     operations = [
