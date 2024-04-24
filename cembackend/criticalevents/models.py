@@ -1,9 +1,30 @@
 from collections.abc import Iterable
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+class Organization(models.Model):
+    """Reprensents an organization. Organizations are the entity that kakuna
+    sells to, they have users, sites, etc."""
+    name = models.CharField(max_length=100)
 
 
-class Person(models.Model):
+class BaseModel(models.Model):
+    """Base model for all models in the application. Provides common fields,
+    specifically gives everything an organization scoping"""
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract=True
+
+
+class User(AbstractUser):
+    """Represents our user"""
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+
+    REQUIRED_FIELDS = ['email', 'organization_id']
+
+
+class Person(BaseModel):
     """ Represents a person who may be impacted by an incident """
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -13,7 +34,7 @@ class Person(models.Model):
         return f'{self.first_name} {self.last_name}'
 
 
-class Location(models.Model):
+class Location(BaseModel):
     """ Represents a latitude, longitude location """
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
@@ -22,7 +43,7 @@ class Location(models.Model):
         return f'Location ({self.latitude}, {self.longitude})'
 
 
-class IncidentReport(models.Model):
+class IncidentReport(BaseModel):
     """ Represents an initial incident report, before information has been gathered """
     reporter = models.ForeignKey(User, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,7 +54,7 @@ class IncidentReport(models.Model):
         return f'Incident at {self.created_at.strftime("%m/%d/%Y %H:%M:%S")}'
 
 
-class Alert(models.Model):
+class Alert(BaseModel):
     """ Represents an alert sent regarding an incident """
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT, related_name='alerts')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -41,7 +62,7 @@ class Alert(models.Model):
     sender = models.ForeignKey(User, on_delete=models.RESTRICT)
 
 
-class MessageReceipt(models.Model):
+class MessageReceipt(BaseModel):
     """ Receipt for a message sent through twilio """
     twilio_message_id = models.CharField(max_length=50)
     recipient = models.ForeignKey(Person, on_delete=models.RESTRICT)
@@ -51,7 +72,7 @@ class MessageReceipt(models.Model):
     recipient_phone = models.CharField(max_length=20)
 
 
-class PersonStatus(models.Model):
+class PersonStatus(BaseModel):
     """ Represents the status of a Person in relation to an IncidentReport """
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.RESTRICT, related_name='statuses')
@@ -61,14 +82,14 @@ class PersonStatus(models.Model):
     verbose_plural_name = 'Person statuses'
 
 
-class ShortToken(models.Model):
+class ShortToken(BaseModel):
     """ A token scoped to a particular person and a particular incident """
     person = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='short_tokens')
     incident_report = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name="short_tokens")
     token = models.CharField(max_length=10)
 
 
-class Site(models.Model):
+class Site(BaseModel):
     """ A site with a floor plan """
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=255)
