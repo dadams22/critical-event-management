@@ -12,7 +12,7 @@ ADD . /code
 WORKDIR /code
 RUN pip install -e .
 
-RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput && mv ../static static
 
 EXPOSE 8000
 
