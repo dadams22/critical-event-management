@@ -66,14 +66,18 @@ class CreateIncidentReportView(APIView):
 
         location = (
             Location.objects.create(
-                latitude=location_data["latitude"], longitude=location_data["longitude"]
+                latitude=location_data["latitude"],
+                longitude=location_data["longitude"],
+                organization=user.organization,
             )
             if location_data is not None
             else None
         )
 
         incident_report = IncidentReport.objects.create(
-            reporter=user, location=location
+            reporter=user,
+            location=location,
+            organization=user.organization,
         )
         serializer = IncidentReportSerializer(incident_report)
 
@@ -104,7 +108,7 @@ class AlertViewSet(viewsets.ViewSet):
         serializer = AlertSerializer(data={"sender": user.id, **request.data})
 
         if serializer.is_valid():
-            alert = serializer.save()
+            alert = serializer.save(organization=user.organization)
 
             # for person in Person.objects.all():
             #     send_twilio_message(person, alert.body, alert.incident_report)
