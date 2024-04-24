@@ -54,7 +54,6 @@ const useStyles = createStyles((theme) => ({
 const data: { link: string; label: string; icon: TablerIcon }[] = [
 	{ link: '/prepare/sites', label: 'Sites', icon: IconBuildingCommunity },
 	{ link: '/prepare/people', label: 'People', icon: IconUsers },
-	{ link: '/prepare/templates', label: 'Message Templates', icon: IconTemplate },
 ];
 
 interface ComponentProps {
