@@ -10,6 +10,9 @@ from .models import (
     PersonStatus,
     ShortToken,
     Site,
+    Floor,
+    Asset,
+    AssetType,
 )
 
 # Register your models here.
@@ -21,3 +24,6 @@ admin.site.register(Alert)
 admin.site.register(PersonStatus)
 admin.site.register(ShortToken)
 admin.site.register(Site)
+admin.site.register(Floor)
+admin.site.register(Asset)
+admin.site.register(AssetType)
