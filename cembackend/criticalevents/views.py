@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework import status, viewsets
 from twilio.twiml.messaging_response import MessagingResponse
 
-from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer, PersonSerializer, SiteSerializer
+from .serializers import AlertSerializer, IncidentReportSerializer, MinimalUserSerializer, PersonSerializer, SiteSerializer, FloorSerializer, AssetTypeSerializer, AssetSerializer
 
-from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus, Site
+from .models import Location, Person, IncidentReport, MessageReceipt, PersonStatus, Site, Floor, AssetType, Asset
 from .twilio_utils import send_twilio_message
 
 class PingView(APIView):
@@ -121,18 +121,29 @@ class TwilioWebhookView(APIView):
         return Response(str(twiml_response))
 
 
-class SiteViewSet(viewsets.ModelViewSet):
-    serializer_class = SiteSerializer
+class OrganizationedViewSet(viewsets.ModelViewSet):
+    """ An abstract viewset that filters by the current user's organization """
+    model = None
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return Site.objects.filter(organization=user.organization)
-        else:
-            raise Http404("User is not authenticated")
+        return self.model.objects.filter(organization=self.request.user.organization)
 
     def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            serializer.save(organization=self.request.user.organization)
-        else:
-            raise Http404("User is not authenticated")
+        serializer.save(organization=self.request.user.organization)
+
+class SiteViewSet(OrganizationedViewSet):
+    model = Site
+    serializer_class = SiteSerializer
+
+
+class FloorViewSet(OrganizationedViewSet):
+    model = Floor
+    serializer_class = FloorSerializer
+
+class AssetTypeViewSet(OrganizationedViewSet):
+    model = AssetType
+    serializer_class = AssetTypeSerializer
+
+class AssetViewSet(OrganizationedViewSet):
+    model = Asset
+    serializer_class = AssetSerializer

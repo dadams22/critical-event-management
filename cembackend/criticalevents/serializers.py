@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 User = get_user_model()
-from .models import Alert, IncidentReport, Location, Person, PersonStatus, Site
+from .models import Alert, IncidentReport, Location, Person, PersonStatus, Site, Floor, Asset, AssetType
 
 
 class LocationSerializer(serializers.ModelSerializer):
@@ -59,3 +59,21 @@ class SiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         fields = ['id', 'name', 'address', 'longitude', 'latitude', 'bounds', 'floor_plan', 'floor_plan_bounds']
+
+
+class FloorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Floor
+        fields = ['id', 'name', 'site', 'sort_order', 'floor_plan', 'floor_plan_bounds']
+
+
+class AssetTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AssetType
+        fields = ['id', 'name']
+
+
+class AssetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Asset
+        fields = ['id', 'name', 'asset_type', 'floor', 'longitude', 'latitude']

@@ -112,7 +112,7 @@ class Floor(BaseModel):
     floor_plan_bounds = models.JSONField()
 
 
-class AssetTypes(BaseModel):
+class AssetType(BaseModel):
     """ A type of asset that can be placed on a floor
 
     Note that asset types are Organization-scoped, so that different
@@ -123,9 +123,10 @@ class AssetTypes(BaseModel):
 
 class Asset(BaseModel):
     """ An asset within a site """
+
     floor = models.ForeignKey(Floor, on_delete=models.RESTRICT)
     name = models.CharField(max_length=255)
-    asset_type = models.ForeignKey(AssetTypes, on_delete=models.RESTRICT)
+    asset_type = models.ForeignKey(AssetType, on_delete=models.RESTRICT)
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
 
