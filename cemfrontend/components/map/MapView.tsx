@@ -1,11 +1,11 @@
 'use client';
 
-import styled from "@emotion/styled";
-import mapboxgl from "mapbox-gl";
-import { useEffect, useRef } from "react";
-import { Location } from "../../api/types";
-import React from "react";
-import { ColorScheme } from "@mantine/core";
+import styled from '@emotion/styled';
+import mapboxgl from 'mapbox-gl';
+import { useEffect, useRef } from 'react';
+import { Location } from '../../api/types';
+import React from 'react';
+import { ColorScheme } from '@mantine/core';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -18,16 +18,16 @@ const MapContainer = styled.div`
 `;
 
 interface ComponentProps {
-    location: Location;
+	location: Location;
 }
 
 export default function MapView({ location }: ComponentProps) {
-    const map = useRef<mapboxgl.Map>(null);
-    const mapContainer = useRef(null);
+	const map = useRef<mapboxgl.Map>(null);
+	const mapContainer = useRef(null);
 
 	const colorScheme: ColorScheme = 'dark';
 
-    useEffect(() => {
+	useEffect(() => {
 		if (map.current || !location || !mapContainer.current) return; // initialize map only once
 		map.current = new mapboxgl.Map({
 			container: mapContainer.current,
@@ -38,13 +38,11 @@ export default function MapView({ location }: ComponentProps) {
 			center: [location.longitude, location.latitude],
 			zoom: 18,
 		});
-    }, [location, mapContainer.current]);
+	}, [location, mapContainer.current]);
 
-    return (
-        <MapContainer ref={mapContainer}>
-			<MapContext.Provider value={map.current}>
-
-			</MapContext.Provider>
+	return (
+		<MapContainer ref={mapContainer}>
+			<MapContext.Provider value={map.current}></MapContext.Provider>
 		</MapContainer>
-    )
+	);
 }
