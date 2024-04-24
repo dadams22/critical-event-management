@@ -34,7 +34,13 @@ interface ComponentProps {
 	sites?: Site[];
 }
 
-export default function MapView({ location, onUpdateBounds, polygons, floorPlan, sites, }: ComponentProps) {
+export default function MapView({
+	location,
+	onUpdateBounds,
+	polygons,
+	floorPlan,
+	sites,
+}: ComponentProps) {
 	const theme = useMantineTheme();
 
 	const map = useRef(null);
@@ -313,22 +319,21 @@ export default function MapView({ location, onUpdateBounds, polygons, floorPlan,
 
 				// floor plan
 				map.current.addSource(`site-floor-plan-${site.id}`, {
-					'type': 'image',
-					'url': site.floor_plan,
-					'coordinates': site.floor_plan_bounds
+					type: 'image',
+					url: site.floor_plan,
+					coordinates: site.floor_plan_bounds,
 				});
 				map.current.addLayer({
 					id: `site-floor-plan-${site.id}-layer`,
-					'type': 'raster',
-					'source': `site-floor-plan-${site.id}`,
-					'paint': {
-						'raster-fade-duration': 0
-					}
+					type: 'raster',
+					source: `site-floor-plan-${site.id}`,
+					paint: {
+						'raster-fade-duration': 0,
+					},
 				});
-		
 			});
 		});
-	}, [sites, map.current])
+	}, [sites, map.current]);
 
 	return <MapContainer ref={mapContainer} />;
 }
