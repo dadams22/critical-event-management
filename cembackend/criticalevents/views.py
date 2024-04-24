@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -121,5 +122,11 @@ class TwilioWebhookView(APIView):
 
 
 class SiteViewSet(viewsets.ModelViewSet):
-    queryset = Site.objects.all()
     serializer_class = SiteSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            return Site.objects.filter(organization=user.organization)
+        else:
+            raise Http404("User is not authenticated")
