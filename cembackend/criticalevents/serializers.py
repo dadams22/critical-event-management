@@ -90,7 +90,7 @@ class IncidentReportSerializer(serializers.ModelSerializer):
 class SiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
-        fields = [
+        fields = (
             "id",
             "name",
             "address",
@@ -99,22 +99,22 @@ class SiteSerializer(serializers.ModelSerializer):
             "bounds",
             "floor_plan",
             "floor_plan_bounds",
-        ]
+        )
 
 
 class FloorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Floor
-        fields = ["id", "name", "site", "sort_order", "floor_plan", "floor_plan_bounds"]
+        fields = ("id", "name", "site", "sort_order", "floor_plan", "floor_plan_bounds")
 
 
 class AssetTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssetType
-        fields = ["id", "name"]
+        fields = ("id", "name")
 
 
 class AssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asset
-        fields = ["id", "name", "asset_type", "floor", "longitude", "latitude"]
+        fields = ("id", "name", "asset_type", "floor", "longitude", "latitude")
