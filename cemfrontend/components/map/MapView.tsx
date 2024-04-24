@@ -3,11 +3,12 @@
 import styled from "@emotion/styled";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Location, Site } from "../../api/types";
+import { Bounds, Location, Site } from "../../api/types";
 import React from "react";
 import { ColorScheme } from "@mantine/core";
 import Marker from './components/Marker';
 import SiteDisplay from "./components/SiteDisplay";
+import DrawBoundsControls from "./components/DrawBoundsControls";
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -22,9 +23,13 @@ const MapContainer = styled.div`
 interface ComponentProps {
     location: Location;
 	sites?: Site[];
+	drawBounds?: {
+		bounds?: Bounds;
+		onUpdateBounds: (bounds?: Bounds) => void;
+	}
 }
 
-export default function MapView({ location, sites }: ComponentProps) {
+export default function MapView({ location, sites, drawBounds, }: ComponentProps) {
 	const colorScheme: ColorScheme = 'dark';
     const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);
@@ -56,6 +61,9 @@ export default function MapView({ location, sites }: ComponentProps) {
 						{sites && sites.map((site) => (
 							<SiteDisplay site={site} />
 						))}
+						{drawBounds && (
+							<DrawBoundsControls {...drawBounds} />
+						)}
 					</>
 				)}
 			</MapContext.Provider>

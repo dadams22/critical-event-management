@@ -17,12 +17,13 @@ import { useMemo, useState } from 'react';
 import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
 import _ from 'lodash';
 import AddressField from '../../../../components/AddressField';
-import MapView, { Bounds } from '../../report/[incidentReportId]/MapView';
+import { Bounds } from '../../report/[incidentReportId]/MapView';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
 import { IconPhotoPlus } from '@tabler/icons';
 // import { Polygon } from '@turf/helpers/dist/es';
 import Api from '../../../../api/Api';
+import MapView from '../../../../components/map/MapView';
 
 const useStyles = createStyles((theme) => ({
 	overlay: {
@@ -164,8 +165,10 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 										longitude: address.features?.[0]?.geometry?.coordinates?.[0],
 										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
 									}}
-									onUpdateBounds={setSiteBounds}
-									polygons={siteBounds ? [siteBounds] : undefined}
+									drawBounds={{
+										bounds: siteBounds,
+										onUpdateBounds: setSiteBounds,
+									}}
 								/>
 							</MapContainer>
 						)}
