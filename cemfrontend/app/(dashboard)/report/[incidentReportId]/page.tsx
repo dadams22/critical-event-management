@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
-import MapView from './MapView';
+import MapView from '../../../../components/map/MapView';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
@@ -148,7 +148,12 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 
 	return (
 		<MapContainer>
-			{location && <MapView location={location} sites={sites} />}
+			{location && 
+				<MapView 
+					location={location} 
+					sites={sites} 
+				/>
+			}
 			<OverlayGrid>
 				<SideBar>
 					<Card shadow="sm">

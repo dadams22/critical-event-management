@@ -33,10 +33,9 @@ export default function Marker({ location }: ComponentProps) {
         marker.current?.setLngLat([location.longitude, location.latitude]);
 
         return () => {
-            console.log('cleaning');
             if (!map || !marker.current) return;
             marker.current.remove();
-        }
+        };
     }, [map, location]);
 
     return null;

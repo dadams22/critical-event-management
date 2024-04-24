@@ -3,10 +3,11 @@
 import styled from "@emotion/styled";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Location } from "../../api/types";
+import { Location, Site } from "../../api/types";
 import React from "react";
 import { ColorScheme } from "@mantine/core";
 import Marker from './components/Marker';
+import SiteDisplay from "./components/SiteDisplay";
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -20,16 +21,18 @@ const MapContainer = styled.div`
 
 interface ComponentProps {
     location: Location;
+	sites?: Site[];
 }
 
-export default function MapView({ location }: ComponentProps) {
-    const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
+export default function MapView({ location, sites }: ComponentProps) {
 	const colorScheme: ColorScheme = 'dark';
+    const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
+	const [loaded, setLoaded] = useState<boolean>(false);
 
 	const map = useMemo<mapboxgl.Map | null>(() => {
 		if (!mapContainer) return null;
 
-		return new mapboxgl.Map({
+		const map = new mapboxgl.Map({
 			container: mapContainer,
 			style:
 				colorScheme === 'dark'
@@ -37,13 +40,24 @@ export default function MapView({ location }: ComponentProps) {
 					: 'mapbox://styles/mapbox/light-v11',
 			center: [location.longitude, location.latitude],
 			zoom: 18,
-		})
+		});
+
+		map.on('load', () => setLoaded(true));
+
+		return map;
 	}, [mapContainer]);
 
     return (
         <MapContainer ref={(elem) => setMapContainer(elem)}>
 			<MapContext.Provider value={map}>
-				<Marker location={location} />
+				{loaded && (
+					<>
+						<Marker location={location} />
+						{sites && sites.map((site) => (
+							<SiteDisplay site={site} />
+						))}
+					</>
+				)}
 			</MapContext.Provider>
 		</MapContainer>
     )
