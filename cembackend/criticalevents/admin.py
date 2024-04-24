@@ -15,6 +15,11 @@ from .models import (
     AssetType,
 )
 
+UserAdmin.list_display += ("organization",)
+UserAdmin.list_filter += ("organization",)
+UserAdmin.fieldsets += (("Extra Fields", {"fields": ("organization",)}),)
+UserAdmin.add_fieldsets += (("Extra Fields", {"fields": ("organization",)}),)
+
 # Register your models here.
 admin.site.register(User, UserAdmin)
 admin.site.register(Organization)
