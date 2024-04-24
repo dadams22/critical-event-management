@@ -151,6 +151,7 @@ class AssetType(BaseModel):
     organizations can have different types of assets"""
 
     name = models.CharField(max_length=255)
+    icon_identifier = models.CharField(max_length=255, default="fire-extinguisher")
 
 
 class Asset(BaseModel):

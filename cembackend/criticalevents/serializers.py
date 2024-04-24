@@ -111,7 +111,7 @@ class FloorSerializer(serializers.ModelSerializer):
 class AssetTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssetType
-        fields = ("id", "name")
+        fields = ("id", "name", "icon_identifier")
 
 
 class AssetSerializer(serializers.ModelSerializer):
