@@ -109,7 +109,7 @@ const Api = (() => {
 			longitude,
 			latitude,
 			floorPlan,
-			floorPlanBounds
+			floorPlanBounds,
 		}: {
 			name: string;
 			address: string;
@@ -120,7 +120,7 @@ const Api = (() => {
 			floorPlanBounds: Bounds;
 		}): Promise<Site> => {
 			const formData = new FormData();
-			formData.append('name', name);  // Add other fields as required
+			formData.append('name', name); // Add other fields as required
 			formData.append('address', address);
 			formData.append('longitude', String(longitude));
 			formData.append('latitude', String(latitude));
@@ -128,16 +128,12 @@ const Api = (() => {
 			formData.append('floor_plan_bounds', JSON.stringify(floorPlanBounds));
 			formData.append('floor_plan', floorPlan);
 
-			const response = await axiosInstance.post<Site>(
-				'site/',
-				formData,
-				{ 
-					method: 'CREATE',
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
+			const response = await axiosInstance.post<Site>('site/', formData, {
+				method: 'CREATE',
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
 			return response.data;
 		},
 
@@ -145,7 +141,7 @@ const Api = (() => {
 			const response = await axiosInstance.get<Site[]>('site/');
 			console.group(response.data);
 			return response.data;
-		}
+		},
 	};
 })();
 

@@ -104,22 +104,26 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const nextDisabled = useMemo(() => {
 		if (step === 0) return !siteName || !address;
 		if (step === 1) return !siteBounds;
-		if (step === 2) return !address 
-			|| !address?.features?.[0]?.properties?.full_address
-			|| !siteBounds
-			|| !floorPlanFile;
+		if (step === 2)
+			return (
+				!address ||
+				!address?.features?.[0]?.properties?.full_address ||
+				!siteBounds ||
+				!floorPlanFile
+			);
 
 		return false;
 	}, [step, siteName, address, siteBounds, siteBounds, floorPlanFile]);
 
 	const handleSave = () => {
 		if (
-			!address 
-			|| !address?.features?.[0]?.properties?.full_address
-			|| !siteBounds
-			|| !floorPlanFile
-			|| !floorPlanBounds
-		) return;
+			!address ||
+			!address?.features?.[0]?.properties?.full_address ||
+			!siteBounds ||
+			!floorPlanFile ||
+			!floorPlanBounds
+		)
+			return;
 
 		setSaving(true);
 		Api.createSite({
@@ -231,7 +235,11 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 						<Button variant="outline" onClick={stepHandlers.decrement} disabled={step === 0}>
 							Previous
 						</Button>
-						<Button variant="filled" onClick={step === 2 ? handleSave : stepHandlers.increment} disabled={nextDisabled}>
+						<Button
+							variant="filled"
+							onClick={step === 2 ? handleSave : stepHandlers.increment}
+							disabled={nextDisabled}
+						>
 							{step === 2 ? 'Save' : 'Next'}
 						</Button>
 					</Group>

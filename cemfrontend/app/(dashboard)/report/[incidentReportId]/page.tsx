@@ -92,9 +92,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 		refreshInterval: 2000,
 	});
 
-	const {
-		data: sites,
-	} = useSWR('sites/all', Api.getSites)
+	const { data: sites } = useSWR('sites/all', Api.getSites);
 	// console.log(sites);
 
 	const { data: people } = useSWR('people', Api.getPeople);
@@ -148,12 +146,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 
 	return (
 		<MapContainer>
-			{location && 
-				<MapView 
-					location={location} 
-					sites={sites} 
-				/>
-			}
+			{location && <MapView location={location} sites={sites} />}
 			<OverlayGrid>
 				<SideBar>
 					<Card shadow="sm">
