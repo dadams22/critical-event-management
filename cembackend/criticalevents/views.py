@@ -130,3 +130,9 @@ class SiteViewSet(viewsets.ModelViewSet):
             return Site.objects.filter(organization=user.organization)
         else:
             raise Http404("User is not authenticated")
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            serializer.save(organization=self.request.user.organization)
+        else:
+            raise Http404("User is not authenticated")
