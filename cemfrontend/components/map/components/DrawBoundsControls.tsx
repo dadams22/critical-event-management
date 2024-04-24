@@ -7,12 +7,12 @@ import { TxRectMode } from 'mapbox-gl-draw-rotate-scale-rect-mode';
 import { MapContext } from "../MapView";
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
-interface ComponentProps {
+export interface DrawBoundsControlsProps {
     onUpdateBounds: (bounds?: Bounds) => void;
     bounds?: Bounds;
 }
 
-export default function DrawBoundsControls({ onUpdateBounds, bounds }: ComponentProps) {
+export default function DrawBoundsControls({ onUpdateBounds, bounds }: DrawBoundsControlsProps) {
     const map = useContext(MapContext);
 
     const draw = useMemo<MapboxDraw>(() => new MapboxDraw({

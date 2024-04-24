@@ -8,7 +8,8 @@ import React from "react";
 import { ColorScheme } from "@mantine/core";
 import Marker from './components/Marker';
 import SiteDisplay from "./components/SiteDisplay";
-import DrawBoundsControls from "./components/DrawBoundsControls";
+import DrawBoundsControls, { DrawBoundsControlsProps } from "./components/DrawBoundsControls";
+import PlaceFloorPlanControls, { PlaceFloorPlanControlsProps } from "./components/PlaceFloorPlanControls";
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -23,13 +24,11 @@ const MapContainer = styled.div`
 interface ComponentProps {
     location: Location;
 	sites?: Site[];
-	drawBounds?: {
-		bounds?: Bounds;
-		onUpdateBounds: (bounds?: Bounds) => void;
-	}
+	drawBounds?: DrawBoundsControlsProps;
+	floorPlan?: PlaceFloorPlanControlsProps;
 }
 
-export default function MapView({ location, sites, drawBounds, }: ComponentProps) {
+export default function MapView({ location, sites, drawBounds, floorPlan }: ComponentProps) {
 	const colorScheme: ColorScheme = 'dark';
     const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);
@@ -63,6 +62,9 @@ export default function MapView({ location, sites, drawBounds, }: ComponentProps
 						))}
 						{drawBounds && (
 							<DrawBoundsControls {...drawBounds} />
+						)}
+						{floorPlan && (
+							<PlaceFloorPlanControls {...floorPlan} />
 						)}
 					</>
 				)}
