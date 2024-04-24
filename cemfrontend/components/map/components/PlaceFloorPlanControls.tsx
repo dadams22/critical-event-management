@@ -7,15 +7,17 @@ import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import { polygon } from '@turf/helpers';
 import { TxRectMode } from 'mapbox-gl-draw-rotate-scale-rect-mode';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
+import BoundsDisplay from "./BoundsDisplay";
 
 export interface PlaceFloorPlanControlsProps {
     floorPlanImageUrl: string;
     width: number;
     height: number;
     onUpdateFloorPlanBounds: (bounds: Bounds) => void;
+    siteBounds: Bounds;
 }
 
-export default function PlaceFloorPlanControls({ floorPlanImageUrl, width, height, onUpdateFloorPlanBounds }: ComponentProps) {
+export default function PlaceFloorPlanControls({ floorPlanImageUrl, width, height, onUpdateFloorPlanBounds, siteBounds }: ComponentProps) {
     const map = useContext(MapContext);
 
     const draw = useMemo<MapboxDraw>(() => new MapboxDraw({
@@ -140,5 +142,5 @@ export default function PlaceFloorPlanControls({ floorPlanImageUrl, width, heigh
         };
     }, [map])
     
-    return null;
+    return <BoundsDisplay bounds={siteBounds} />;
 }

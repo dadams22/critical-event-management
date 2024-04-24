@@ -3,6 +3,7 @@
 import { useContext, useEffect } from "react";
 import { Site } from "../../../api/types";
 import { MapContext } from "../MapView";
+import BoundsDisplay from "./BoundsDisplay";
 
 const siteBoundsId = (site: Site) => `site-bounds-${site.id}`;
 const siteBoundsLayerId = (site: Site) => `site-bounds-layer-${site.id}`;
@@ -17,30 +18,10 @@ interface ComponentProps {
 export default function SiteDisplay({ site }: ComponentProps) {
     const map = useContext(MapContext);
 
+    console.log(site);
+
     useEffect(() => {
         if (!map) return;
-
-        // Site boundaries
-        map.addSource(`site-bounds-${site.id}`, {
-            type: 'geojson',
-            data: {
-                type: 'Feature',
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: site.bounds,
-                },
-            },
-        });
-        map.addLayer({
-            id: siteBoundsLayerId(site),
-            type: 'fill',
-            source: siteBoundsId(site),
-            layout: {},
-            paint: {
-                'fill-color': '#0080ff',
-                'fill-opacity': 0.5,
-            },
-        });
 
         // Floor plan
         map.addSource(siteFloorPlanId(site), {
@@ -60,12 +41,10 @@ export default function SiteDisplay({ site }: ComponentProps) {
         return () => {
             if (!map) return;
 
-            map.removeSource(siteBoundsId(site));
-            map.removeLayer(siteBoundsLayerId(site));
             map.removeSource(siteFloorPlanId(site));
-            map.removeSource(siteFloorPlanLayerId(site));
+            map.removeLayer(siteFloorPlanLayerId(site));
         };
     }, [map, site])
 
-    return null;
+    return <BoundsDisplay bounds={site.bounds} />;
 }

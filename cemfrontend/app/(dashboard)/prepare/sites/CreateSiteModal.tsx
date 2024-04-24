@@ -183,11 +183,12 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
 									}}
 									floorPlan={
-										!!floorPlanImageUrl && !!floorPlanDimensions
+										!!floorPlanImageUrl && !!floorPlanDimensions && !!siteBounds
 											? {
 													onUpdateFloorPlanBounds: setFloorPlanBounds,
 													floorPlanImageUrl,
 													...floorPlanDimensions,
+													siteBounds,
 												}
 											: undefined
 									}
