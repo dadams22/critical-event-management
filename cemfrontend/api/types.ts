@@ -40,13 +40,16 @@ export interface IncidentReport {
 	statuses: PersonStatus[];
 }
 
+export type Bounds = [number, number][];
+
 export interface Site {
 	id: string;
 	name: string;
 	address: string;
 	longitude: number;
 	latitude: number;
-	bounds: string;
+	location: Location;
+	bounds: Bounds;
 	floor_plan: string;
-	floor_plan_bounds: string;
+	floor_plan_bounds: Bounds;
 }
