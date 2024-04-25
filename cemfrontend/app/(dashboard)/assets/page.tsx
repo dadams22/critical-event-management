@@ -9,6 +9,7 @@ import {
 	Group,
 	Button,
 	useMantineTheme,
+    Autocomplete,
 } from '@mantine/core';
 import useSWR from 'swr';
 import Api from '../../../api/Api';
@@ -17,7 +18,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 // import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
 // import SearchBar from './SearchBar';
-import { IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons';
+import { IconCheck, IconPlus, IconSearch, IconSpeakerphone, IconUrgent } from '@tabler/icons';
 import { modals } from '@mantine/modals';
 // import { ModalNames } from '../../../(modals)';
 // import { Alert } from '../../../../api/types';
@@ -103,7 +104,11 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
                 <SideBar>
 				</SideBar>
 				<ActionBar>
-					{/* <SearchBar people={people} statusByPerson={statusByPerson} /> */}
+                    <div />
+					<Autocomplete w={400} data={[]} icon={<IconSearch size={20} />} placeholder="Search for assets..." />
+                    <Button leftIcon={<IconPlus size={20} />}>
+                        Add Asset
+                    </Button>
 				</ActionBar>
 				<Footer>
 					<AssetSummary />
