@@ -1,17 +1,11 @@
 'use client';
-import {
-	Center,
-	Loader,
-	Button,
-	useMantineTheme,
-    Autocomplete,
-} from '@mantine/core';
+import { Center, Loader, Button, useMantineTheme, Autocomplete } from '@mantine/core';
 import useSWR from 'swr';
 import Api from '../../../api/Api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import { IconPlus, IconSearch, } from '@tabler/icons';
+import { IconPlus, IconSearch } from '@tabler/icons';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';
@@ -71,13 +65,13 @@ const Footer = styled.div`
 
 export default function IncidentReportPage() {
 	const { data: sites } = useSWR('sites/all', Api.getSites);
-    
-    const [addingAsset, setAddingAsset] = useState<boolean>(false);
-    const [addAssetLocation, setAddAssetLocation] = useState<Location>();
 
-    console.log(addAssetLocation);
+	const [addingAsset, setAddingAsset] = useState<boolean>(false);
+	const [addAssetLocation, setAddAssetLocation] = useState<Location>();
 
-    const loading = false
+	console.log(addAssetLocation);
+
+	const loading = false;
 	if (loading)
 		return (
 			<Center h="100%">
@@ -85,14 +79,14 @@ export default function IncidentReportPage() {
 			</Center>
 		);
 
-    const handleClickAddAsset = () => {
-        setAddingAsset(true);
-    };
+	const handleClickAddAsset = () => {
+		setAddingAsset(true);
+	};
 
-    const handleAddAsset = (location: Location) => {
-        setAddAssetLocation(location);
-        setAddingAsset(false);
-    };
+	const handleAddAsset = (location: Location) => {
+		setAddAssetLocation(location);
+		setAddingAsset(false);
+	};
 
 	const handleCancelAddAsset = () => {
 		setAddingAsset(false);
@@ -102,25 +96,26 @@ export default function IncidentReportPage() {
 	return (
 		<MapContainer>
 			{!!sites?.[0] && (
-                <MapView 
-                    location={_.pick(sites[0], ['longitude', 'latitude'])} 
-                    sites={sites} 
-                    addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
-                    marker={addAssetLocation ? { location: addAssetLocation } : undefined}
-                />
-            )}
+				<MapView
+					location={_.pick(sites[0], ['longitude', 'latitude'])}
+					sites={sites}
+					addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
+					marker={addAssetLocation ? { location: addAssetLocation } : undefined}
+				/>
+			)}
 			<OverlayGrid>
-                <SideBar>
-                    {addAssetLocation && (
-                        <AddAssetForm onCancel={handleCancelAddAsset} />
-                    )}
-				</SideBar>
+				<SideBar>{addAssetLocation && <AddAssetForm onCancel={handleCancelAddAsset} />}</SideBar>
 				<ActionBar>
-                    <div />
-					<Autocomplete w={400} data={[]} icon={<IconSearch size={20} />} placeholder="Search for assets..." />
-                    <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
-                        Add Asset
-                    </Button>
+					<div />
+					<Autocomplete
+						w={400}
+						data={[]}
+						icon={<IconSearch size={20} />}
+						placeholder="Search for assets..."
+					/>
+					<Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
+						Add Asset
+					</Button>
 				</ActionBar>
 				<Footer>
 					<AssetSummary />

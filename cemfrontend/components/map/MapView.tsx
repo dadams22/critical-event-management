@@ -34,7 +34,15 @@ interface ComponentProps {
 	marker?: MarkerProps;
 }
 
-export default function MapView({ location, showLocationMarker, sites, drawBounds, floorPlan, addAsset, marker }: ComponentProps) {
+export default function MapView({
+	location,
+	showLocationMarker,
+	sites,
+	drawBounds,
+	floorPlan,
+	addAsset,
+	marker,
+}: ComponentProps) {
 	const colorScheme: ColorScheme = 'dark';
 	const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);

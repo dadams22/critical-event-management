@@ -1,31 +1,31 @@
 'use client';
 
-import { useContext, useEffect } from "react";
-import { MapContext } from "../MapView";
-import { Location } from "../../../api/types";
+import { useContext, useEffect } from 'react';
+import { MapContext } from '../MapView';
+import { Location } from '../../../api/types';
 
 export interface AddAssetControlsProps {
-    onAdd: (location: Location) => void;
+	onAdd: (location: Location) => void;
 }
 
-export default function AddAssetControls({ onAdd, }: AddAssetControlsProps) {
-    const map = useContext(MapContext);
+export default function AddAssetControls({ onAdd }: AddAssetControlsProps) {
+	const map = useContext(MapContext);
 
-    useEffect(() => {
-        if (!map) return;
+	useEffect(() => {
+		if (!map) return;
 
-        const handleClick = (e) => {
-            onAdd({ longitude: e.lngLat.lng, latitude: e.lngLat.lat })
-        };
-        map.on('click', handleClick);
+		const handleClick = (e) => {
+			onAdd({ longitude: e.lngLat.lng, latitude: e.lngLat.lat });
+		};
+		map.on('click', handleClick);
 
-        map.getCanvas().style.cursor = 'crosshair';
+		map.getCanvas().style.cursor = 'crosshair';
 
-        return () => {
-            map.off('click', handleClick);
-            map.getCanvas().style.cursor = '';
-        };
-    }, [map]);
+		return () => {
+			map.off('click', handleClick);
+			map.getCanvas().style.cursor = '';
+		};
+	}, [map]);
 
-    return null;
+	return null;
 }
