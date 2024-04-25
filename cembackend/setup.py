@@ -55,6 +55,7 @@ setup(
         "GitPython==3.1.43",
         "django-storages==1.14.2",
         "dj_inmemorystorage==2.1.0",
+        "drf-yasg==1.21.7",
     ],
     extras_require={
         "dev": [
