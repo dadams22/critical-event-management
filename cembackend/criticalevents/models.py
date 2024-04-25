@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -113,6 +114,16 @@ class ShortToken(BaseModel):
     token = models.CharField(max_length=10)
 
 
+def floor_plan_upload_to(instance, filename):
+    """Generate a unique path for a floor plan image upload
+
+    NOTE: I tried to generalize the upload_to functions but django gets whiny
+    when the function itself doesn't exist on the module, so you need to make
+    a new one for each model that needs it."""
+
+    return f"floor_plans/{str(uuid.uuid4())}/{filename}"
+
+
 class Site(BaseModel):
     """A site with a floor plan"""
 
@@ -123,7 +134,7 @@ class Site(BaseModel):
     bounds = models.JSONField()
 
     # TODO: Remove floor plan stuff from site, move to floors
-    floor_plan = models.ImageField(upload_to="floor_plans/")
+    floor_plan = models.ImageField(upload_to=floor_plan_upload_to)
     floor_plan_bounds = models.JSONField()
 
     def __str__(self) -> str:
@@ -137,7 +148,7 @@ class Floor(BaseModel):
     name = models.CharField(max_length=255)
     sort_order = models.IntegerField()
 
-    floor_plan = models.ImageField(upload_to="floor_plans/")
+    floor_plan = models.ImageField(upload_to=floor_plan_upload_to)
     floor_plan_bounds = models.JSONField()
 
     def __str__(self) -> str:
@@ -154,6 +165,16 @@ class AssetType(BaseModel):
     icon_identifier = models.CharField(max_length=255, default="fire-extinguisher")
 
 
+def asset_upload_to(instance, filename):
+    """Generate a unique path for an asset image upload
+
+    NOTE: I tried to generalize the upload_to functions but django gets whiny
+    when the function itself doesn't exist on the module, so you need to make
+    a new one for each model that needs it."""
+
+    return f"assets/{str(uuid.uuid4())}/{filename}"
+
+
 class Asset(BaseModel):
     """An asset within a site"""
 
@@ -162,6 +183,7 @@ class Asset(BaseModel):
     asset_type = models.ForeignKey(AssetType, on_delete=models.RESTRICT)
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
+    photo = models.ImageField(upload_to=asset_upload_to, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

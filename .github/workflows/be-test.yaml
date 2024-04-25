@@ -34,4 +34,6 @@ jobs:
     - name: Test with pytest
       run: |
         cd cembackend
-        . ./.venv/bin/activate && python manage.py test
+        . ./.venv/bin/activate
+        python manage.py makemigrations --check || (echo "Django detected that we need migrations, run \`python manage.py makemigrations\`" && exit 1)
+        python manage.py test
