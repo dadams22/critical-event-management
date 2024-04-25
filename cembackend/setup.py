@@ -6,15 +6,15 @@ from setuptools import setup, find_packages
 README = """"""
 
 setup(
-    name='python-cembackend',
-    version='0.0.1',
-    description='Kakuna Backend',
+    name="python-cembackend",
+    version="0.0.1",
+    description="Kakuna Backend",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/kakuna-dev/critical-event-management",
-    author='Mike Lyons',
-    author_email='mike@kakuna.io',
-    packages=find_packages( exclude=[ 'tmp', 'examples', 'build' ] ),
+    author="Mike Lyons",
+    author_email="mike@kakuna.io",
+    packages=find_packages(exclude=["tmp", "examples", "build"]),
     include_package_data=True,
     scripts=[],
     install_requires=[
@@ -53,12 +53,15 @@ setup(
         "urllib3==2.0.3",
         "yarl==1.9.2",
         "GitPython==3.1.43",
+        "django-storages==1.14.2",
+        "dj_inmemorystorage==2.1.0",
     ],
     extras_require={
         "dev": [
             "pytest==6.2.4",
             "pytest-cov==2.7.1",
             "pytest-mock==3.6.1",
+            "black==24.4.1",
         ]
     },
     license="MIT",

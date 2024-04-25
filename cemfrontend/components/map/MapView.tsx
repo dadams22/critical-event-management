@@ -37,8 +37,7 @@ export default function MapView({ location, sites, drawBounds, floorPlan }: Comp
 
 	const map = useMemo<mapboxgl.Map | null>(() => {
 		if (!mapContainer) return null;
-
-		const map = new mapboxgl.Map({
+		map.current = new mapboxgl.Map({
 			container: mapContainer,
 			style:
 				colorScheme === 'dark'

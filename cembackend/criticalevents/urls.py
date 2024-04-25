@@ -2,21 +2,38 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken import views
 
-from .views import AlertViewSet, MessageView, CreateIncidentReportView, IncidentReportViewSet, PersonViewSet, ResolveIncidentView, TwilioWebhookView, CheckAuthView, SiteViewSet, PingView
+from .views import (
+    AlertViewSet,
+    MessageView,
+    CreateIncidentReportView,
+    IncidentReportViewSet,
+    PersonViewSet,
+    ResolveIncidentView,
+    TwilioWebhookView,
+    CheckAuthView,
+    SiteViewSet,
+    PingView,
+    FloorViewSet,
+    AssetTypeViewSet,
+    AssetViewSet,
+)
 
 router = routers.SimpleRouter()
-router.register(r'incident', IncidentReportViewSet, basename='incident')
-router.register(r'alert', AlertViewSet, basename='alert')
-router.register(r'person', PersonViewSet, basename='person')
-router.register(r'site', SiteViewSet, basename='site')
+router.register(r"incident", IncidentReportViewSet, basename="incident")
+router.register(r"alert", AlertViewSet, basename="alert")
+router.register(r"person", PersonViewSet, basename="person")
+router.register(r"site", SiteViewSet, basename="site")
+router.register(r"floor", FloorViewSet, basename="floor")
+router.register(r"asset_type", AssetTypeViewSet, basename="asset_type")
+router.register(r"asset", AssetViewSet, basename="asset")
 
 urlpatterns = [
-    path('auth', views.obtain_auth_token),
-    path('ping', PingView.as_view()),
-    path('check-auth', CheckAuthView.as_view()),
-    path('report-incident', CreateIncidentReportView.as_view()),
-    path('resolve-incident', ResolveIncidentView.as_view()),
-    path('message', MessageView.as_view()),
-    path('twilio-webhook', TwilioWebhookView.as_view()),
-    path('', include(router.urls)),
+    path("auth", views.obtain_auth_token),
+    path("ping", PingView.as_view()),
+    path("check-auth", CheckAuthView.as_view()),
+    path("report-incident", CreateIncidentReportView.as_view()),
+    path("resolve-incident", ResolveIncidentView.as_view()),
+    path("message", MessageView.as_view()),
+    path("twilio-webhook", TwilioWebhookView.as_view()),
+    path("", include(router.urls)),
 ]
