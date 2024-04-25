@@ -24,6 +24,7 @@ import { modals } from '@mantine/modals';
 import { produce } from 'immer';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
+import { AssetSummary } from './AssetSummary';
 
 dayjs.extend(relativeTime);
 
@@ -105,7 +106,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 					{/* <SearchBar people={people} statusByPerson={statusByPerson} /> */}
 				</ActionBar>
 				<Footer>
-					{/* <ImpactedIndividualsStats people={people} statusByPerson={statusByPerson} /> */}
+					<AssetSummary />
 				</Footer>
 			</OverlayGrid>
 		</MapContainer>
