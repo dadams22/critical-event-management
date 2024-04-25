@@ -26,6 +26,7 @@ import { produce } from 'immer';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';
+import { ModalNames } from '../../(modals)';
 
 dayjs.extend(relativeTime);
 
@@ -97,6 +98,10 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 			</Center>
 		);
 
+    const handleClickAddAsset = () => {
+        
+    }
+
 	return (
 		<MapContainer>
 			{!!sites?.[0] && <MapView location={_.pick(sites[0], ['longitude', 'latitude'])} sites={sites} />}
@@ -106,7 +111,7 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 				<ActionBar>
                     <div />
 					<Autocomplete w={400} data={[]} icon={<IconSearch size={20} />} placeholder="Search for assets..." />
-                    <Button leftIcon={<IconPlus size={20} />}>
+                    <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
                         Add Asset
                     </Button>
 				</ActionBar>
