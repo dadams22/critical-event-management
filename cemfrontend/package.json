@@ -49,7 +49,8 @@
 		"next": "13.2.4",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
-		"swr": "^2.2.0"
+		"swr": "^2.2.0",
+		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.17.8",
@@ -64,6 +65,7 @@
 		"@types/node": "^18.11.4",
 		"@types/react": "18.0.21",
 		"@types/turf": "^3.5.32",
+		"@types/uuid": "^9.0.8",
 		"@typescript-eslint/eslint-plugin": "^5.30.0",
 		"@typescript-eslint/parser": "^5.30.0",
 		"babel-loader": "^8.2.4",
