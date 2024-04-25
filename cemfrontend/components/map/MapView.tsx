@@ -6,12 +6,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Bounds, Location, Site } from '../../api/types';
 import React from 'react';
 import { ColorScheme } from '@mantine/core';
-import Marker from './components/Marker';
+import Marker, { MarkerProps } from './components/Marker';
 import SiteDisplay from './components/SiteDisplay';
 import DrawBoundsControls, { DrawBoundsControlsProps } from './components/DrawBoundsControls';
 import PlaceFloorPlanControls, {
 	PlaceFloorPlanControlsProps,
 } from './components/PlaceFloorPlanControls';
+import AddAssetControls, { AddAssetControlsProps } from './components/AddAssetControls';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -28,9 +29,11 @@ interface ComponentProps {
 	sites?: Site[];
 	drawBounds?: DrawBoundsControlsProps;
 	floorPlan?: PlaceFloorPlanControlsProps;
+	addAsset?: AddAssetControlsProps;
+	marker?: MarkerProps;
 }
 
-export default function MapView({ location, sites, drawBounds, floorPlan }: ComponentProps) {
+export default function MapView({ location, sites, drawBounds, floorPlan, addAsset, marker }: ComponentProps) {
 	const colorScheme: ColorScheme = 'dark';
 	const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);
@@ -62,6 +65,8 @@ export default function MapView({ location, sites, drawBounds, floorPlan }: Comp
 						{sites && sites.map((site) => <SiteDisplay site={site} />)}
 						{drawBounds && <DrawBoundsControls {...drawBounds} />}
 						{floorPlan && <PlaceFloorPlanControls {...floorPlan} />}
+						{addAsset && <AddAssetControls {...addAsset} />}
+						{marker && <Marker {...marker} />}
 					</>
 				)}
 			</MapContext.Provider>

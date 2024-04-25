@@ -139,7 +139,6 @@ const Api = (() => {
 
 		getSites: async (): Promise<Site[]> => {
 			const response = await axiosInstance.get<Site[]>('site/');
-			console.group(response.data);
 			return response.data;
 		},
 	};

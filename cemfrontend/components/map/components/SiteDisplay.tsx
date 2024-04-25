@@ -17,8 +17,6 @@ interface ComponentProps {
 export default function SiteDisplay({ site }: ComponentProps) {
 	const map = useContext(MapContext);
 
-	console.log(site);
-
 	useEffect(() => {
 		if (!map) return;
 

@@ -2,11 +2,6 @@
 import {
 	Center,
 	Loader,
-	Space,
-	Text,
-	Timeline,
-	Card,
-	Group,
 	Button,
 	useMantineTheme,
     Autocomplete,
@@ -15,18 +10,14 @@ import useSWR from 'swr';
 import Api from '../../../api/Api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-// import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
-// import SearchBar from './SearchBar';
-import { IconCheck, IconPlus, IconSearch, IconSpeakerphone, IconUrgent } from '@tabler/icons';
-import { modals } from '@mantine/modals';
-// import { ModalNames } from '../../../(modals)';
-// import { Alert } from '../../../../api/types';
-import { produce } from 'immer';
+import { IconPlus, IconSearch, } from '@tabler/icons';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';
-import { ModalNames } from '../../(modals)';
+import { useState } from 'react';
+import { Location } from '../../../api/types';
+import AddAssetForm from './AddAssetForm';
 
 dayjs.extend(relativeTime);
 
@@ -78,17 +69,13 @@ const Footer = styled.div`
 	grid-area: footer;
 `;
 
-interface ComponentProps {
-	params: {
-		incidentReportId: string;
-	};
-}
-
-export default function IncidentReportPage({ params: { incidentReportId } }: ComponentProps) {
-	const theme = useMantineTheme();
-
+export default function IncidentReportPage() {
 	const { data: sites } = useSWR('sites/all', Api.getSites);
-    console.log(sites);
+    
+    const [addingAsset, setAddingAsset] = useState<boolean>(false);
+    const [addAssetLocation, setAddAssetLocation] = useState<Location>();
+
+    console.log(addAssetLocation);
 
     const loading = false
 	if (loading)
@@ -99,14 +86,29 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 		);
 
     const handleClickAddAsset = () => {
-        
+        setAddingAsset(true);
+    };
+
+    const handleAddAsset = (location: Location) => {
+        setAddAssetLocation(location);
+        setAddingAsset(false);
     }
 
 	return (
 		<MapContainer>
-			{!!sites?.[0] && <MapView location={_.pick(sites[0], ['longitude', 'latitude'])} sites={sites} />}
+			{!!sites?.[0] && (
+                <MapView 
+                    location={_.pick(sites[0], ['longitude', 'latitude'])} 
+                    sites={sites} 
+                    addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
+                    marker={addAssetLocation ? { location: addAssetLocation } : undefined}
+                />
+            )}
 			<OverlayGrid>
                 <SideBar>
+                    {addAssetLocation && (
+                        <AddAssetForm />
+                    )}
 				</SideBar>
 				<ActionBar>
                     <div />

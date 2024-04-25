@@ -6,11 +6,11 @@ import { MapContext } from '../MapView';
 import mapboxgl from 'mapbox-gl';
 import { useMantineTheme } from '@mantine/core';
 
-interface ComponentProps {
+export interface MarkerProps {
 	location: Location;
 }
 
-export default function Marker({ location }: ComponentProps) {
+export default function Marker({ location }: MarkerProps) {
 	const theme = useMantineTheme();
 
 	const map = useContext(MapContext);
