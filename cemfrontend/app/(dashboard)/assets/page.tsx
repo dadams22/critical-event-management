@@ -92,7 +92,12 @@ export default function IncidentReportPage() {
     const handleAddAsset = (location: Location) => {
         setAddAssetLocation(location);
         setAddingAsset(false);
-    }
+    };
+
+	const handleCancelAddAsset = () => {
+		setAddingAsset(false);
+		setAddAssetLocation(undefined);
+	};
 
 	return (
 		<MapContainer>
@@ -107,7 +112,7 @@ export default function IncidentReportPage() {
 			<OverlayGrid>
                 <SideBar>
                     {addAssetLocation && (
-                        <AddAssetForm />
+                        <AddAssetForm onCancel={handleCancelAddAsset} />
                     )}
 				</SideBar>
 				<ActionBar>

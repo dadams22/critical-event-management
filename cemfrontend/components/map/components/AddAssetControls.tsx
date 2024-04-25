@@ -17,11 +17,13 @@ export default function AddAssetControls({ onAdd, }: AddAssetControlsProps) {
         const handleClick = (e) => {
             onAdd({ longitude: e.lngLat.lng, latitude: e.lngLat.lat })
         };
-
         map.on('click', handleClick);
+
+        map.getCanvas().style.cursor = 'crosshair';
 
         return () => {
             map.off('click', handleClick);
+            map.getCanvas().style.cursor = '';
         };
     }, [map]);
 

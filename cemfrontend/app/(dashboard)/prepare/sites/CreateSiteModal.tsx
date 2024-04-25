@@ -169,6 +169,7 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 										longitude: address.features?.[0]?.geometry?.coordinates?.[0],
 										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
 									}}
+									showLocationMarker
 									drawBounds={{
 										bounds: siteBounds,
 										onUpdateBounds: setSiteBounds,

@@ -11,7 +11,7 @@ import {
 	useMantineTheme,
 } from '@mantine/core';
 import _ from 'lodash';
-import { IconCheck, IconQuestionMark, IconShieldCheck, IconSos, IconUrgent, IconUsers, TablerIcon } from '@tabler/icons';
+import { IconCheck, IconUrgent, TablerIcon } from '@tabler/icons';
 import { IconClockExclamation } from '@tabler/icons-react';
 
 interface StatDisplayProps {

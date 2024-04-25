@@ -26,6 +26,7 @@ const MapContainer = styled.div`
 
 interface ComponentProps {
 	location: Location;
+	showLocationMarker?: boolean;
 	sites?: Site[];
 	drawBounds?: DrawBoundsControlsProps;
 	floorPlan?: PlaceFloorPlanControlsProps;
@@ -33,7 +34,7 @@ interface ComponentProps {
 	marker?: MarkerProps;
 }
 
-export default function MapView({ location, sites, drawBounds, floorPlan, addAsset, marker }: ComponentProps) {
+export default function MapView({ location, showLocationMarker, sites, drawBounds, floorPlan, addAsset, marker }: ComponentProps) {
 	const colorScheme: ColorScheme = 'dark';
 	const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);
@@ -61,7 +62,7 @@ export default function MapView({ location, sites, drawBounds, floorPlan, addAss
 			<MapContext.Provider value={map}>
 				{loaded && (
 					<>
-						<Marker location={location} />
+						{showLocationMarker && <Marker location={location} />}
 						{sites && sites.map((site) => <SiteDisplay site={site} />)}
 						{drawBounds && <DrawBoundsControls {...drawBounds} />}
 						{floorPlan && <PlaceFloorPlanControls {...floorPlan} />}
