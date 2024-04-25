@@ -1,7 +1,7 @@
 'use client';
 
 import { createStyles, Navbar, getStylesRef, rem, Flex, Stack } from '@mantine/core';
-import { IconBuildingCommunity, IconUsers, TablerIcon } from '@tabler/icons';
+import { IconAsset, IconBuildingCommunity, IconUsers, TablerIcon } from '@tabler/icons';
 import { usePathname } from 'next/navigation';
 
 const useStyles = createStyles((theme) => ({
@@ -52,8 +52,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data: { link: string; label: string; icon: TablerIcon }[] = [
-	{ link: '/prepare/sites', label: 'Sites', icon: IconBuildingCommunity },
-	{ link: '/prepare/people', label: 'People', icon: IconUsers },
+	{ link: '/prepare/sites', label: 'Sites', icon: IconBuildingCommunity, },
+	{ link: '/prepare/people', label: 'People', icon: IconUsers, },
+	{ link: '/prepare/assetTypes', label: 'Asset Types', icon: IconAsset, },
 ];
 
 interface ComponentProps {
