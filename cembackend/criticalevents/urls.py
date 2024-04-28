@@ -46,9 +46,9 @@ router.register(r"asset", AssetViewSet, basename="asset")
 urlpatterns = [
     path("auth", views.obtain_auth_token),
     path("ping", PingView.as_view()),
-    path("check-auth", CheckAuthView.as_view()),
-    path("report-incident", CreateIncidentReportView.as_view()),
-    path("resolve-incident", ResolveIncidentView.as_view()),
+    path("check_auth", CheckAuthView.as_view()),
+    path("report_incident", CreateIncidentReportView.as_view()),
+    path("resolve_incident", ResolveIncidentView.as_view()),
     path("message", MessageView.as_view()),
     path("twilio-webhook", TwilioWebhookView.as_view()),
     path(

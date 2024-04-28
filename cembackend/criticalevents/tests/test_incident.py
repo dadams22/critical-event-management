@@ -27,7 +27,7 @@ class IncidentTestCases(TestCase):
         }
         # Make a POST request to the CreateIncidentReportView
         response = self.client.post(
-            "/api/report-incident", data=new_incident_report_data, format="json"
+            "/api/report_incident", data=new_incident_report_data, format="json"
         )
         if response.status_code != 200:
             print(response.content)
@@ -45,7 +45,7 @@ class IncidentTestCases(TestCase):
             },
         }
         response = self.client.post(
-            "/api/report-incident", data=new_incident_report_data, format="json"
+            "/api/report_incident", data=new_incident_report_data, format="json"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(IncidentReport.objects.count(), 1)
@@ -58,7 +58,7 @@ class IncidentTestCases(TestCase):
             "incident_id": incident_report.id,
         }
         response = self.client.post(
-            "/api/resolve-incident", data=resolve_incident_data, format="json"
+            "/api/resolve_incident", data=resolve_incident_data, format="json"
         )
         self.assertEqual(response.status_code, 200)
 

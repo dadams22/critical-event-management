@@ -25,7 +25,7 @@ class AlertViewSetTest(TestCase):
             },
         }
         response = self.client.post(
-            "/api/report-incident", data=new_incident_report_data, format="json"
+            "/api/report_incident", data=new_incident_report_data, format="json"
         )
         self.assertEqual(response.status_code, 200)
         self.incident_report_id = response.data["incident_report"]["id"]

@@ -37,7 +37,7 @@ const Api = (() => {
 		checkAuth: async (): Promise<boolean> => {
 			let authenticated = false;
 			const response = await axiosInstance
-				.get('check-auth')
+				.get('check_auth')
 				.then(() => {
 					authenticated = true;
 				})
@@ -49,7 +49,7 @@ const Api = (() => {
 
 		reportIncident: async ({ location }: { location?: Location }): Promise<IncidentReport> => {
 			const response = await axiosInstance.post<{ incident_report: IncidentReport }>(
-				'report-incident',
+				'report_incident',
 				location ? { location } : undefined
 			);
 			return response.data.incident_report;
@@ -57,7 +57,7 @@ const Api = (() => {
 
 		resolveIncident: async (incidentId: string): Promise<IncidentReport> => {
 			const response = await axiosInstance.post<{ incident_report: IncidentReport }>(
-				'resolve-incident',
+				'resolve_incident',
 				{ incident_id: incidentId }
 			);
 			return response.data.incident_report;
