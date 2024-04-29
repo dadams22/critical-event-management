@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
 import { Alert, IncidentReport, Person } from './types';
-import { Location, Site } from './types';
+import { Location, Site, AssetType } from './types';
 import { Bounds } from '../app/(dashboard)/report/[incidentReportId]/MapView';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -139,6 +139,19 @@ const Api = (() => {
 
 		getSites: async (): Promise<Site[]> => {
 			const response = await axiosInstance.get<Site[]>('site/');
+			return response.data;
+		},
+
+		getAssetTypes: async (): Promise<AssetType[]> => {
+			const response = await axiosInstance.get<AssetType[]>('asset_type/');
+			return response.data;
+		},
+
+		createAssetType: async ({ name, iconIdentifier }: { name: string; iconIdentifier: string }) => {
+			const response = await axiosInstance.post<AssetType>('asset_type/', {
+				name,
+				icon_identifier: iconIdentifier,
+			});
 			return response.data;
 		},
 	};

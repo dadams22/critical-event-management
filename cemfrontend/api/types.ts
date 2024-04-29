@@ -53,3 +53,9 @@ export interface Site {
 	floor_plan: string;
 	floor_plan_bounds: Bounds;
 }
+
+export interface AssetType {
+	id: string;
+	name: string;
+	icon_identifier: string;
+}
