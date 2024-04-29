@@ -1,22 +1,11 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
-from criticalevents.models import Alert, Organization
-from django.contrib.auth import get_user_model
+from criticalevents.tests.libs.base_test_case import BaseTestCase
 
-User = get_user_model()
+from criticalevents.models import Alert
 
 
-class AlertViewSetTest(TestCase):
+class AlertViewSetTest(BaseTestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.organization = Organization.objects.create(name="Test Organization")
-        self.user = User.objects.create_user(
-            username="testuser", password="12345", organization=self.organization
-        )
-
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+        super().setUp()
 
         new_incident_report_data = {
             "location": {

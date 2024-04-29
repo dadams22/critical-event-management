@@ -1,21 +1,14 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+
+from criticalevents.tests.libs.base_test_case import BaseTestCase
+
 from criticalevents.models import Organization, AssetType, Asset, Floor, Site
 
-User = get_user_model()
 
-
-class AssetViewSetTest(TestCase):
+class AssetViewSetTest(BaseTestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.organization = Organization.objects.create(name="Test Organization")
-        self.user = User.objects.create_user(
-            username="testuser", password="12345", organization=self.organization
-        )
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+        super().setUp()
+
         self.site = Site.objects.create(
             name="Test Site",
             organization=self.organization,
@@ -69,7 +62,7 @@ class AssetViewSetTest(TestCase):
         }
 
         # Make a POST request to the AssetViewSet
-        response = self.client.post("/api/asset/", data=new_asset_data)
+        response = self.client.post("/api/asset/", data=new_asset_data, format="json")
 
         if response.status_code != 201:
             print(response.content)

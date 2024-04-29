@@ -1,21 +1,12 @@
-from django.test import TestCase
-from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import get_user_model
-from criticalevents.models import Organization, AssetType
+from criticalevents.tests.libs.base_test_case import BaseTestCase
 
-User = get_user_model()
+from criticalevents.models import AssetType, Organization
 
 
-class AssetTypeViewSetTest(TestCase):
+class AssetTypeViewSetTest(BaseTestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.organization = Organization.objects.create(name="Test Organization")
-        self.user = User.objects.create_user(
-            username="testuser", password="12345", organization=self.organization
-        )
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+        super().setUp()
+
         self.asset_type = AssetType.objects.create(
             name="Test AssetType", organization=self.organization
         )

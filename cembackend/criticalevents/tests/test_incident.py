@@ -1,21 +1,11 @@
-from django.test import TestCase
-from django.contrib.auth import get_user_model
-from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
-from criticalevents.models import Organization, IncidentReport
+from criticalevents.models import IncidentReport
 
-User = get_user_model()
+from criticalevents.tests.libs.base_test_case import BaseTestCase
 
 
-class IncidentTestCases(TestCase):
+class IncidentTestCases(BaseTestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.organization = Organization.objects.create(name="Test Organization")
-        self.user = User.objects.create_user(
-            username="testuser", password="12345", organization=self.organization
-        )
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+        super().setUp()
 
     def test_create_incident_report(self):
         # Define the new incident report data

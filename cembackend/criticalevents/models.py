@@ -202,3 +202,26 @@ class AssetProperty(BaseModel):
     asset = models.ForeignKey(Asset, on_delete=models.RESTRICT)
     key = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
+
+
+def maintenance_log_upload_to(instance, filename):
+    """Generate a unique path for a maintenance log image upload
+
+    NOTE: I tried to generalize the upload_to functions but django gets whiny
+    when the function itself doesn't exist on the module, so you need to make
+    a new one for each model that needs it."""
+
+    return f"maintenance_logs/{str(uuid.uuid4())}/{filename}"
+
+
+class MaintenanceLog(BaseModel):
+    """A log of maintenance performed on an asset"""
+
+    asset = models.ForeignKey(
+        Asset, on_delete=models.CASCADE, related_name="maintenance_logs"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(max_length=2000)
+    photo = models.ImageField(
+        upload_to=maintenance_log_upload_to, null=True, blank=True
+    )

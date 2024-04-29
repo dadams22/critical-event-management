@@ -14,6 +14,7 @@ from .serializers import (
     FloorSerializer,
     AssetTypeSerializer,
     AssetSerializer,
+    MaintenanceLogSerializer,
 )
 
 from .models import (
@@ -26,6 +27,7 @@ from .models import (
     Floor,
     AssetType,
     Asset,
+    MaintenanceLog,
 )
 from .twilio_utils import send_twilio_message
 
@@ -192,3 +194,8 @@ class AssetTypeViewSet(OrganizationedViewSet):
 class AssetViewSet(OrganizationedViewSet):
     model = Asset
     serializer_class = AssetSerializer
+
+
+class MaintenanceLogViewSet(OrganizationedViewSet):
+    model = MaintenanceLog
+    serializer_class = MaintenanceLogSerializer

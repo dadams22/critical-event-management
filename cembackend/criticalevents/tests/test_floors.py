@@ -1,6 +1,3 @@
-from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 
@@ -10,16 +7,14 @@ from rest_framework.test import APIClient
 from criticalevents.models import Site, Organization
 from criticalevents.models import Floor, Site
 
+from criticalevents.tests.libs.images import generate_upload_image
+from criticalevents.tests.libs.base_test_case import BaseTestCase
 
-class FloorViewSetTest(TestCase):
+
+class FloorViewSetTest(BaseTestCase):
     def setUp(self):
-        self.client = APIClient()
-        self.organization = Organization.objects.create(name="Test Organization")
-        self.user = User.objects.create_user(
-            username="testuser", password="12345", organization=self.organization
-        )
-        self.token = Token.objects.create(user=self.user)
-        self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
+        super().setUp()
+
         self.site = Site.objects.create(
             name="Test Site",
             organization=self.organization,
@@ -52,21 +47,13 @@ class FloorViewSetTest(TestCase):
         # Authenticate the user
         self.client.login(username="testuser", password="12345")
 
-        # Create a dummy image file
-        image = Image.new("RGB", (100, 100))
-        image_file = BytesIO()
-        image.save(image_file, "JPEG")
-        image_file.seek(0)
-
         # Define the new floor data
         new_floor_data = {
             "name": "New Floor",
             "site": self.site.id,
             "sort_order": 2,
             "floor_plan_bounds": "{}",
-            "floor_plan": SimpleUploadedFile(
-                "floor_plan.jpg", image_file.read(), content_type="image/jpeg"
-            ),
+            "floor_plan": generate_upload_image(),
         }
 
         # Make a POST request to the FloorViewSet

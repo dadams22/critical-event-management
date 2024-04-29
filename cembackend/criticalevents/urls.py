@@ -19,16 +19,17 @@ from .views import (
     FloorViewSet,
     AssetTypeViewSet,
     AssetViewSet,
+    MaintenanceLogViewSet,
 )
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Snippets API",
+        title="CEM API",
         default_version="v1",
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="BSD License"),
+        description="",
+        terms_of_service="",
+        contact=openapi.Contact(email="m@getkakuna.com"),
+        license=openapi.License(name="Private"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
@@ -42,6 +43,7 @@ router.register(r"site", SiteViewSet, basename="site")
 router.register(r"floor", FloorViewSet, basename="floor")
 router.register(r"asset_type", AssetTypeViewSet, basename="asset_type")
 router.register(r"asset", AssetViewSet, basename="asset")
+router.register(r"maintenance_log", MaintenanceLogViewSet, basename="maintenance_log")
 
 urlpatterns = [
     path("auth", views.obtain_auth_token),
