@@ -5,7 +5,7 @@ import Api from '../../../api/Api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import { IconPlus, IconSearch } from '@tabler/icons';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';

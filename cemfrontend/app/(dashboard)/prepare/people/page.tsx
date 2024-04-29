@@ -5,7 +5,7 @@ import { Avatar, Table, Group, Text, ActionIcon, ScrollArea, useMantineTheme } f
 import { IconTrash } from '@tabler/icons-react';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
-import { IconUserPlus } from '@tabler/icons';
+import { IconUserPlus } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
 import { produce } from 'immer';

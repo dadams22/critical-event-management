@@ -1,7 +1,7 @@
 'use client';
 
 import { Badge, Box, Flex, Input, MantineColor, Paper, Space, Stack, Text } from '@mantine/core';
-import { IconSearch } from '@tabler/icons';
+import { IconSearch } from '@tabler/icons-react';
 import { useState } from 'react';
 import { Person, PersonStatus } from '../../../../api/types';
 

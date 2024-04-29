@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { Person, PersonStatus } from '../../../../api/types';
 import _ from 'lodash';
-import { IconQuestionMark, IconShieldCheck, IconSos, IconUsers, TablerIcon } from '@tabler/icons';
+import { IconQuestionMark, IconShieldCheck, IconSos, IconUsers, TablerIcon } from '@tabler/icons-react';
 
 interface StatDisplayProps {
 	label: string;

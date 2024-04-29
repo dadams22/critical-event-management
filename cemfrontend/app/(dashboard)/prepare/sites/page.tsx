@@ -1,7 +1,7 @@
 'use client';
 
 import { Title, Text, Button, Flex } from '@mantine/core';
-import { IconPlus } from '@tabler/icons';
+import { IconPlus } from '@tabler/icons-react';
 import CreateSiteModal from './CreateSiteModal';
 import { useDisclosure } from '@mantine/hooks';
 

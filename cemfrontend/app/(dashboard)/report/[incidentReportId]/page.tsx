@@ -18,7 +18,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
 import SearchBar from './SearchBar';
-import { IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons';
+import { IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { ModalNames } from '../../../(modals)';
 import { Alert } from '../../../../api/types';

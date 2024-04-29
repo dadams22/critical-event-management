@@ -19,7 +19,7 @@ import _ from 'lodash';
 import AddressField from '../../../../components/AddressField';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
-import { IconPhotoPlus } from '@tabler/icons';
+import { IconPhotoPlus } from '@tabler/icons-react';
 // import { Polygon } from '@turf/helpers/dist/es';
 import Api from '../../../../api/Api';
 import MapView from '../../../../components/map/MapView';

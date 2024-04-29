@@ -3,9 +3,10 @@
 import { useState } from 'react';
 
 import { Button, Center, Flex, Loader, Title, TextInput, Table, Text, useMantineTheme  } from '@mantine/core';
-import { IconUserPlus } from '@tabler/icons';
+import { IconUserPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
+import { getIcon } from '../../../(icons)/assetTypes';;
 
 export default function AssetTypesPage() {
     const theme = useMantineTheme();
@@ -93,7 +94,7 @@ export default function AssetTypesPage() {
                             )}
                             {(assetTypes || []).map((assetType) => (
                                 <tr key={assetType.id}>
-                                    <td>{assetType.icon_identifier}</td>
+                                    <td>{ getIcon(assetType.icon_identifier) }</td>
                                     <td>{assetType.name}</td>
                                 </tr>
                             ))}

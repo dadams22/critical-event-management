@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Button, Flex, Title, Text, Space } from '@mantine/core';
-import { IconUrgent } from '@tabler/icons';
+import { IconUrgent } from '@tabler/icons-react';
 import Api from '../../../api/Api';
 import { useRouter } from 'next/navigation';
 import { Location } from '../../../api/types';

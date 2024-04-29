@@ -11,7 +11,7 @@ import {
 	useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconShieldHalfFilled } from '@tabler/icons';
+import { IconShieldHalfFilled } from '@tabler/icons-react';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
