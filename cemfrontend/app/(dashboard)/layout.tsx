@@ -105,6 +105,7 @@ interface HeaderResponsiveProps {
 }
 
 const links: { link: string; label: string }[] = [
+	{ label: 'Assets', link: '/assets' },
 	{ label: 'Report', link: '/report' },
 	{ label: 'Prepare', link: '/prepare' },
 ];

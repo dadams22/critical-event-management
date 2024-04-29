@@ -46,6 +46,8 @@ export interface Site {
 	id: string;
 	name: string;
 	address: string;
+	longitude: number;
+	latitude: number;
 	location: Location;
 	bounds: Bounds;
 	floor_plan: string;
