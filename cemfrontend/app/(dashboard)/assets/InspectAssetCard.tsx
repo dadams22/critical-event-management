@@ -2,7 +2,7 @@
 
 import { Card, CloseButton, Flex, Image, Stack, Text, Title } from '@mantine/core';
 import { Asset } from '../../../api/types';
-import { getIcon } from '../../(icons)/assetTypes';
+import { getAssetIcon } from '../../(icons)/assetTypes';
 
 interface ComponentProps {
 	asset: Asset;
@@ -30,7 +30,7 @@ export default function InspectAssetCard({ asset, onClose }: ComponentProps) {
 					</Text>
 					<Text>
 						<Flex gap={4} align="center">
-							{getIcon(asset.asset_type.icon_identifier)}
+							{getAssetIcon(asset.asset_type.icon_identifier)}
 							{asset.asset_type.name}
 						</Flex>
 					</Text>

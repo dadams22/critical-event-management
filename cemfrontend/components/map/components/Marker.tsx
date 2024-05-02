@@ -5,12 +5,12 @@ import { Location } from '../../../api/types';
 import { MapContext } from '../MapView';
 import mapboxgl from 'mapbox-gl';
 import { useMantineTheme } from '@mantine/core';
-import { getIcon, IconIdentifier } from '../../../app/(icons)/assetTypes';
+import { getAssetIcon, AssetIconIdentifier } from '../../../app/(icons)/assetTypes';
 import ReactDOM from 'react-dom';
 
 export interface MarkerProps {
 	location: Location;
-	iconIdentifier?: IconIdentifier;
+	iconIdentifier?: AssetIconIdentifier;
 	onClick?: () => void;
 }
 
@@ -25,7 +25,7 @@ export default function Marker({ location, iconIdentifier, onClick }: MarkerProp
 		let iconElement;
 		if (iconIdentifier) {
 			iconElement = document.createElement('div');
-			const icon = getIcon(iconIdentifier);
+			const icon = getAssetIcon(iconIdentifier);
 			ReactDOM.render(icon, iconElement);
 		}
 

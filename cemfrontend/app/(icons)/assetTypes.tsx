@@ -4,30 +4,30 @@ import { IconFireExtinguisher, IconHeartBolt, IconBleach, IconAsset } from '@tab
 
 const DEFAULT_ASSET_ICON = <IconAsset size={20} />;
 
-export enum IconIdentifier {
-	FireExtinguisher = 'fire-extinguisher',
-	HeartBolt = 'heart-bolt',
-	Bleach = 'bleach',
-	Asset = 'asset',
+export enum AssetIconIdentifier {
+    FireExtinguisher = 'fire-extinguisher',
+    HeartBolt = 'heart-bolt',
+    Bleach = 'bleach',
+    Asset = 'asset',
 }
 
-export const iconMap: Record<IconIdentifier, React.ReactElement> = {
-	[IconIdentifier.FireExtinguisher]: <IconFireExtinguisher size={20} />,
-	[IconIdentifier.HeartBolt]: <IconHeartBolt size={20} />,
-	[IconIdentifier.Bleach]: <IconBleach size={20} />,
-	[IconIdentifier.Asset]: <IconAsset size={20} />,
+export const assetIconMap: Record<AssetIconIdentifier, React.ReactNode> = {
+    [AssetIconIdentifier.FireExtinguisher]: <IconFireExtinguisher />,
+    [AssetIconIdentifier.HeartBolt]: <IconHeartBolt />,
+    [AssetIconIdentifier.Bleach]: <IconBleach />,
+    [AssetIconIdentifier.Asset]: <IconAsset />,
 };
 
-export function getIcon(identifier: string) {
-	if (iconMap[identifier as IconIdentifier]) {
-		return iconMap[identifier as IconIdentifier];
-	}
-	return DEFAULT_ASSET_ICON;
+export function getAssetIcon(identifier: string) {
+    if (assetIconMap[identifier as AssetIconIdentifier]) {
+        return assetIconMap[identifier as AssetIconIdentifier];
+    }
+    return DEFAULT_ASSET_ICON;
 }
 
-export const iconOptions = [
-	{ value: IconIdentifier.FireExtinguisher, label: 'Fire Extinguisher' },
-	{ value: IconIdentifier.HeartBolt, label: 'AED' },
-	{ value: IconIdentifier.Bleach, label: 'Chemical Wash Station' },
-	{ value: IconIdentifier.Asset, label: 'Other' },
+export const assetIconOptions = [
+    { value: AssetIconIdentifier.FireExtinguisher, label: 'Fire Extinguisher' },
+    { value: AssetIconIdentifier.HeartBolt, label: 'AED' },
+    { value: AssetIconIdentifier.Bleach, label: 'Chemical Wash Station' },
+    { value: AssetIconIdentifier.Asset, label: 'Other' },
 ];

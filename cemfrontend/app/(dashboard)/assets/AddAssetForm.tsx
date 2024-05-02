@@ -20,7 +20,7 @@ import {
 import { IconCheck, IconClick, IconCrosshair, IconPhoto, IconSelector } from '@tabler/icons-react';
 import { forwardRef, useState } from 'react';
 import { AssetType } from '../../../api/types';
-import { getIcon } from '../../(icons)/assetTypes';
+import { getAssetIcon } from '../../(icons)/assetTypes';
 import Api from '../../../api/Api';
 
 interface ComponentProps {
@@ -40,7 +40,7 @@ const AssetTypeSelectItem = forwardRef<HTMLDivElement, ItemProps>(
 	({ icon_identifier, label, ...others }: ItemProps, ref) => (
 		<div ref={ref} {...others}>
 			<Group noWrap align="center">
-				{getIcon(icon_identifier)}
+				{getAssetIcon(icon_identifier)}
 				<div>
 					<Text size="sm">{label}</Text>
 				</div>
