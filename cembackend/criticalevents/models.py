@@ -234,3 +234,4 @@ class MaintenanceLog(BaseModel):
     photo = models.ImageField(
         upload_to=maintenance_log_upload_to, null=True, blank=True
     )
+    reported_by = models.ForeignKey(User, on_delete=models.RESTRICT)

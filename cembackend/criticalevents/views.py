@@ -234,3 +234,12 @@ class AssetViewSet(OrganizationedViewSet):
 class MaintenanceLogViewSet(OrganizationedViewSet):
     model = MaintenanceLog
     serializer_class = MaintenanceLogSerializer
+
+    def perform_create(self, serializer):
+        """Override the default perform_create to add the organization and
+        reported_by fields"""
+
+        serializer.context["organization"] = self.request.user.organization
+        serializer.save(
+            organization=self.request.user.organization, reported_by=self.request.user
+        )
