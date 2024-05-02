@@ -155,11 +155,6 @@ class AlertViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=400)
 
 
-class PersonViewSet(viewsets.ModelViewSet):
-    serializer_class = PersonSerializer
-    queryset = Person.objects.all()
-
-
 class ResolveIncidentView(APIView):
     def post(self, request):
         incident_id = request.data.get("incident_id")
@@ -209,6 +204,11 @@ class OrganizationedViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.context["organization"] = self.request.user.organization
         serializer.save(organization=self.request.user.organization)
+
+
+class PersonViewSet(OrganizationedViewSet):
+    model = Person
+    serializer_class = PersonSerializer
 
 
 class SiteViewSet(OrganizationedViewSet):
