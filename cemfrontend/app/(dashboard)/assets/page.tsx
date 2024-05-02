@@ -9,9 +9,10 @@ import { IconPlus, IconSearch } from '@tabler/icons-react';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Location } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
+import InspectAssetCard from './InspectAssetCard';
 
 dayjs.extend(relativeTime);
 
@@ -63,16 +64,27 @@ const Footer = styled.div`
 	grid-area: footer;
 `;
 
-export default function IncidentReportPage() {
-	const { data: sites } = useSWR('sites/all', Api.getSites);
+export default function AssetsPage() {
+	const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites);
+	const { data: assetTypes, isLoading: assetTypesLoading } = useSWR(
+		'assetTypes/all',
+		Api.getAssetTypes
+	);
+	const {
+		data: assets,
+		isLoading: assetsLoading,
+		mutate: mutateAssets,
+	} = useSWR('assets/all', Api.getAssets);
 
 	const [addingAsset, setAddingAsset] = useState<boolean>(false);
 	const [addAssetLocation, setAddAssetLocation] = useState<Location>();
+	const [inspectedAssetId, setInspectedAssetId] = useState<string>();
+	const inspectedAsset = useMemo<Asset | undefined>(
+		() => _.find(assets, { id: inspectedAssetId }),
+		[assets, inspectedAssetId]
+	);
 
-	console.log(addAssetLocation);
-
-	const loading = false;
-	if (loading)
+	if (sitesLoading || assetTypesLoading || assetsLoading)
 		return (
 			<Center h="100%">
 				<Loader variant="bars" />
@@ -85,12 +97,38 @@ export default function IncidentReportPage() {
 
 	const handleAddAsset = (location: Location) => {
 		setAddAssetLocation(location);
-		setAddingAsset(false);
 	};
 
 	const handleCancelAddAsset = () => {
 		setAddingAsset(false);
 		setAddAssetLocation(undefined);
+	};
+
+	const handleSaveAsset = async ({
+		name,
+		assetType,
+		photo,
+	}: {
+		name: string;
+		assetType: string;
+		photo?: File;
+	}) => {
+		if (!addAssetLocation || !sites) return;
+
+		const floorId = sites[0].floors[0].id;
+
+		await Api.createAsset({
+			floor: floorId,
+			name,
+			assetType,
+			longitude: addAssetLocation.longitude,
+			latitude: addAssetLocation.latitude,
+			photo,
+		}).then((asset) => {
+			mutateAssets();
+			setAddingAsset(false);
+			setAddAssetLocation(undefined);
+		});
 	};
 
 	return (
@@ -99,12 +137,28 @@ export default function IncidentReportPage() {
 				<MapView
 					location={_.pick(sites[0], ['longitude', 'latitude'])}
 					sites={sites}
+					assets={assets}
+					onClickAsset={setInspectedAssetId}
 					addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
 					marker={addAssetLocation ? { location: addAssetLocation } : undefined}
 				/>
 			)}
 			<OverlayGrid>
-				<SideBar>{addAssetLocation && <AddAssetForm onCancel={handleCancelAddAsset} />}</SideBar>
+				<SideBar>
+					{addingAsset ? (
+						<AddAssetForm
+							onSave={handleSaveAsset}
+							onCancel={handleCancelAddAsset}
+							locationSelected={!!addAssetLocation}
+							assetTypes={assetTypes!}
+						/>
+					) : inspectedAsset ? (
+						<InspectAssetCard
+							asset={inspectedAsset}
+							onClose={() => setInspectedAssetId(undefined)}
+						/>
+					) : null}
+				</SideBar>
 				<ActionBar>
 					<div />
 					<Autocomplete

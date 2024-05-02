@@ -1,17 +1,21 @@
 'use client';
 import React, { useRef } from 'react';
 import {
+	ActionIcon,
 	Button,
 	Center,
 	createStyles,
 	Flex,
+	Grid,
 	Group,
 	Modal,
 	Overlay,
 	Stack,
 	Stepper,
+	Table,
 	Text,
 	TextInput,
+	Title,
 } from '@mantine/core';
 import { useMemo, useState } from 'react';
 import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
@@ -19,11 +23,20 @@ import _ from 'lodash';
 import AddressField from '../../../../components/AddressField';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
-import { IconPhotoPlus } from '@tabler/icons-react';
+import {
+	IconCheck,
+	IconClick,
+	IconPencil,
+	IconPhotoPlus,
+	IconPlus,
+	IconTrash,
+	IconX,
+} from '@tabler/icons-react';
 // import { Polygon } from '@turf/helpers/dist/es';
 import Api from '../../../../api/Api';
 import MapView from '../../../../components/map/MapView';
 import { Bounds } from '../../../../api/types';
+import { produce } from 'immer';
 
 const useStyles = createStyles((theme) => ({
 	overlay: {
@@ -37,6 +50,9 @@ const useStyles = createStyles((theme) => ({
 		borderRadius: '8px',
 		transitionProperty: 'opacity border',
 		transitionDuration: '300ms',
+	},
+	clickableRow: {
+		cursor: 'pointer',
 	},
 }));
 
@@ -58,10 +74,11 @@ const ImageMeasurer = styled.img`
 
 interface ComponentProps {
 	opened: boolean;
+	onSave: () => void;
 	onClose: () => void;
 }
 
-export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
+export default function CreateSiteModal({ opened, onSave, onClose }: ComponentProps) {
 	const { classes } = useStyles();
 
 	const [saving, setSaving] = useState<boolean>(false);
@@ -73,7 +90,6 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 
 	const floorPlanInputRef = useRef<HTMLInputElement>(null);
 	const [floorPlanImageUrl, setFloorPlanImageUrl] = useState<string>();
-	const [floorPlanAspectRatio, setFloorPlanAspectRatio] = useState<number>();
 	const [floorPlanBounds, setFloorPlanBounds] = useState<Bounds>();
 	const [floorPlanDimensions, setFloorPlanDimensions] = useState<{
 		width: number;
@@ -82,35 +98,61 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 	const [floorPlanFile, setFloorPlanFile] = useState<File>();
 	const floorPlanMeasurerRef = useRef<HTMLImageElement>(null);
 
+	const [floors, setFloors] = useState<
+		{
+			name?: string;
+			floorPlanBounds?: Bounds;
+			floorPlanImageUrl?: string;
+			floorPlanImage?: File;
+			floorPlanDimensions?: {
+				width: number;
+				height: number;
+			};
+		}[]
+	>([]);
+	const [editingFloorName, setEditingFloorName] = useState<string>('');
+	const [floorBeingEditedIndex, setFloorBeingEditedIndex] = useState<number>();
+	const [floorPlanPlacementIndex, setFloorPlanPlacementIndex] = useState<number>();
+
+	const handleClickAddFloor = () => {
+		setFloors(
+			produce(floors, (draft) => {
+				draft.push({ name: '' });
+				setFloorBeingEditedIndex(draft.length - 1);
+			})
+		);
+		setEditingFloorName('');
+	};
+
 	const handleFloorPlanOverlayClick = () => {
 		floorPlanInputRef.current?.click();
 	};
 
 	const handleFloorPlanUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-		if (!e.target.files?.[0]) return;
+		if (!e.target.files?.[0] || floorPlanPlacementIndex === undefined) return;
 
 		const imageFile = e.target.files[0];
-		setFloorPlanFile(imageFile);
-
 		const reader = new FileReader();
-
 		reader.onload = (event: ProgressEvent<FileReader>) => {
-			setFloorPlanImageUrl(String(event.target?.result));
+			setFloors(
+				produce(floors, (draft) => {
+					draft[floorPlanPlacementIndex].floorPlanImageUrl = String(event.target?.result);
+					draft[floorPlanPlacementIndex].floorPlanImage = imageFile;
+				})
+			);
 		};
-
 		reader.readAsDataURL(imageFile);
 	};
 
 	const nextDisabled = useMemo(() => {
 		if (step === 0) return !siteName || !address;
 		if (step === 1) return !siteBounds;
-		if (step === 2)
-			return (
-				!address ||
-				!address?.features?.[0]?.properties?.full_address ||
-				!siteBounds ||
-				!floorPlanFile
-			);
+		if (step === 2) return;
+		!address ||
+			!address?.features?.[0]?.properties?.full_address ||
+			!siteBounds ||
+			!floors.length ||
+			floors.some((floor) => !floor.name || !floor.floorPlanImage || !floor.floorPlanImageUrl);
 
 		return false;
 	}, [step, siteName, address, siteBounds, siteBounds, floorPlanFile]);
@@ -120,8 +162,8 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 			!address ||
 			!address?.features?.[0]?.properties?.full_address ||
 			!siteBounds ||
-			!floorPlanFile ||
-			!floorPlanBounds
+			!floors.length ||
+			floors.some((floor) => !floor.name || !floor.floorPlanImage || !floor.floorPlanImageUrl)
 		)
 			return;
 
@@ -132,11 +174,10 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 			bounds: siteBounds,
 			longitude: address?.features?.[0]?.geometry?.coordinates?.[0],
 			latitude: address?.features?.[0]?.geometry?.coordinates?.[1],
-			floorPlan: floorPlanFile,
-			floorPlanBounds: floorPlanBounds,
+			floors: floors.map((floor) => _.pick(floor, ['name', 'floorPlanImage', 'floorPlanBounds'])),
 		})
-			.then((site) => {
-				console.log(site);
+			.then(() => {
+				onSave();
 				onClose();
 			})
 			.finally(() => setSaving(false));
@@ -180,54 +221,194 @@ export default function CreateSiteModal({ opened, onClose }: ComponentProps) {
 					</Stepper.Step>
 					<Stepper.Step label="Add Floor Plans">
 						{address && (
-							<MapContainer>
-								<MapView
-									key="new"
-									location={{
-										longitude: address.features?.[0]?.geometry?.coordinates?.[0],
-										latitude: address.features?.[0]?.geometry?.coordinates?.[1],
-									}}
-									floorPlan={
-										!!floorPlanImageUrl && !!floorPlanDimensions && !!siteBounds
-											? {
-													onUpdateFloorPlanBounds: setFloorPlanBounds,
-													floorPlanImageUrl,
-													...floorPlanDimensions,
-													siteBounds,
-												}
-											: undefined
-									}
-								/>
-								{!floorPlanImageUrl && (
-									<Overlay center className={classes.overlay} onClick={handleFloorPlanOverlayClick}>
-										<Stack align="center">
-											<IconPhotoPlus size={80} />
-											<Text>Add a floor plan.</Text>
-										</Stack>
-										<FloorPlanInput
-											type="file"
-											accept=".svg, .png"
-											ref={floorPlanInputRef}
-											onChange={handleFloorPlanUpload}
+							<Grid>
+								<Grid.Col span={4}>
+									<Table>
+										<thead>
+											<th align="left">Floors</th>
+										</thead>
+										<tbody>
+											{!floors.length ? (
+												<tr>
+													<td colSpan={2} align="center">
+														No floors have been added.
+													</td>
+												</tr>
+											) : (
+												floors.map((floor, i) => (
+													<tr
+														className={
+															floorBeingEditedIndex === undefined ? classes.clickableRow : undefined
+														}
+														onClick={
+															floorBeingEditedIndex === undefined
+																? () => setFloorPlanPlacementIndex(i)
+																: undefined
+														}
+													>
+														{i === floorBeingEditedIndex ? (
+															<>
+																<td>
+																	<TextInput
+																		value={editingFloorName}
+																		placeholder={`Floor ${i + 1}`}
+																		onChange={(e) => setEditingFloorName(e.target.value)}
+																	/>
+																</td>
+																<td>
+																	<Group miw="max-content" spacing="xs">
+																		<ActionIcon
+																			onClick={(e) => {
+																				setFloors(
+																					produce(floors, (draft) => {
+																						draft[i].name = editingFloorName;
+																					})
+																				);
+																				setFloorBeingEditedIndex(undefined);
+																				setEditingFloorName('');
+																				e.stopPropagation();
+																			}}
+																			disabled={!editingFloorName}
+																		>
+																			<IconCheck size={20} />
+																		</ActionIcon>
+																		<ActionIcon
+																			onClick={(e) => {
+																				setFloorBeingEditedIndex(undefined);
+																				setEditingFloorName('');
+																				e.stopPropagation();
+																			}}
+																		>
+																			<IconX size={20} />
+																		</ActionIcon>
+																	</Group>
+																</td>
+															</>
+														) : (
+															<>
+																<td width="100%">{floor.name}</td>
+																<td>
+																	<Group miw="max-content" spacing="xs">
+																		<ActionIcon
+																			onClick={() => {
+																				setFloorBeingEditedIndex(i);
+																				setEditingFloorName(floor.name || '');
+																			}}
+																			disabled={floorBeingEditedIndex !== undefined}
+																		>
+																			<IconPencil size={20} />
+																		</ActionIcon>
+																		<ActionIcon
+																			onClick={() => {
+																				setFloors(
+																					produce(floors, (draft) => {
+																						draft.splice(i, 1);
+																					})
+																				);
+																			}}
+																			disabled={floorBeingEditedIndex !== undefined}
+																		>
+																			<IconTrash size={20} />
+																		</ActionIcon>
+																	</Group>
+																</td>
+															</>
+														)}
+													</tr>
+												))
+											)}
+											<tr>
+												<td colSpan={2}>
+													<Center>
+														<Button
+															leftIcon={<IconPlus size={20} />}
+															onClick={handleClickAddFloor}
+															disabled={floorBeingEditedIndex !== undefined}
+														>
+															Add Floor
+														</Button>
+													</Center>
+												</td>
+											</tr>
+										</tbody>
+									</Table>
+								</Grid.Col>
+								<Grid.Col span={8}>
+									<MapContainer>
+										<MapView
+											key="new"
+											location={{
+												longitude: address.features?.[0]?.geometry?.coordinates?.[0],
+												latitude: address.features?.[0]?.geometry?.coordinates?.[1],
+											}}
+											floorPlan={
+												floorPlanPlacementIndex !== undefined &&
+												!!floors[floorPlanPlacementIndex].floorPlanImageUrl &&
+												!!floors[floorPlanPlacementIndex].floorPlanDimensions &&
+												!!siteBounds
+													? {
+															onUpdateFloorPlanBounds: (bounds) => {
+																setFloors(
+																	produce(floors, (draft) => {
+																		draft[floorPlanPlacementIndex].floorPlanBounds = bounds;
+																	})
+																);
+															},
+															floorPlanBounds: floors[floorPlanPlacementIndex].floorPlanBounds,
+															floorPlanImageUrl: floors[floorPlanPlacementIndex].floorPlanImageUrl,
+															...floors[floorPlanPlacementIndex].floorPlanDimensions,
+															siteBounds,
+														}
+													: undefined
+											}
 										/>
-									</Overlay>
-								)}
-								{!!floorPlanImageUrl && !floorPlanAspectRatio && (
-									<ImageMeasurer
-										ref={floorPlanMeasurerRef}
-										src={floorPlanImageUrl}
-										onLoad={(e) => {
-											const image = e.target as HTMLImageElement;
-											const aspectRatio = image.naturalWidth / image.naturalHeight;
-											setFloorPlanAspectRatio(aspectRatio);
-											setFloorPlanDimensions({
-												width: image.naturalWidth,
-												height: image.naturalHeight,
-											});
-										}}
-									/>
-								)}
-							</MapContainer>
+										{floorPlanPlacementIndex === undefined ? (
+											<Overlay center>
+												<Stack align="center">
+													<IconClick size={80} />
+													<Text>Select a floor to add a floor plan.</Text>
+												</Stack>
+											</Overlay>
+										) : !floors[floorPlanPlacementIndex].floorPlanImageUrl ? (
+											<Overlay
+												center
+												className={classes.overlay}
+												onClick={handleFloorPlanOverlayClick}
+											>
+												<Stack align="center">
+													<IconPhotoPlus size={80} />
+													<Text>Add a floor plan.</Text>
+												</Stack>
+												<FloorPlanInput
+													type="file"
+													accept=".svg, .png"
+													ref={floorPlanInputRef}
+													onChange={handleFloorPlanUpload}
+												/>
+											</Overlay>
+										) : null}
+										{floorPlanPlacementIndex !== undefined &&
+											!!floors[floorPlanPlacementIndex].floorPlanImageUrl &&
+											!floors[floorPlanPlacementIndex].floorPlanDimensions && (
+												<ImageMeasurer
+													ref={floorPlanMeasurerRef}
+													src={floors[floorPlanPlacementIndex].floorPlanImageUrl}
+													onLoad={(e) => {
+														const image = e.target as HTMLImageElement;
+														setFloors(
+															produce(floors, (draft) => {
+																draft[floorPlanPlacementIndex].floorPlanDimensions = {
+																	width: image.naturalWidth,
+																	height: image.naturalHeight,
+																};
+															})
+														);
+													}}
+												/>
+											)}
+									</MapContainer>
+								</Grid.Col>
+							</Grid>
 						)}
 					</Stepper.Step>
 				</Stepper>

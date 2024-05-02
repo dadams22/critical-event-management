@@ -1,3 +1,5 @@
+import { IconIdentifier } from '../app/(icons)/assetTypes';
+
 export interface MinimalUser {
 	id: string;
 	username: string;
@@ -42,6 +44,14 @@ export interface IncidentReport {
 
 export type Bounds = [number, number][];
 
+export interface Floor {
+	id: string;
+	name: string;
+	sort_order: number;
+	floor_plan: string;
+	floor_plan_bounds: Bounds;
+}
+
 export interface Site {
 	id: string;
 	name: string;
@@ -49,13 +59,22 @@ export interface Site {
 	longitude: number;
 	latitude: number;
 	location: Location;
-	bounds: Bounds;
-	floor_plan: string;
-	floor_plan_bounds: Bounds;
+	bounds: string;
+	floors: Floor[];
 }
 
 export interface AssetType {
 	id: string;
 	name: string;
-	icon_identifier: string;
+	icon_identifier: IconIdentifier;
+}
+
+export interface Asset {
+	id: string;
+	floor: string;
+	name: string;
+	asset_type: AssetType;
+	longitude: number;
+	latitude: number;
+	photo: string;
 }

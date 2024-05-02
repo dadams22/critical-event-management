@@ -1,5 +1,8 @@
 from criticalevents.tests.libs.base_test_case import BaseTestCase
-from criticalevents.tests.libs.images import generate_upload_image
+from criticalevents.tests.libs.images import (
+    generate_upload_image,
+    generate_upload_image_base64,
+)
 
 from criticalevents.models import Site, Organization
 
@@ -65,10 +68,87 @@ class SiteViewSetTest(BaseTestCase):
             "floor_plan_bounds": "{}",
             "address": "123 Main St",
             "floor_plan": generate_upload_image(),
+            "floors": [],
         }
 
         # Make a POST request to the SiteViewSet
         response = self.client.post("/api/site/", data=new_site_data)
+
+        if response.status_code != 201:
+            print(response.content)
+
+        # Check that the status code is 201 (created)
+        self.assertEqual(response.status_code, 201)
+
+        # Retrieve the newly created site from the database
+        site = Site.objects.get(id=response.data["id"])
+
+        # Check that the organization of the new site is the same as the current user's organization
+        self.assertEqual(site.organization.id, self.organization.id)
+
+    def test_create_site_with_floor(self):
+        # Authenticate the user
+        self.client.login(username="testuser", password="12345")
+
+        # Define the new site data
+        new_site_data = {
+            "name": "New Site",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "bounds": "{}",
+            "floor_plan_bounds": "{}",
+            "address": "123 Main St",
+            "floor_plan": generate_upload_image_base64(),
+            "floors": [
+                {
+                    "name": "Floor 1",
+                    "sort_order": 1,
+                    "floor_plan": generate_upload_image_base64(),
+                    "floor_plan_bounds": "{}",
+                }
+            ],
+        }
+
+        # Make a POST request to the SiteViewSet
+        response = self.client.post("/api/site/", data=new_site_data, format="json")
+
+        if response.status_code != 201:
+            print(response.content)
+
+        # Check that the status code is 201 (created)
+        self.assertEqual(response.status_code, 201)
+
+        # Retrieve the newly created site from the database
+        site = Site.objects.get(id=response.data["id"])
+
+        # Check that the organization of the new site is the same as the current user's organization
+        self.assertEqual(site.organization.id, self.organization.id)
+
+    def test_create_site_with_floor_unstringed_bounds(self):
+        # Authenticate the user
+        self.client.login(username="testuser", password="12345")
+
+        # Define the new site data
+        new_site_data = {
+            "name": "New Site",
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "bounds": [1, 2],
+            "floor_plan_bounds": "{}",
+            "address": "123 Main St",
+            "floor_plan": generate_upload_image_base64(),
+            "floors": [
+                {
+                    "name": "Floor 1",
+                    "sort_order": 1,
+                    "floor_plan": generate_upload_image_base64(),
+                    "floor_plan_bounds": [1, 2],
+                }
+            ],
+        }
+
+        # Make a POST request to the SiteViewSet
+        response = self.client.post("/api/site/", data=new_site_data, format="json")
 
         if response.status_code != 201:
             print(response.content)

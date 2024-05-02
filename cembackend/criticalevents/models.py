@@ -134,8 +134,10 @@ class Site(BaseModel):
     bounds = models.JSONField()
 
     # TODO: Remove floor plan stuff from site, move to floors
-    floor_plan = models.ImageField(upload_to=floor_plan_upload_to)
-    floor_plan_bounds = models.JSONField()
+    floor_plan = models.ImageField(
+        upload_to=floor_plan_upload_to, null=True, blank=True
+    )
+    floor_plan_bounds = models.JSONField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

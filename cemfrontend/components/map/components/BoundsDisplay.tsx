@@ -26,7 +26,7 @@ export default function BoundsDisplay({ bounds }: ComponentProps) {
 				type: 'Feature',
 				geometry: {
 					type: 'Polygon',
-					coordinates: bounds,
+					coordinates: typeof bounds === 'string' ? JSON.parse(bounds) : bounds,
 				},
 			},
 		});

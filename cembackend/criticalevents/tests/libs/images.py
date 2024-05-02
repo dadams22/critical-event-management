@@ -1,3 +1,4 @@
+import base64
 from PIL import Image
 from io import BytesIO
 
@@ -20,3 +21,9 @@ def generate_upload_image() -> SimpleUploadedFile:
     return SimpleUploadedFile(
         "floor_plan.jpg", _generate_test_image(), content_type="image/jpeg"
     )
+
+
+def generate_upload_image_base64() -> str:
+    """Generate a test image for upload in base64"""
+
+    return f"data:image/jpeg;base64,{base64.b64encode(_generate_test_image()).decode('utf-8')}"

@@ -52,9 +52,9 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const data: { link: string; label: string; icon: TablerIcon }[] = [
-	{ link: '/prepare/sites', label: 'Sites', icon: IconBuildingCommunity, },
-	{ link: '/prepare/people', label: 'People', icon: IconUsers, },
-	{ link: '/prepare/assetTypes', label: 'Asset Types', icon: IconAsset, },
+	{ link: '/prepare/sites', label: 'Sites', icon: IconBuildingCommunity },
+	{ link: '/prepare/people', label: 'People', icon: IconUsers },
+	{ link: '/prepare/assetTypes', label: 'Asset Types', icon: IconAsset },
 ];
 
 interface ComponentProps {

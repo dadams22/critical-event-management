@@ -88,7 +88,19 @@ class IncidentReportSerializer(serializers.ModelSerializer):
         )
 
 
+class FloorSerializer(serializers.ModelSerializer):
+    site = serializers.PrimaryKeyRelatedField(
+        queryset=Site.objects.all(), required=False
+    )
+
+    class Meta:
+        model = Floor
+        fields = ("id", "name", "site", "sort_order", "floor_plan", "floor_plan_bounds")
+
+
 class SiteSerializer(serializers.ModelSerializer):
+    floors = FloorSerializer(many=True, required=False)
+
     class Meta:
         model = Site
         fields = (
@@ -100,13 +112,23 @@ class SiteSerializer(serializers.ModelSerializer):
             "bounds",
             "floor_plan",
             "floor_plan_bounds",
+            "floors",
         )
 
+    def create(self, validated_data):
+        floors_data = None
+        if "floors" in validated_data:
+            floors_data = validated_data.pop("floors")
 
-class FloorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Floor
-        fields = ("id", "name", "site", "sort_order", "floor_plan", "floor_plan_bounds")
+        site = Site.objects.create(**validated_data)
+
+        if floors_data:
+            for floor_data in floors_data:
+                Floor.objects.create(
+                    site=site, organization=self.context["organization"], **floor_data
+                )
+
+        return site
 
 
 class AssetTypeSerializer(serializers.ModelSerializer):
@@ -124,6 +146,8 @@ class AssetSerializer(serializers.ModelSerializer):
         if request and request.method == "GET":
             self.Meta.depth = 1
             self.Meta.fields += ("maintenance_logs",)
+        else:
+            self.Meta.depth = 0
 
     class Meta:
         model = Asset
@@ -134,6 +158,7 @@ class AssetSerializer(serializers.ModelSerializer):
             "floor",
             "longitude",
             "latitude",
+            "photo",
         )
 
 

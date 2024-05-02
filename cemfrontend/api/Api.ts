@@ -1,11 +1,20 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
-import { Alert, IncidentReport, Person } from './types';
+import { Alert, Asset, IncidentReport, Person } from './types';
 import { Location, Site, AssetType } from './types';
 import { Bounds } from '../app/(dashboard)/report/[incidentReportId]/MapView';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 export const AUTH_TOKEN_KEY = 'auth-token';
+
+async function fileToBase64(file: File) {
+	return new Promise((resolve, reject) => {
+	  const reader = new FileReader();
+	  reader.onload = () => resolve(String(reader.result)); // Extract base64 string
+	  reader.onerror = error => reject(error);
+	  reader.readAsDataURL(file);
+	});
+  }
 
 const Api = (() => {
 	const axiosInstance = axios.create({
@@ -108,31 +117,34 @@ const Api = (() => {
 			bounds,
 			longitude,
 			latitude,
-			floorPlan,
-			floorPlanBounds,
+			floors,
 		}: {
 			name: string;
 			address: string;
 			bounds: Bounds;
 			longitude: number;
 			latitude: number;
-			floorPlan: File;
-			floorPlanBounds: Bounds;
+			floors: { name: string; floorPlanImage: File; floorPlanBounds: Bounds; }[];
 		}): Promise<Site> => {
-			const formData = new FormData();
-			formData.append('name', name); // Add other fields as required
-			formData.append('address', address);
-			formData.append('longitude', String(longitude));
-			formData.append('latitude', String(latitude));
-			formData.append('bounds', JSON.stringify(bounds));
-			formData.append('floor_plan_bounds', JSON.stringify(floorPlanBounds));
-			formData.append('floor_plan', floorPlan);
+			const formattedFloors = await Promise.all(floors.map(async ({ name: floorName, floorPlanImage, floorPlanBounds }, i) => {
+				const base64Image = await fileToBase64(floorPlanImage);
+				return {
+				  name: floorName,
+				  floor_plan: base64Image,
+				  floor_plan_bounds: floorPlanBounds,
+				  sort_order: i,
+				};
+			  }));
 
-			const response = await axiosInstance.post<Site>('site/', formData, {
+			const response = await axiosInstance.post<Site>('site/', {
+				name,
+				address,
+				longitude,
+				latitude,
+				bounds: bounds,
+				floors: formattedFloors
+			}, {
 				method: 'CREATE',
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
 			});
 			return response.data;
 		},
@@ -151,6 +163,43 @@ const Api = (() => {
 			const response = await axiosInstance.post<AssetType>('asset_type/', {
 				name,
 				icon_identifier: iconIdentifier,
+			});
+			return response.data;
+		},
+
+		getAssets: async (): Promise<Asset[]> => {
+			const response = await axiosInstance.get<Asset[]>('asset/');
+			return response.data;
+		},
+
+		createAsset: async ({
+			floor,
+			name,
+			assetType,
+			longitude,
+			latitude,
+			photo,
+		}: {
+			floor: string;
+			name: string;
+			assetType: string;
+			longitude: number;
+			latitude: number;
+			photo?: File;
+		}): Promise<Asset> => {
+			const formData = new FormData();
+			formData.append('floor', floor);
+			formData.append('name', name);
+			formData.append('asset_type', assetType);
+			formData.append('longitude', String(longitude));
+			formData.append('latitude', String(latitude));
+			if (!!photo) formData.append('photo', photo);
+
+			const response = await axiosInstance.post('asset/', formData, {
+				method: 'CREATE',
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
 			});
 			return response.data;
 		},

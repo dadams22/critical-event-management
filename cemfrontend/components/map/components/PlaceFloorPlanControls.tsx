@@ -13,6 +13,7 @@ export interface PlaceFloorPlanControlsProps {
 	floorPlanImageUrl: string;
 	width: number;
 	height: number;
+	floorPlanBounds?: Bounds;
 	onUpdateFloorPlanBounds: (bounds: Bounds) => void;
 	siteBounds: Bounds;
 }
@@ -21,9 +22,10 @@ export default function PlaceFloorPlanControls({
 	floorPlanImageUrl,
 	width,
 	height,
+	floorPlanBounds,
 	onUpdateFloorPlanBounds,
 	siteBounds,
-}: ComponentProps) {
+}: PlaceFloorPlanControlsProps) {
 	const map = useContext(MapContext);
 
 	const draw = useMemo<MapboxDraw>(
@@ -83,7 +85,9 @@ export default function PlaceFloorPlanControls({
 			im_h = Math.round(0.8 * im_h);
 		}
 
-		const cPoly = computeRect([w / 2, h / 2], [im_w, im_h]);
+		const cPoly = floorPlanBounds
+			? [...floorPlanBounds, floorPlanBounds[0]]
+			: computeRect([w / 2, h / 2], [im_w, im_h]);
 		const cBox = cPoly.slice(0, 4);
 
 		map.addSource('floorPlanImage', {
@@ -141,6 +145,8 @@ export default function PlaceFloorPlanControls({
 
 		return () => {
 			map.removeControl(draw);
+			map.removeLayer('floorPlanImageLayer');
+			map.removeSource('floorPlanImage');
 		};
 	}, [map]);
 

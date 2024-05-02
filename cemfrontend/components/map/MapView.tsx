@@ -3,7 +3,7 @@
 import styled from '@emotion/styled';
 import mapboxgl from 'mapbox-gl';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Bounds, Location, Site } from '../../api/types';
+import { Asset, Bounds, Location, Site } from '../../api/types';
 import React from 'react';
 import { ColorScheme } from '@mantine/core';
 import Marker, { MarkerProps } from './components/Marker';
@@ -13,6 +13,7 @@ import PlaceFloorPlanControls, {
 	PlaceFloorPlanControlsProps,
 } from './components/PlaceFloorPlanControls';
 import AddAssetControls, { AddAssetControlsProps } from './components/AddAssetControls';
+import _ from 'lodash';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -28,6 +29,8 @@ interface ComponentProps {
 	location: Location;
 	showLocationMarker?: boolean;
 	sites?: Site[];
+	assets?: Asset[];
+	onClickAsset?: (assetId: string) => void;
 	drawBounds?: DrawBoundsControlsProps;
 	floorPlan?: PlaceFloorPlanControlsProps;
 	addAsset?: AddAssetControlsProps;
@@ -38,6 +41,8 @@ export default function MapView({
 	location,
 	showLocationMarker,
 	sites,
+	assets,
+	onClickAsset,
 	drawBounds,
 	floorPlan,
 	addAsset,
@@ -71,9 +76,23 @@ export default function MapView({
 				{loaded && (
 					<>
 						{showLocationMarker && <Marker location={location} />}
-						{sites && sites.map((site) => <SiteDisplay site={site} />)}
+						{sites &&
+							sites.map((site) => (
+								<SiteDisplay key={site.id} site={site} zoomToBounds={sites.length === 1} />
+							))}
+						{assets &&
+							assets.map((asset) => (
+								<Marker
+									key={asset.id}
+									location={_.pick(asset, ['latitude', 'longitude'])}
+									iconIdentifier={asset.asset_type.icon_identifier}
+									onClick={() => onClickAsset(asset.id)}
+								/>
+							))}
 						{drawBounds && <DrawBoundsControls {...drawBounds} />}
-						{floorPlan && <PlaceFloorPlanControls {...floorPlan} />}
+						{floorPlan && (
+							<PlaceFloorPlanControls key={floorPlan.floorPlanImageUrl} {...floorPlan} />
+						)}
 						{addAsset && <AddAssetControls {...addAsset} />}
 						{marker && <Marker {...marker} />}
 					</>

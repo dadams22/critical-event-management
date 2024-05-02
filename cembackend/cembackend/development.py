@@ -8,7 +8,3 @@ DATABASES = {
 }
 
 DEBUG = True
-
-# Storage stuff
-
-DEFAULT_FILE_STORAGE = "inmemorystorage.InMemoryStorage"

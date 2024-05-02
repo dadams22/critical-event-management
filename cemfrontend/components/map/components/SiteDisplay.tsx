@@ -4,6 +4,7 @@ import { useContext, useEffect } from 'react';
 import { Site } from '../../../api/types';
 import { MapContext } from '../MapView';
 import BoundsDisplay from './BoundsDisplay';
+import mapboxgl from 'mapbox-gl';
 
 const siteBoundsId = (site: Site) => `site-bounds-${site.id}`;
 const siteBoundsLayerId = (site: Site) => `site-bounds-layer-${site.id}`;
@@ -12,10 +13,13 @@ const siteFloorPlanLayerId = (site: Site) => `site-floor-plan-layer-${site.id}`;
 
 interface ComponentProps {
 	site: Site;
+	zoomToBounds?: boolean;
 }
 
-export default function SiteDisplay({ site }: ComponentProps) {
+export default function SiteDisplay({ site, zoomToBounds }: ComponentProps) {
 	const map = useContext(MapContext);
+
+	console.log(site.bounds);
 
 	useEffect(() => {
 		if (!map) return;
@@ -23,8 +27,8 @@ export default function SiteDisplay({ site }: ComponentProps) {
 		// Floor plan
 		map.addSource(siteFloorPlanId(site), {
 			type: 'image',
-			url: site.floor_plan,
-			coordinates: site.floor_plan_bounds,
+			url: site.floors[0].floor_plan,
+			coordinates: site.floors[0].floor_plan_bounds,
 		});
 		map.addLayer({
 			id: siteFloorPlanLayerId(site),
@@ -35,11 +39,19 @@ export default function SiteDisplay({ site }: ComponentProps) {
 			},
 		});
 
+		if (zoomToBounds) {
+			const zoomBounds = new mapboxgl.LngLatBounds();
+			(typeof site.bounds === 'string' ? JSON.parse(site.bounds) : site.bounds).forEach((coord) =>
+				zoomBounds.extend(coord)
+			);
+			map.fitBounds(zoomBounds, { padding: 40 });
+		}
+
 		return () => {
 			if (!map) return;
 
-			map.removeSource(siteFloorPlanId(site));
-			map.removeLayer(siteFloorPlanLayerId(site));
+			// map.removeLayer(siteFloorPlanLayerId(site));
+			// map.removeSource(siteFloorPlanId(site));
 		};
 	}, [map, site]);
 

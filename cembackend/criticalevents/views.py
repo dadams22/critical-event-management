@@ -1,5 +1,6 @@
+import base64
 from django.utils import timezone
-from django.http import Http404
+from django.core.files.base import ContentFile
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -8,7 +9,6 @@ from twilio.twiml.messaging_response import MessagingResponse
 from .serializers import (
     AlertSerializer,
     IncidentReportSerializer,
-    MinimalUserSerializer,
     PersonSerializer,
     SiteSerializer,
     FloorSerializer,
@@ -21,7 +21,6 @@ from .models import (
     Location,
     Person,
     IncidentReport,
-    MessageReceipt,
     PersonStatus,
     Site,
     Floor,
@@ -30,6 +29,40 @@ from .models import (
     MaintenanceLog,
 )
 from .twilio_utils import send_twilio_message
+
+from rest_framework import parsers
+
+
+def file_from_base64(data):
+    # data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABkAGQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD5/ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==
+    format, imgstr = data.split(";base64,")
+    ext = format.split("/")[-1]
+    data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
+    return data
+
+
+class Base64FileJSONParser(parsers.JSONParser):
+    media_type = "application/json"
+
+    def _parse_files_rec(self, request_json):
+        if not isinstance(request_json, dict):
+            return
+        for key, value in request_json.items():
+            if isinstance(value, str):
+                if value.startswith("data:image"):
+                    request_json[key] = file_from_base64(value)
+            elif isinstance(value, dict):
+                self._parse_files_rec(value)
+            elif isinstance(value, list):
+                for item in value:
+                    self._parse_files_rec(item)
+
+    def parse(self, stream, media_type=None, parser_context=None):
+        result = super().parse(
+            stream, media_type=media_type, parser_context=parser_context
+        )
+        self._parse_files_rec(result)
+        return result
 
 
 class PingView(APIView):
@@ -168,11 +201,13 @@ class OrganizationedViewSet(viewsets.ModelViewSet):
     """An abstract viewset that filters by the current user's organization"""
 
     model = None
+    parser_classes = (Base64FileJSONParser, parsers.MultiPartParser)
 
     def get_queryset(self):
         return self.model.objects.filter(organization=self.request.user.organization)
 
     def perform_create(self, serializer):
+        serializer.context["organization"] = self.request.user.organization
         serializer.save(organization=self.request.user.organization)
 
 
