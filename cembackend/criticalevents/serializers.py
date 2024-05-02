@@ -159,6 +159,7 @@ class AssetSerializer(serializers.ModelSerializer):
             "longitude",
             "latitude",
             "photo",
+            "next_maintenance_date",
         )
 
 

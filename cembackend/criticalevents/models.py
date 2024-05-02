@@ -2,6 +2,7 @@ from collections.abc import Iterable
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 
 class Organization(models.Model):
@@ -177,6 +178,11 @@ def asset_upload_to(instance, filename):
     return f"assets/{str(uuid.uuid4())}/{filename}"
 
 
+def default_next_maintenance_date():
+    """Return the current date as the default next maintenance date"""
+    return timezone.now().date()
+
+
 class Asset(BaseModel):
     """An asset within a site"""
 
@@ -186,6 +192,7 @@ class Asset(BaseModel):
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
     photo = models.ImageField(upload_to=asset_upload_to, null=True, blank=True)
+    next_maintenance_date = models.DateField(default=default_next_maintenance_date)
 
     def __str__(self) -> str:
         return self.name

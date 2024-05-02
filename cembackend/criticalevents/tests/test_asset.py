@@ -59,6 +59,7 @@ class AssetViewSetTest(BaseTestCase):
             "floor": self.floor.id,
             "longitude": 0.0,
             "latitude": 0.0,
+            "next_maintenance_date": "2022-01-01",
         }
 
         # Make a POST request to the AssetViewSet
