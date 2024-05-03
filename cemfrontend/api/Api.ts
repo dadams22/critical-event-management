@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
-import { Alert, Asset, IncidentReport, Person } from './types';
+import { Alert, Asset, IncidentReport, MaintenanceLog, Person } from './types';
 import { Location, Site, AssetType } from './types';
 import { Bounds } from '../app/(dashboard)/report/[incidentReportId]/MapView';
 
@@ -179,6 +179,7 @@ const Api = (() => {
 			longitude,
 			latitude,
 			photo,
+			nextMaintenanceDate
 		}: {
 			floor: string;
 			name: string;
@@ -186,23 +187,49 @@ const Api = (() => {
 			longitude: number;
 			latitude: number;
 			photo?: File;
+			nextMaintenanceDate: Date;
 		}): Promise<Asset> => {
 			const formData = new FormData();
-			formData.append('floor', floor);
-			formData.append('name', name);
-			formData.append('asset_type', assetType);
-			formData.append('longitude', String(longitude));
-			formData.append('latitude', String(latitude));
-			if (!!photo) formData.append('photo', photo);
+			const payload = {
+				floor,
+				name,
+				asset_type: assetType,
+				longitude, 
+				latitude,
+				next_maintenance_date: nextMaintenanceDate.toISOString().split('T')[0],
+			};
+			
+			if (!!photo) {
+				payload['photo'] = await fileToBase64(photo);
+			}
 
-			const response = await axiosInstance.post('asset/', formData, {
+			const response = await axiosInstance.post('asset/', payload, {
 				method: 'CREATE',
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
 			});
 			return response.data;
 		},
+
+		createMaintenanceLog: async ({
+			assetId,
+			notes,
+			photo
+		}: {
+			assetId: string;
+			notes: string;
+			photo?: File;
+		}) => {
+			const payload = {
+				asset: assetId,
+				notes,
+			};
+
+			if (!!photo) {
+				payload['photo'] = await fileToBase64(photo);
+			}
+
+			const response = await axiosInstance.post<MaintenanceLog>('maintenance_log/', payload, { method: 'CREATE' });
+			return response.data;
+		}
 	};
 })();
 

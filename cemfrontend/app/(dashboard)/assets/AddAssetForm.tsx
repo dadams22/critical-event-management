@@ -22,9 +22,15 @@ import { forwardRef, useState } from 'react';
 import { AssetType } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import Api from '../../../api/Api';
+import { DateInput } from '@mantine/dates';
 
 interface ComponentProps {
-	onSave: (assetInfo: { name: string; assetType: string; photo?: File }) => Promise<void>;
+	onSave: (assetInfo: {
+		name: string;
+		assetType: string;
+		photo?: File;
+		nextMaintenanceDate: Date;
+	}) => Promise<void>;
 	onCancel: () => void;
 	locationSelected: boolean;
 	assetTypes: AssetType[];
@@ -61,6 +67,7 @@ export default function AddAssetForm({
 	const [assetType, setAssetType] = useState<string | null>();
 	const [assetImage, setAssetImage] = useState<File>();
 	const [assetImageUrl, setAssetImageUrl] = useState<string>();
+	const [nextMaintenanceDate, setNextMaintenanceDate] = useState<Date | null>();
 
 	const handleImageUpload = (file: File | null) => {
 		if (!file) {
@@ -85,11 +92,16 @@ export default function AddAssetForm({
 	}));
 
 	const [saving, setSaving] = useState<boolean>(false);
-	const disableSave: boolean = !name || !locationSelected || !assetType;
+	const disableSave: boolean = !name || !locationSelected || !assetType || !nextMaintenanceDate;
 	const handleSave = () => {
 		if (disableSave) return;
 		setSaving(true);
-		onSave({ name, assetType: assetType!, photo: assetImage }).finally(() => setSaving(false));
+		onSave({
+			name,
+			assetType: assetType!,
+			photo: assetImage,
+			nextMaintenanceDate: nextMaintenanceDate!,
+		}).finally(() => setSaving(false));
 	};
 
 	return (
@@ -122,6 +134,15 @@ export default function AddAssetForm({
 					itemComponent={AssetTypeSelectItem}
 					label="Asset Type"
 					required
+				/>
+				<DateInput
+					label="Next Mainenance Date"
+					value={nextMaintenanceDate}
+					onChange={setNextMaintenanceDate}
+					required
+					minDate={new Date()}
+					popoverProps={{ position: 'right', withinPortal: true }}
+					firstDayOfWeek={0}
 				/>
 				{assetImageUrl && <Image src={assetImageUrl} radius="sm" caption={assetImage?.name} />}
 				<FileButton accept="image/png,image/jpeg" onChange={handleImageUpload}>

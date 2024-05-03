@@ -13,6 +13,8 @@ import {
 import _ from 'lodash';
 import { IconCheck, IconUrgent, TablerIcon } from '@tabler/icons-react';
 import { IconClockExclamation } from '@tabler/icons-react';
+import { Asset, MaintenanceStatus } from '../../../api/types';
+import { useMemo } from 'react';
 
 interface StatDisplayProps {
 	label: string;
@@ -22,34 +24,47 @@ interface StatDisplayProps {
 	Icon: TablerIcon;
 }
 
-interface ComponentProps {}
+interface ComponentProps {
+	assets: Asset[];
+}
 
-export function AssetSummary({}: ComponentProps) {
+export function AssetSummary({ assets }: ComponentProps) {
 	const theme = useMantineTheme();
 
-	const data: StatDisplayProps[] = [
-		{
-			label: 'In Compliance',
-			progress: 85,
-			count: 85,
-			color: 'green',
-			Icon: IconCheck,
-		},
-		{
-			label: 'Needs Maintenance',
-			progress: 10,
-			count: 10,
-			color: 'yellow',
-			Icon: IconClockExclamation,
-		},
-		{
-			label: 'Out of Compliance',
-			progress: 5,
-			count: 5,
-			color: 'red',
-			Icon: IconUrgent,
-		},
-	];
+	const data: StatDisplayProps[] = useMemo(() => {
+		const compliantCount = assets.filter(
+			(asset) => asset.maintenance_status === MaintenanceStatus.COMPLIANT
+		).length;
+		const needsMaintenanceCount = assets.filter(
+			(asset) => asset.maintenance_status === MaintenanceStatus.NEEDS_MAINTENANCE
+		).length;
+		const outOfComplianceCount = assets.filter(
+			(asset) => asset.maintenance_status === MaintenanceStatus.OUT_OF_COMPLIANCE
+		).length;
+		return [
+			{
+				label: 'In Compliance',
+				progress: (compliantCount / assets.length) * 100,
+				count: compliantCount,
+				color: 'green',
+				Icon: IconCheck,
+			},
+			{
+				label: 'Needs Maintenance',
+				progress: (needsMaintenanceCount / assets.length) * 100,
+				count: needsMaintenanceCount,
+				color: 'yellow',
+				Icon: IconClockExclamation,
+			},
+			{
+				label: 'Out of Compliance',
+				progress: (outOfComplianceCount / assets.length) * 100,
+				count: outOfComplianceCount,
+				color: 'red',
+				Icon: IconUrgent,
+			},
+		];
+	}, [assets]);
 
 	const stats = data.map((stat) => {
 		return (

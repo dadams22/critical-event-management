@@ -10,11 +10,12 @@ import ReactDOM from 'react-dom';
 
 export interface MarkerProps {
 	location: Location;
+	color?: string;
 	iconIdentifier?: AssetIconIdentifier;
 	onClick?: () => void;
 }
 
-export default function Marker({ location, iconIdentifier, onClick }: MarkerProps) {
+export default function Marker({ location, iconIdentifier, color, onClick }: MarkerProps) {
 	const theme = useMantineTheme();
 
 	const map = useContext(MapContext);
@@ -25,12 +26,12 @@ export default function Marker({ location, iconIdentifier, onClick }: MarkerProp
 		let iconElement;
 		if (iconIdentifier) {
 			iconElement = document.createElement('div');
-			const icon = getAssetIcon(iconIdentifier);
+			const icon = getAssetIcon(iconIdentifier, { size: 30, color: color });
 			ReactDOM.render(icon, iconElement);
 		}
 
 		const marker = new mapboxgl.Marker({
-			color: theme.colors.red[8],
+			color: color || theme.colors.red[8],
 			element: iconElement || undefined,
 		})
 			.setLngLat([location.longitude, location.latitude])

@@ -69,12 +69,28 @@ export interface AssetType {
 	icon_identifier: IconIdentifier;
 }
 
+export enum MaintenanceStatus {
+    OUT_OF_COMPLIANCE = "OUT_OF_COMPLIANCE",
+    NEEDS_MAINTENANCE = "NEEDS_MAINTENANCE",
+    COMPLIANT = "COMPLIANT"
+}
+
+export interface MaintenanceLog {
+	id: string;
+	created_at: string;
+	notes: string;
+	photo?: string;
+}
+
 export interface Asset {
 	id: string;
-	floor: string;
+	floor: Floor;
 	name: string;
 	asset_type: AssetType;
 	longitude: number;
 	latitude: number;
 	photo: string;
+	next_maintenance_date: string;
+	maintenance_status: MaintenanceStatus;
+	maintenance_logs: MaintenanceLog[];
 }

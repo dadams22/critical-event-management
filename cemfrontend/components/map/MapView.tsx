@@ -3,9 +3,9 @@
 import styled from '@emotion/styled';
 import mapboxgl from 'mapbox-gl';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Asset, Bounds, Location, Site } from '../../api/types';
+import { Asset, Bounds, Location, MaintenanceStatus, Site } from '../../api/types';
 import React from 'react';
-import { ColorScheme } from '@mantine/core';
+import { ColorScheme, MantineColor, useMantineTheme } from '@mantine/core';
 import Marker, { MarkerProps } from './components/Marker';
 import SiteDisplay from './components/SiteDisplay';
 import DrawBoundsControls, { DrawBoundsControlsProps } from './components/DrawBoundsControls';
@@ -35,6 +35,8 @@ interface ComponentProps {
 	floorPlan?: PlaceFloorPlanControlsProps;
 	addAsset?: AddAssetControlsProps;
 	marker?: MarkerProps;
+	zoomToSite?: string;
+	selectedFloorId?: string;
 }
 
 export default function MapView({
@@ -47,7 +49,10 @@ export default function MapView({
 	floorPlan,
 	addAsset,
 	marker,
+	zoomToSite,
+	selectedFloorId,
 }: ComponentProps) {
+	const theme = useMantineTheme();
 	const colorScheme: ColorScheme = 'dark';
 	const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);
@@ -70,6 +75,12 @@ export default function MapView({
 		return map;
 	}, [mapContainer]);
 
+	const MAINTENANCE_STATUS_TO_COLOR: Record<MaintenanceStatus, MantineColor> = {
+		[MaintenanceStatus.COMPLIANT]: theme.colors.green[8],
+		[MaintenanceStatus.NEEDS_MAINTENANCE]: theme.colors.yellow[8],
+		[MaintenanceStatus.OUT_OF_COMPLIANCE]: theme.colors.red[8],
+	};
+
 	return (
 		<MapContainer ref={(elem) => setMapContainer(elem)}>
 			<MapContext.Provider value={map}>
@@ -78,7 +89,12 @@ export default function MapView({
 						{showLocationMarker && <Marker location={location} />}
 						{sites &&
 							sites.map((site) => (
-								<SiteDisplay key={site.id} site={site} zoomToBounds={sites.length === 1} />
+								<SiteDisplay
+									key={site.id}
+									site={site}
+									zoomToBounds={sites.length === 1 || zoomToSite === site.id}
+									selectedFloorId={selectedFloorId}
+								/>
 							))}
 						{assets &&
 							assets.map((asset) => (
@@ -86,6 +102,7 @@ export default function MapView({
 									key={asset.id}
 									location={_.pick(asset, ['latitude', 'longitude'])}
 									iconIdentifier={asset.asset_type.icon_identifier}
+									color={MAINTENANCE_STATUS_TO_COLOR[asset.maintenance_status]}
 									onClick={() => onClickAsset(asset.id)}
 								/>
 							))}

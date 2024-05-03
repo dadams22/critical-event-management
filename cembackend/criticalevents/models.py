@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from datetime import timedelta
 
 
 class Organization(models.Model):
@@ -193,6 +194,19 @@ class Asset(BaseModel):
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
     photo = models.ImageField(upload_to=asset_upload_to, null=True, blank=True)
     next_maintenance_date = models.DateField(default=default_next_maintenance_date)
+
+    @property
+    def maintenance_status(self):
+        # Get the current date
+        current_date = timezone.now().date()
+        # Calculate the difference between the current date and next_maintenance_date
+        time_until_maintenance = self.next_maintenance_date - current_date
+        if time_until_maintenance < timedelta(days=0):
+            return "OUT_OF_COMPLIANCE"
+        elif time_until_maintenance <= timedelta(days=30):
+            return "NEEDS_MAINTENANCE"
+        else:
+            return "COMPLIANT"
 
     def __str__(self) -> str:
         return self.name

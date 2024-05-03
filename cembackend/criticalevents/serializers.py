@@ -148,6 +148,7 @@ class AssetSerializer(serializers.ModelSerializer):
             self.Meta.fields += ("maintenance_logs",)
         else:
             self.Meta.depth = 0
+            self.Meta.fields = [field for field in self.Meta.fields if field != "maintenance_logs"]
 
     class Meta:
         model = Asset
@@ -160,7 +161,9 @@ class AssetSerializer(serializers.ModelSerializer):
             "latitude",
             "photo",
             "next_maintenance_date",
+            "maintenance_status",
         )
+        read_only_fields = ("maintenance_status",)
 
 
 class MaintenanceLogSerializer(serializers.ModelSerializer):
