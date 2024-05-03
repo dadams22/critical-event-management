@@ -36,5 +36,6 @@ export const assetIconOptions = [
 	{ value: AssetIconIdentifier.FireExtinguisher, label: 'Fire Extinguisher' },
 	{ value: AssetIconIdentifier.HeartBolt, label: 'AED' },
 	{ value: AssetIconIdentifier.Bleach, label: 'Chemical Wash Station' },
+	{ value: AssetIconIdentifier.FirstAid, label: 'First Aid Kit' },
 	{ value: AssetIconIdentifier.Asset, label: 'Other' },
 ];
