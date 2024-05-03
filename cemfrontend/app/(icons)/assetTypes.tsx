@@ -2,6 +2,7 @@
 
 import {
 	IconFireExtinguisher,
+	IconFirstAidKit,
 	IconHeartBolt,
 	IconBleach,
 	IconAsset,
@@ -14,11 +15,13 @@ export enum AssetIconIdentifier {
 	FireExtinguisher = 'fire-extinguisher',
 	HeartBolt = 'heart-bolt',
 	Bleach = 'bleach',
+	FirstAid = 'first-aid-kit',
 	Asset = 'asset',
 }
 
 export const assetIconMap: Record<AssetIconIdentifier, React.ReactComponentElement<IconProps>> = {
 	[AssetIconIdentifier.FireExtinguisher]: IconFireExtinguisher,
+	[AssetIconIdentifier.FirstAid]: IconFirstAidKit,
 	[AssetIconIdentifier.HeartBolt]: IconHeartBolt,
 	[AssetIconIdentifier.Bleach]: IconBleach,
 	[AssetIconIdentifier.Asset]: IconAsset,
