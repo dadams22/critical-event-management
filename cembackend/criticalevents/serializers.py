@@ -137,18 +137,16 @@ class AssetTypeSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "icon_identifier")
 
 
+class MaintenanceLogSerializer(serializers.ModelSerializer):
+    reported_by = MinimalUserSerializer(read_only=True)
+
+    class Meta:
+        model = MaintenanceLog
+        fields = ("id", "notes", "asset", "created_at", "photo", "reported_by")
+
+
 class AssetSerializer(serializers.ModelSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # HACK: Depth=1 breaks the .create method for any model with a foreign
-        # key. I got this fix here: https://stackoverflow.com/questions/66858087/django-rest-framework-adding-depth-in-serializer-gives-foreign-key-constraint
-        request = self.context.get("request")
-        if request and request.method == "GET":
-            self.Meta.depth = 1
-            self.Meta.fields += ("maintenance_logs",)
-        else:
-            self.Meta.depth = 0
-            self.Meta.fields = [field for field in self.Meta.fields if field != "maintenance_logs"]
+    maintenance_logs = MaintenanceLogSerializer(many=True, read_only=True)
 
     class Meta:
         model = Asset
@@ -161,12 +159,7 @@ class AssetSerializer(serializers.ModelSerializer):
             "latitude",
             "photo",
             "next_maintenance_date",
+            "maintenance_logs",
             "maintenance_status",
         )
         read_only_fields = ("maintenance_status",)
-
-
-class MaintenanceLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MaintenanceLog
-        fields = ("id", "notes", "asset", "created_at", "photo")

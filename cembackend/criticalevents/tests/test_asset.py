@@ -117,3 +117,68 @@ class AssetViewSetTest(BaseTestCase):
 
         # Check that the response data does not include the other asset
         self.assertNotIn("Other Asset", [asset["name"] for asset in response.data])
+
+    def test_asset_with_maintenance_status(self):
+        # Authenticate the user
+        self.client.login(username="testuser", password="12345")
+
+        # Define the new asset data
+        new_asset_data = {
+            "name": "New Asset",
+            "asset_type": self.asset_type.id,
+            "floor": self.floor.id,
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "next_maintenance_date": "2022-01-01",
+        }
+
+        # Make a POST request to the AssetViewSet
+        response = self.client.post("/api/asset/", data=new_asset_data, format="json")
+
+        if response.status_code != 201:
+            print(response.content)
+
+        # Check that the status code is 201 (created)
+        self.assertEqual(response.status_code, 201)
+
+        # Retrieve the newly created asset from the database
+        asset = Asset.objects.get(id=response.data["id"])
+
+        # Check that the maintenance status of the new asset is correct
+        self.assertEqual(asset.maintenance_status, "OUT_OF_COMPLIANCE")
+
+    def test_get_asset_with_maintenance_log(self):
+        # Authenticate the user
+        self.client.login(username="testuser", password="12345")
+
+        # Define the new maintenance log data
+        new_maintenance_log_data = {
+            "asset": self.asset.id,
+            "notes": "hello there",
+        }
+
+        # Make a POST request to the MaintenanceLogViewSet
+        response = self.client.post(
+            "/api/maintenance_log/", data=new_maintenance_log_data, format="json"
+        )
+
+        if response.status_code != 201:
+            print(response.content)
+
+        # Check that the status code is 201 (created)
+        self.assertEqual(response.status_code, 201)
+
+        # Make a GET request to the AssetViewSet to retrieve the asset with the maintenance log
+        response = self.client.get(f"/api/asset/{self.asset.id}/")
+
+        if response.status_code != 200:
+            print(response.content)
+
+        # Check that the status code is 200
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the maintenance log notes are correct
+        self.assertEqual(response.data["maintenance_logs"][0]["notes"], "hello there")
+        self.assertEqual(
+            response.data["maintenance_logs"][0]["reported_by"]["id"], self.user.id
+        )
