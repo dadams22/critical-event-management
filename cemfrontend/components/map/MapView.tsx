@@ -63,10 +63,9 @@ export default function MapView({
 		const map = new mapboxgl.Map({
 			container: mapContainer,
 			style: 
-				'mapbox://styles/mapbox/satellite-streets-v9',
-				// colorScheme === 'dark'
-				// 	? 'mapbox://styles/mapbox/dark-v11'
-				// 	: 'mapbox://styles/mapbox/light-v11',
+				colorScheme === 'dark'
+					? 'mapbox://styles/mapbox/dark-v11'
+					: 'mapbox://styles/mapbox/light-v11',
 			center: [location.longitude, location.latitude],
 			zoom: 18,
 		});
