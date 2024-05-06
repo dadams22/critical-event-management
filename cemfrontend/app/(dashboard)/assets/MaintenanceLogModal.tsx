@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, FileButton, Flex, Group, Image, Modal, Stack, Textarea } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 import { IconPhoto } from '@tabler/icons-react';
 import _ from 'lodash';
 import { useState } from 'react';
@@ -15,6 +16,7 @@ export default function MaintenanceLogModal({ opened, onClose, onSave }: Compone
 	const [notes, setNotes] = useState<string>('');
 	const [photo, setPhoto] = useState<File>();
 	const [photoUrl, setPhotoUrl] = useState<string>();
+	const [nextMaintenanceDate, setNextMaintenanceDate] = useState<Date | null>();
 
 	const canSave: boolean = !!notes;
 
@@ -38,8 +40,14 @@ export default function MaintenanceLogModal({ opened, onClose, onSave }: Compone
 
 	const handleSave = () => {
 		setSaving(true);
-		onSave({ notes, photo })
-			.then(() => onClose())
+		onSave({ notes, photo, nextMaintenanceDate })
+			.then(() => {
+				setNotes('');
+				setPhoto(undefined);
+				setPhotoUrl(undefined);
+				setNextMaintenanceDate(null);
+				onClose()
+			})
 			.finally(() => setSaving(false));
 	};
 
@@ -47,6 +55,14 @@ export default function MaintenanceLogModal({ opened, onClose, onSave }: Compone
 		<Modal title="Log Maintenance" opened={opened} onClose={onClose}>
 			<Stack>
 				<Textarea label="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} required />
+				<DateInput
+					label="Next Mainenance Date"
+					value={nextMaintenanceDate}
+					onChange={setNextMaintenanceDate}
+					minDate={new Date()}
+					popoverProps={{ position: 'right', withinPortal: true }}
+					firstDayOfWeek={0}
+				/>
 				{photoUrl && <Image src={photoUrl} radius="sm" caption={photo?.name} />}
 				<FileButton accept="image/png,image/jpeg" onChange={handlePhotoUpload}>
 					{(props) => (

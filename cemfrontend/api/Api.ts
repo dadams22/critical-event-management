@@ -194,11 +194,11 @@ const Api = (() => {
 				floor,
 				name,
 				asset_type: assetType,
-				longitude, 
+				longitude,
 				latitude,
 				next_maintenance_date: nextMaintenanceDate.toISOString().split('T')[0],
 			};
-			
+
 			if (!!photo) {
 				payload['photo'] = await fileToBase64(photo);
 			}
@@ -212,15 +212,18 @@ const Api = (() => {
 		createMaintenanceLog: async ({
 			assetId,
 			notes,
-			photo
+			photo,
+			nextMaintenanceDate,
 		}: {
 			assetId: string;
 			notes: string;
 			photo?: File;
+			nextMaintenanceDate?: Date;
 		}) => {
 			const payload = {
 				asset: assetId,
 				notes,
+				next_maintenance_date: nextMaintenanceDate?.toISOString().split('T')[0],
 			};
 
 			if (!!photo) {

@@ -139,14 +139,45 @@ class AssetTypeSerializer(serializers.ModelSerializer):
 
 class MaintenanceLogSerializer(serializers.ModelSerializer):
     reported_by = MinimalUserSerializer(read_only=True)
+    next_maintenance_date = serializers.DateField(write_only=True, required=False)
 
     class Meta:
         model = MaintenanceLog
-        fields = ("id", "notes", "asset", "created_at", "photo", "reported_by")
+        fields = (
+            "id",
+            "notes",
+            "asset",
+            "created_at",
+            "photo",
+            "reported_by",
+            "next_maintenance_date",
+        )
+
+    def create(self, validated_data):
+        next_maintenance_date = validated_data.pop("next_maintenance_date", None)
+        maintenance_log = MaintenanceLog.objects.create(**validated_data)
+
+        if next_maintenance_date:
+            maintenance_log.asset.next_maintenance_date = next_maintenance_date
+            maintenance_log.asset.save()
+
+        return maintenance_log
 
 
 class AssetSerializer(serializers.ModelSerializer):
-    maintenance_logs = MaintenanceLogSerializer(many=True, read_only=True)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # HACK: Depth=1 breaks the .create method for any model with a foreign
+        # key. I got this fix here: https://stackoverflow.com/questions/66858087/django-rest-framework-adding-depth-in-serializer-gives-foreign-key-constraint
+        request = self.context.get("request")
+        if request and request.method == "GET":
+            self.Meta.depth = 2
+            self.Meta.fields += ("maintenance_logs",)
+        else:
+            self.Meta.depth = 0
+            self.Meta.fields = [
+                field for field in self.Meta.fields if field != "maintenance_logs"
+            ]
 
     class Meta:
         model = Asset
@@ -159,7 +190,6 @@ class AssetSerializer(serializers.ModelSerializer):
             "latitude",
             "photo",
             "next_maintenance_date",
-            "maintenance_logs",
             "maintenance_status",
         )
         read_only_fields = ("maintenance_status",)

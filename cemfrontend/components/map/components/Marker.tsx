@@ -45,7 +45,7 @@ export default function Marker({ location, iconIdentifier, color, onClick }: Mar
 			if (!map) return;
 			marker.remove();
 		};
-	}, [map]);
+	}, [map, color]);
 
 	return null;
 }

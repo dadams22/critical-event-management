@@ -64,3 +64,20 @@ class TestMaintenanceLog(BaseTestCase):
         self.assertEqual(response.status_code, 200)
 
         self.assertEqual(response.data["maintenance_logs"][0]["notes"], "hello there")
+
+    def test_create_maintenance_log_with_next_maintenance_date(self):
+        # Prepare the maintenance log data
+        data = {
+            "notes": "Test maintenance log",
+            "asset": self.asset.id,
+            "next_maintenance_date": "2023-01-01",
+        }
+
+        # Send a POST request to create a new maintenance log
+        response = self.client.post("/api/maintenance_log/", data, format="json")
+
+        assert response.status_code == 201, response.content
+
+        # Assert that the next_maintenance_date of the asset was updated
+        self.asset.refresh_from_db()
+        assert str(self.asset.next_maintenance_date) == data["next_maintenance_date"]

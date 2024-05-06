@@ -52,9 +52,9 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
 		{ open: openMaintenanceLogModal, close: closeMaintenanceLogModal },
 	] = useDisclosure();
 
-	const handleLogMaintenance = (payload: { notes: string; photo?: File }) => {
-		const { notes, photo } = payload;
-		return Api.createMaintenanceLog({ assetId: asset.id, notes, photo }).then(() =>
+	const handleLogMaintenance = (payload: { notes: string; photo?: File, nextMaintenanceDate?: Date }) => {
+		const { notes, photo, nextMaintenanceDate } = payload;
+		return Api.createMaintenanceLog({ assetId: asset.id, notes, photo, nextMaintenanceDate }).then(() =>
 			onUpdateAsset()
 		);
 	};
