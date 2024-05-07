@@ -2,13 +2,7 @@
 
 import {
 	createStyles,
-	Header,
-	Group,
-	Burger,
-	Paper,
-	Transition,
 	rem,
-	Title,
 	useMantineTheme,
 	Tooltip,
 	UnstyledButton,
@@ -17,22 +11,16 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-	IconAlarm,
 	IconAsset,
 	IconLogout,
 	IconSettings,
-	IconShieldHalfFilled,
 	IconSquareLetterPFilled,
-	IconSquareRoundedLetterPFilled,
 	IconUrgent,
 } from '@tabler/icons-react';
-import { getCookie } from 'cookies-next';
-import Link from 'next/link';
+import {deleteCookie, getCookie} from 'cookies-next';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Api, { AUTH_TOKEN_KEY } from '../../api/Api';
-
-const HEADER_HEIGHT = rem(60);
 
 const useStyles = createStyles((theme) => ({
 	pageContainer: {
@@ -87,15 +75,12 @@ const useStyles = createStyles((theme) => ({
 	},
 }));
 
-interface HeaderResponsiveProps {
-	links: { link: string; label: string }[];
-}
-
 interface NavbarLinkProps {
 	icon: typeof IconAsset;
 	label: string;
-	link: string;
+	link?: string;
 	active?: boolean;
+	onClick?: () => void;
 }
 
 const links: NavbarLinkProps[] = [
@@ -103,12 +88,13 @@ const links: NavbarLinkProps[] = [
 	{ label: 'Report', link: '/report', icon: IconUrgent },
 ];
 
-function NavbarLink({ icon: Icon, label, active, link }: NavbarLinkProps) {
+function NavbarLink({ icon: Icon, label, active, link, onClick }: NavbarLinkProps) {
 	const { classes } = useStyles();
 	const router = useRouter();
 
 	const handleClick = () => {
-		router.push(link);
+		if (link) router.push(link);
+		if (onClick) onClick();
 	};
 
 	return (
@@ -148,6 +134,11 @@ export default function AppLayout({ children }: ComponentProps) {
 		});
 	}, [token]);
 
+	const handleLogout = () => {
+		deleteCookie(AUTH_TOKEN_KEY);
+		router.push('/login');
+	};
+
 	return (
 		<div className={classes.pageContainer}>
 			<nav className={classes.navbar}>
@@ -163,7 +154,7 @@ export default function AppLayout({ children }: ComponentProps) {
 
 				<Stack justify="center" gap={0}>
 					<NavbarLink icon={IconSettings} label="Settings" link="/prepare" />
-					<NavbarLink icon={IconLogout} label="Logout" />
+					<NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
 				</Stack>
 			</nav>
 			<main className={classes.main}>{children}</main>
