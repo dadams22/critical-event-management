@@ -1,16 +1,28 @@
 'use client';
 
-import { Button, Center, Flex, Loader, Space, Title } from '@mantine/core';
-import { Avatar, Table, Group, Text, ActionIcon, ScrollArea, useMantineTheme } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import {
+	Button,
+	Center,
+	Flex,
+	Loader,
+	Space,
+	Title,
+	Avatar,
+	Table,
+	Group,
+	Text,
+	ActionIcon,
+	ScrollArea,
+	useMantineTheme,
+} from '@mantine/core';
+import { IconTrash, IconUserPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
-import Api from '../../../../api/Api';
-import { IconUserPlus } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
-import { ModalNames } from '../../../(modals)';
 import { produce } from 'immer';
-import { Person } from '../../../../api/types';
 import { useState } from 'react';
+import { Person } from '../../../../api/types';
+import Api from '../../../../api/Api';
+import { ModalNames } from '../../../(modals)';
 
 export default function PeoplePage() {
 	const theme = useMantineTheme();

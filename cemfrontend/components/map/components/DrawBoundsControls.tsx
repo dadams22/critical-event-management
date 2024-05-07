@@ -1,9 +1,9 @@
 'use client';
 
 import { useContext, useEffect, useMemo } from 'react';
-import { Bounds } from '../../../api/types';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { TxRectMode } from 'mapbox-gl-draw-rotate-scale-rect-mode';
+import { Bounds } from '../../../api/types';
 import { MapContext } from '../MapView';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 
@@ -28,12 +28,10 @@ export default function DrawBoundsControls({ onUpdateBounds, bounds }: DrawBound
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
-				modes: Object.assign(
-					{
-						tx_poly: TxRectMode,
-					},
-					MapboxDraw.modes
-				),
+				modes: {
+					tx_poly: TxRectMode,
+					...MapboxDraw.modes,
+				},
 			}),
 		[]
 	);

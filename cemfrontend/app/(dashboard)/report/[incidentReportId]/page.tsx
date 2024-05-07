@@ -1,4 +1,5 @@
 'use client';
+
 import {
 	Center,
 	Loader,
@@ -11,19 +12,19 @@ import {
 	useMantineTheme,
 } from '@mantine/core';
 import useSWR from 'swr';
-import Api from '../../../../api/Api';
-import MapView from '../../../../components/map/MapView';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
 import styled from '@emotion/styled';
-import SearchBar from './SearchBar';
 import { IconCheck, IconSpeakerphone, IconUrgent } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
-import { ModalNames } from '../../../(modals)';
-import { Alert } from '../../../../api/types';
 import { produce } from 'immer';
 import _ from 'lodash';
+import { ModalNames } from '../../../(modals)';
+import { Alert } from '../../../../api/types';
+import SearchBar from './SearchBar';
+import { ImpactedIndividualsStats } from './ImpactedIndividualsStats';
+import MapView from '../../../../components/map/MapView';
+import Api from '../../../../api/Api';
 
 dayjs.extend(relativeTime);
 
@@ -97,12 +98,13 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 	const { data: people } = useSWR('people', Api.getPeople);
 
 	if (error) return <div>Error loading data</div>;
-	if (!incident_report || !people)
+	if (!incident_report || !people) {
 		return (
 			<Center h="100%">
 				<Loader variant="bars" />
 			</Center>
 		);
+	}
 
 	const { reporter, location, created_at } = incident_report;
 

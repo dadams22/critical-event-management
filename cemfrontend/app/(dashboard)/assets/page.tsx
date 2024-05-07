@@ -1,4 +1,5 @@
 'use client';
+
 import {
 	Center,
 	Loader,
@@ -16,15 +17,15 @@ import {
 	Text,
 } from '@mantine/core';
 import useSWR from 'swr';
-import Api from '../../../api/Api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
 import { IconMapPin, IconPlus, IconSearch, IconStack } from '@tabler/icons-react';
 import _ from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';
-import { useEffect, useMemo, useState } from 'react';
+import Api from '../../../api/Api';
 import { Asset, Location } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
@@ -102,7 +103,8 @@ export default function AssetsPage() {
 	const [selectedSiteId, setSelectedSiteId] = useState<string | null>();
 	const [selectedFloorId, setSelectedFloorId] = useState<string | null>();
 	const selectedSite = sites?.find((site) => site.id === selectedSiteId);
-	const floorOptions: SelectItem[] = selectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) || [];
+	const floorOptions: SelectItem[] =
+		selectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) || [];
 
 	const assets = useMemo<Asset[]>(
 		() => allAssets?.filter((asset: Asset) => String(asset.floor.id) === selectedFloorId) || [],
@@ -139,12 +141,13 @@ export default function AssetsPage() {
 		setAddAssetLocation(undefined);
 	}, [selectedSiteId]);
 
-	if (sitesLoading || assetTypesLoading || assetsLoading)
+	if (sitesLoading || assetTypesLoading || assetsLoading) {
 		return (
 			<Center h="100%">
 				<Loader variant="bars" />
 			</Center>
 		);
+	}
 
 	const handleClickAddAsset = () => {
 		setAddingAsset(true);
@@ -221,8 +224,22 @@ export default function AssetsPage() {
 				<ActionBar>
 					<Group>
 						<Title order={3}>Assets</Title>
-						<Select icon={<IconMapPin size={20} />} data={siteOptions} value={selectedSiteId} onChange={setSelectedSiteId} w={160} />
-						{(selectedSite?.floors.length || 0) > 1 && <Select w={100} icon={<IconStack size={20} />} data={floorOptions} value={selectedFloorId} onChange={setSelectedFloorId} />}
+						<Select
+							icon={<IconMapPin size={20} />}
+							data={siteOptions}
+							value={selectedSiteId}
+							onChange={setSelectedSiteId}
+							w={160}
+						/>
+						{(selectedSite?.floors.length || 0) > 1 && (
+							<Select
+								w={100}
+								icon={<IconStack size={20} />}
+								data={floorOptions}
+								value={selectedFloorId}
+								onChange={setSelectedFloorId}
+							/>
+						)}
 						<Autocomplete
 							w={280}
 							data={assetAutocompleteItems}

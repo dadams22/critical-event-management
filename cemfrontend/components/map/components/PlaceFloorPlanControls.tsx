@@ -1,11 +1,11 @@
 'use client';
 
 import { useContext, useEffect, useMemo } from 'react';
-import { Bounds } from '../../../api/types';
-import { MapContext } from '../MapView';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { polygon } from '@turf/helpers';
 import { TxRectMode } from 'mapbox-gl-draw-rotate-scale-rect-mode';
+import { MapContext } from '../MapView';
+import { Bounds } from '../../../api/types';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import BoundsDisplay from './BoundsDisplay';
 
@@ -38,12 +38,10 @@ export default function PlaceFloorPlanControls({
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
-				modes: Object.assign(
-					{
-						tx_poly: TxRectMode,
-					},
-					MapboxDraw.modes
-				),
+				modes: {
+					tx_poly: TxRectMode,
+					...MapboxDraw.modes,
+				},
 			}),
 		[]
 	);
@@ -65,7 +63,7 @@ export default function PlaceFloorPlanControls({
 		const drawUpdateOverlayByFeature = (feature) => {
 			const coordinates = feature.geometry.coordinates[0].slice(0, 4);
 			// TODO: Change this
-			var overlaySourceId = 'floorPlanImage';
+			const overlaySourceId = 'floorPlanImage';
 			map.getSource(overlaySourceId).setCoordinates(coordinates);
 			onUpdateFloorPlanBounds(coordinates);
 		};
@@ -128,7 +126,7 @@ export default function PlaceFloorPlanControls({
 				) {
 					// var source = this.map.getSource(e.sourceId);
 					//var geojson = source._data;
-					var geojson = e.source.data;
+					const geojson = e.source.data;
 					if (
 						geojson &&
 						geojson.features &&

@@ -102,7 +102,7 @@ export default function AssetTypesPage() {
 												disabled={saving}
 												value={newAssetTypeName}
 												onChange={(e) => setNewAssetTypeName(e.target.value)}
-												autoFocus={true}
+												autoFocus
 											/>
 										</td>
 										<td>

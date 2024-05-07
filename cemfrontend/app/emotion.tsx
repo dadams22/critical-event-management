@@ -4,9 +4,9 @@ import { CacheProvider } from '@emotion/react';
 import { useEmotionCache, MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { useServerInsertedHTML } from 'next/navigation';
 import { ModalsProvider } from '@mantine/modals';
-import { APP_MODALS } from './(modals)';
 import { ModalSettings } from '@mantine/modals/lib/context';
 import _ from 'lodash';
+import { APP_MODALS } from './(modals)';
 
 const DEFAULT_MODAL_SETTINGS: ModalSettings = {
 	centered: true,

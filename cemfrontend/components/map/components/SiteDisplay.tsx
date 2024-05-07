@@ -1,10 +1,10 @@
 'use client';
 
 import { useContext, useEffect } from 'react';
+import mapboxgl from 'mapbox-gl';
 import { Site } from '../../../api/types';
 import { MapContext } from '../MapView';
 import BoundsDisplay from './BoundsDisplay';
-import mapboxgl from 'mapbox-gl';
 import FloorPlanDisplay from './FloorPlanDisplay';
 
 const siteBoundsId = (site: Site) => `site-bounds-${site.id}`;

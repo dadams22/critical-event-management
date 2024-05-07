@@ -1,9 +1,9 @@
 'use client';
 
 import { useContext, useEffect, useMemo } from 'react';
+import { v4 as uuid } from 'uuid';
 import { Bounds } from '../../../api/types';
 import { MapContext } from '../MapView';
-import { v4 as uuid } from 'uuid';
 
 const sourceId = (id: string) => `bounds-source-${id}`;
 const layerId = (id: string) => `bounds-layer-${id}`;

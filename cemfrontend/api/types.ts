@@ -70,9 +70,9 @@ export interface AssetType {
 }
 
 export enum MaintenanceStatus {
-    OUT_OF_COMPLIANCE = "OUT_OF_COMPLIANCE",
-    NEEDS_MAINTENANCE = "NEEDS_MAINTENANCE",
-    COMPLIANT = "COMPLIANT"
+	OUT_OF_COMPLIANCE = 'OUT_OF_COMPLIANCE',
+	NEEDS_MAINTENANCE = 'NEEDS_MAINTENANCE',
+	COMPLIANT = 'COMPLIANT',
 }
 
 export interface MaintenanceLog {

@@ -12,9 +12,9 @@ import {
 	ScrollArea,
 } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import CreateSiteModal from './CreateSiteModal';
 import { useDisclosure } from '@mantine/hooks';
 import useSWR from 'swr';
+import CreateSiteModal from './CreateSiteModal';
 import Api from '../../../../api/Api';
 import SiteCard from './SiteCard';
 

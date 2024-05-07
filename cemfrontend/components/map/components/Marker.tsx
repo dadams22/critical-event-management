@@ -1,12 +1,12 @@
 'use client';
 
 import { useContext, useEffect } from 'react';
-import { Location } from '../../../api/types';
-import { MapContext } from '../MapView';
 import mapboxgl from 'mapbox-gl';
 import { useMantineTheme } from '@mantine/core';
-import { getAssetIcon, AssetIconIdentifier } from '../../../app/(icons)/assetTypes';
 import ReactDOM from 'react-dom';
+import { Location } from '../../../api/types';
+import { MapContext } from '../MapView';
+import { getAssetIcon, AssetIconIdentifier } from '../../../app/(icons)/assetTypes';
 
 export interface MarkerProps {
 	location: Location;
@@ -26,7 +26,7 @@ export default function Marker({ location, iconIdentifier, color, onClick }: Mar
 		let iconElement;
 		if (iconIdentifier) {
 			iconElement = document.createElement('div');
-			const icon = getAssetIcon(iconIdentifier, { size: 30, color: color });
+			const icon = getAssetIcon(iconIdentifier, { size: 30, color });
 			ReactDOM.render(icon, iconElement);
 		}
 

@@ -1,4 +1,5 @@
 'use client';
+
 import {
 	createStyles,
 	Header,
@@ -28,8 +29,8 @@ import {
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import Api, { AUTH_TOKEN_KEY } from '../../api/Api';
 import { useEffect } from 'react';
+import Api, { AUTH_TOKEN_KEY } from '../../api/Api';
 
 const HEADER_HEIGHT = rem(60);
 

@@ -1,5 +1,6 @@
 'use client';
-import React, { useRef } from 'react';
+
+import React, { useRef, useMemo, useState } from 'react';
 import {
 	ActionIcon,
 	Button,
@@ -17,10 +18,8 @@ import {
 	TextInput,
 	Title,
 } from '@mantine/core';
-import { useMemo, useState } from 'react';
 import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
 import _ from 'lodash';
-import AddressField from '../../../../components/AddressField';
 import { useCounter } from '@mantine/hooks';
 import styled from '@emotion/styled';
 import {
@@ -32,17 +31,18 @@ import {
 	IconTrash,
 	IconX,
 } from '@tabler/icons-react';
+import { produce } from 'immer';
+import AddressField from '../../../../components/AddressField';
 // import { Polygon } from '@turf/helpers/dist/es';
 import Api from '../../../../api/Api';
 import MapView from '../../../../components/map/MapView';
 import { Bounds } from '../../../../api/types';
-import { produce } from 'immer';
 
 const useStyles = createStyles((theme) => ({
 	overlay: {
 		cursor: 'pointer',
 		opacity: 0.75,
-		border: `1px solid transparent`,
+		border: '1px solid transparent',
 		'&:hover': {
 			opacity: 0.85,
 			border: `1px solid ${theme.colors.blue[6]}`,

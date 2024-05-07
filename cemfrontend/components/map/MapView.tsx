@@ -2,10 +2,10 @@
 
 import styled from '@emotion/styled';
 import mapboxgl from 'mapbox-gl';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Asset, Bounds, Location, MaintenanceStatus, Site } from '../../api/types';
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ColorScheme, MantineColor, useMantineTheme } from '@mantine/core';
+import _ from 'lodash';
+import { Asset, Bounds, Location, MaintenanceStatus, Site } from '../../api/types';
 import Marker, { MarkerProps } from './components/Marker';
 import SiteDisplay from './components/SiteDisplay';
 import DrawBoundsControls, { DrawBoundsControlsProps } from './components/DrawBoundsControls';
@@ -13,7 +13,6 @@ import PlaceFloorPlanControls, {
 	PlaceFloorPlanControlsProps,
 } from './components/PlaceFloorPlanControls';
 import AddAssetControls, { AddAssetControlsProps } from './components/AddAssetControls';
-import _ from 'lodash';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -62,7 +61,7 @@ export default function MapView({
 
 		const map = new mapboxgl.Map({
 			container: mapContainer,
-			style: 
+			style:
 				colorScheme === 'dark'
 					? 'mapbox://styles/mapbox/dark-v11'
 					: 'mapbox://styles/mapbox/light-v11',

@@ -67,12 +67,12 @@ export default function MaintenanceLogModal({ opened, onClose, onSave }: Compone
 				<FileButton accept="image/png,image/jpeg" onChange={handlePhotoUpload}>
 					{(props) => (
 						<Button
-							variant={!!photo ? 'outline' : 'filled'}
+							variant={photo ? 'outline' : 'filled'}
 							size="sm"
 							leftIcon={<IconPhoto size={20} />}
 							{...props}
 						>
-							{!!photo ? 'Change Image' : 'Upload Image'}
+							{photo ? 'Change Image' : 'Upload Image'}
 						</Button>
 					)}
 				</FileButton>

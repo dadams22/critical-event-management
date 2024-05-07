@@ -11,12 +11,12 @@ import {
 	Timeline,
 	Title,
 } from '@mantine/core';
-import { Asset } from '../../../api/types';
-import { getAssetIcon } from '../../(icons)/assetTypes';
 import dayjs from 'dayjs';
 import { useDisclosure } from '@mantine/hooks';
-import MaintenanceLogModal from './MaintenanceLogModal';
 import { IconTool } from '@tabler/icons-react';
+import { Asset } from '../../../api/types';
+import { getAssetIcon } from '../../(icons)/assetTypes';
+import MaintenanceLogModal from './MaintenanceLogModal';
 import Api from '../../../api/Api';
 
 const formatMaintenanceDate = (dateString: string): string => {
@@ -29,7 +29,7 @@ const formatMaintenanceDate = (dateString: string): string => {
 	if (diffInDays < 0) {
 		diffString = `(${Math.abs(diffInDays)} days overdue)`;
 	} else if (diffInDays === 0) {
-		diffString = `(today)`;
+		diffString = '(today)';
 	} else if (diffInMonths < 1) {
 		diffString = `(${diffInDays} days from now)`;
 	} else {

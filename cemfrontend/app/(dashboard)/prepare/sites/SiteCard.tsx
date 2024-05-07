@@ -1,9 +1,9 @@
 'use client';
 
 import { Card, Stack, Text } from '@mantine/core';
-import { Site } from '../../../../api/types';
 import _ from 'lodash';
 import styled from '@emotion/styled';
+import { Site } from '../../../../api/types';
 import MapView from '../../../../components/map/MapView';
 
 const MapContainer = styled.div`

@@ -19,10 +19,10 @@ import {
 } from '@mantine/core';
 import { IconCheck, IconClick, IconCrosshair, IconPhoto, IconSelector } from '@tabler/icons-react';
 import { forwardRef, useState } from 'react';
+import { DateInput } from '@mantine/dates';
 import { AssetType } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import Api from '../../../api/Api';
-import { DateInput } from '@mantine/dates';
 
 interface ComponentProps {
 	onSave: (assetInfo: {
@@ -148,12 +148,12 @@ export default function AddAssetForm({
 				<FileButton accept="image/png,image/jpeg" onChange={handleImageUpload}>
 					{(props) => (
 						<Button
-							variant={!!assetImage ? 'outline' : 'filled'}
+							variant={assetImage ? 'outline' : 'filled'}
 							size="sm"
 							leftIcon={<IconPhoto size={20} />}
 							{...props}
 						>
-							{!!assetImage ? 'Change Image' : 'Upload Image'}
+							{assetImage ? 'Change Image' : 'Upload Image'}
 						</Button>
 					)}
 				</FileButton>

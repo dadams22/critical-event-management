@@ -1,8 +1,9 @@
 'use client';
+
 import { TextInput, PasswordInput, Paper, Title, Container, Group, Button } from '@mantine/core';
 import { useState } from 'react';
-import Api from '../../api/Api';
 import { useRouter } from 'next/navigation';
+import Api from '../../api/Api';
 
 export default function LoginPage() {
 	const router = useRouter();

@@ -1,7 +1,15 @@
 import axios from 'axios';
 import { getCookie, setCookie } from 'cookies-next';
-import { Alert, Asset, IncidentReport, MaintenanceLog, Person } from './types';
-import { Location, Site, AssetType } from './types';
+import {
+	Alert,
+	Asset,
+	IncidentReport,
+	MaintenanceLog,
+	Person,
+	Location,
+	Site,
+	AssetType,
+} from './types';
 import { Bounds } from '../app/(dashboard)/report/[incidentReportId]/MapView';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -9,12 +17,12 @@ export const AUTH_TOKEN_KEY = 'auth-token';
 
 async function fileToBase64(file: File) {
 	return new Promise((resolve, reject) => {
-	  const reader = new FileReader();
-	  reader.onload = () => resolve(String(reader.result)); // Extract base64 string
-	  reader.onerror = error => reject(error);
-	  reader.readAsDataURL(file);
+		const reader = new FileReader();
+		reader.onload = () => resolve(String(reader.result)); // Extract base64 string
+		reader.onerror = (error) => reject(error);
+		reader.readAsDataURL(file);
 	});
-  }
+}
 
 const Api = (() => {
 	const axiosInstance = axios.create({
@@ -24,11 +32,11 @@ const Api = (() => {
 		},
 	});
 
-	axiosInstance.interceptors.request.use(function (config) {
+	axiosInstance.interceptors.request.use((config) => {
 		const token = getCookie(AUTH_TOKEN_KEY);
 
 		if (token) {
-			config.headers['Authorization'] = `Token ${token}`;
+			config.headers.Authorization = `Token ${token}`;
 		}
 
 		return config;
@@ -124,28 +132,34 @@ const Api = (() => {
 			bounds: Bounds;
 			longitude: number;
 			latitude: number;
-			floors: { name: string; floorPlanImage: File; floorPlanBounds: Bounds; }[];
+			floors: { name: string; floorPlanImage: File; floorPlanBounds: Bounds }[];
 		}): Promise<Site> => {
-			const formattedFloors = await Promise.all(floors.map(async ({ name: floorName, floorPlanImage, floorPlanBounds }, i) => {
-				const base64Image = await fileToBase64(floorPlanImage);
-				return {
-				  name: floorName,
-				  floor_plan: base64Image,
-				  floor_plan_bounds: floorPlanBounds,
-				  sort_order: i,
-				};
-			  }));
+			const formattedFloors = await Promise.all(
+				floors.map(async ({ name: floorName, floorPlanImage, floorPlanBounds }, i) => {
+					const base64Image = await fileToBase64(floorPlanImage);
+					return {
+						name: floorName,
+						floor_plan: base64Image,
+						floor_plan_bounds: floorPlanBounds,
+						sort_order: i,
+					};
+				})
+			);
 
-			const response = await axiosInstance.post<Site>('site/', {
-				name,
-				address,
-				longitude,
-				latitude,
-				bounds: bounds,
-				floors: formattedFloors
-			}, {
-				method: 'CREATE',
-			});
+			const response = await axiosInstance.post<Site>(
+				'site/',
+				{
+					name,
+					address,
+					longitude,
+					latitude,
+					bounds,
+					floors: formattedFloors,
+				},
+				{
+					method: 'CREATE',
+				}
+			);
 			return response.data;
 		},
 
@@ -179,7 +193,7 @@ const Api = (() => {
 			longitude,
 			latitude,
 			photo,
-			nextMaintenanceDate
+			nextMaintenanceDate,
 		}: {
 			floor: string;
 			name: string;
@@ -199,8 +213,8 @@ const Api = (() => {
 				next_maintenance_date: nextMaintenanceDate.toISOString().split('T')[0],
 			};
 
-			if (!!photo) {
-				payload['photo'] = await fileToBase64(photo);
+			if (photo) {
+				payload.photo = await fileToBase64(photo);
 			}
 
 			const response = await axiosInstance.post('asset/', payload, {
@@ -226,13 +240,15 @@ const Api = (() => {
 				next_maintenance_date: nextMaintenanceDate?.toISOString().split('T')[0],
 			};
 
-			if (!!photo) {
-				payload['photo'] = await fileToBase64(photo);
+			if (photo) {
+				payload.photo = await fileToBase64(photo);
 			}
 
-			const response = await axiosInstance.post<MaintenanceLog>('maintenance_log/', payload, { method: 'CREATE' });
+			const response = await axiosInstance.post<MaintenanceLog>('maintenance_log/', payload, {
+				method: 'CREATE',
+			});
 			return response.data;
-		}
+		},
 	};
 })();
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Location } from '../../../../api/types';
+import { Location, Site } from '../../../../api/types';
 import mapboxgl from 'mapbox-gl';
 import styled from '@emotion/styled';
 import { useMantineTheme, Text, ColorScheme } from '@mantine/core';
@@ -9,7 +9,6 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { TxRectMode, TxCenter } from 'mapbox-gl-draw-rotate-scale-rect-mode';
 import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css';
 import { polygon } from '@turf/helpers';
-import { Site } from '../../../../api/types';
 
 mapboxgl.accessToken =
 	'pk.eyJ1IjoiZGFkYW1zMjIiLCJhIjoiY2xqd2llczgyMHd4azNkbWhwb2Z6ZTB3YyJ9.VYzIdS2JPHTEW2aHYPONqg';
@@ -68,11 +67,11 @@ export default function MapView({
 			.addTo(map.current);
 
 		// Add polygon editing controls
-		if (!!onUpdateBounds) {
+		if (onUpdateBounds) {
 			draw.current = new MapboxDraw({
 				displayControlsDefault: false,
 				// Select which mapbox-gl-draw control buttons to add to the map.
-				controls: !!onUpdateBounds
+				controls: onUpdateBounds
 					? {
 							polygon: true,
 							trash: true,
@@ -82,16 +81,14 @@ export default function MapView({
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
-				modes: Object.assign(
-					{
-						tx_poly: TxRectMode,
-					},
-					MapboxDraw.modes
-				),
+				modes: {
+					tx_poly: TxRectMode,
+					...MapboxDraw.modes,
+				},
 			});
 			map.current.addControl(draw.current);
 
-			if (!!polygons) {
+			if (polygons) {
 				polygons.forEach((bounds, i) => {
 					draw.current.add({
 						id: `polygon-${i}`,
@@ -115,7 +112,7 @@ export default function MapView({
 			map.current.on('draw.create', handleUpdateBounds);
 			map.current.on('draw.delete', () => onUpdateBounds(undefined));
 			map.current.on('draw.update', handleUpdateBounds);
-		} else if (!!polygons) {
+		} else if (polygons) {
 			map.current!.on('load', () => {
 				polygons.forEach((bounds, i) => {
 					map.current!.addSource(`polygon-${i}`, {
@@ -145,7 +142,7 @@ export default function MapView({
 	});
 
 	useEffect(() => {
-		if (!!onUpdateBounds) {
+		if (onUpdateBounds) {
 			const polygonButton = document.getElementsByClassName('mapbox-gl-draw_polygon')[0];
 			if (!polygonButton) return;
 			polygonButton.disabled = !!polygons;
@@ -161,7 +158,7 @@ export default function MapView({
 			draw.current = new MapboxDraw({
 				displayControlsDefault: false,
 				// Select which mapbox-gl-draw control buttons to add to the map.
-				controls: !!onUpdateBounds
+				controls: onUpdateBounds
 					? {
 							polygon: true,
 							trash: true,
@@ -171,12 +168,10 @@ export default function MapView({
 				// Set mapbox-gl-draw to draw by default.
 				// The user does not have to click the polygon control button first.
 				defaultMode: 'draw_polygon',
-				modes: Object.assign(
-					{
-						tx_poly: TxRectMode,
-					},
-					MapboxDraw.modes
-				),
+				modes: {
+					tx_poly: TxRectMode,
+					...MapboxDraw.modes,
+				},
 			});
 			map.current.addControl(draw.current);
 		}
@@ -201,9 +196,9 @@ export default function MapView({
 		};
 
 		const drawUpdateOverlayByFeature = (feature) => {
-			var coordinates = feature.geometry.coordinates[0].slice(0, 4);
+			const coordinates = feature.geometry.coordinates[0].slice(0, 4);
 			// TODO: Change this
-			var overlaySourceId = 'floorPlanImage';
+			const overlaySourceId = 'floorPlanImage';
 			map.current.getSource(overlaySourceId).setCoordinates(coordinates);
 			onUpdateFloorPlanBounds(coordinates);
 		};
@@ -212,7 +207,7 @@ export default function MapView({
 		// Get the device pixel ratio, falling back to 1.
 		// var dpr = window.devicePixelRatio || 1;
 		// Get the size of the canvas in CSS pixels.
-		var rect = canvas.getBoundingClientRect();
+		const rect = canvas.getBoundingClientRect();
 		const w = rect.width;
 		const h = rect.height;
 		// console.log('canvas: ' + w + 'x' + h);
@@ -265,7 +260,7 @@ export default function MapView({
 				) {
 					// var source = this.map.getSource(e.sourceId);
 					//var geojson = source._data;
-					var geojson = e.source.data;
+					const geojson = e.source.data;
 					if (
 						geojson &&
 						geojson.features &&

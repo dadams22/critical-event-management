@@ -10,7 +10,6 @@ import {
 	Card,
 	useMantineTheme,
 } from '@mantine/core';
-import { Person, PersonStatus } from '../../../../api/types';
 import _ from 'lodash';
 import {
 	IconQuestionMark,
@@ -19,6 +18,7 @@ import {
 	IconUsers,
 	TablerIcon,
 } from '@tabler/icons-react';
+import { Person, PersonStatus } from '../../../../api/types';
 
 interface StatDisplayProps {
 	label: string;
@@ -75,41 +75,32 @@ export function ImpactedIndividualsStats({ people, statusByPerson }: ComponentPr
 		},
 	];
 
-	const stats = data.map((stat) => {
-		return (
-			<Card
-				withBorder
-				radius="md"
-				shadow="sm"
-				p="xs"
-				key={stat.label}
-				style={{ cursor: 'pointer' }}
-			>
-				<Group>
-					<RingProgress
-						size={60}
-						roundCaps
-						thickness={8}
-						sections={[{ value: stat.progress, color: stat.color }]}
-						label={
-							<Center>
-								<stat.Icon size="1.4rem" stroke={1.5} color={theme.colors[stat.color][7]} />
-							</Center>
-						}
-					/>
+	const stats = data.map((stat) => (
+		<Card withBorder radius="md" shadow="sm" p="xs" key={stat.label} style={{ cursor: 'pointer' }}>
+			<Group>
+				<RingProgress
+					size={60}
+					roundCaps
+					thickness={8}
+					sections={[{ value: stat.progress, color: stat.color }]}
+					label={
+						<Center>
+							<stat.Icon size="1.4rem" stroke={1.5} color={theme.colors[stat.color][7]} />
+						</Center>
+					}
+				/>
 
-					<div>
-						<Text color="dimmed" size="xs" transform="uppercase" weight={700}>
-							{stat.label}
-						</Text>
-						<Text weight={700} size="xl">
-							{stat.count}
-						</Text>
-					</div>
-				</Group>
-			</Card>
-		);
-	});
+				<div>
+					<Text color="dimmed" size="xs" transform="uppercase" weight={700}>
+						{stat.label}
+					</Text>
+					<Text weight={700} size="xl">
+						{stat.count}
+					</Text>
+				</div>
+			</Group>
+		</Card>
+	));
 
 	return (
 		<SimpleGrid
