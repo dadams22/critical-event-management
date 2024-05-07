@@ -69,7 +69,7 @@ export default function AssetTypesPage() {
 			) : (
 				<Center>
 					<Stack w={800}>
-						<Flex maw={800} justify="flex-end">
+						<Flex maw={800}>
 							<Button
 								disabled={adding}
 								leftIcon={<IconUserPlus size={20} />}

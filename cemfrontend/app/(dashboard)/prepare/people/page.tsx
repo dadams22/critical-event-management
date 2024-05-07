@@ -99,7 +99,7 @@ export default function PeoplePage() {
 						</Center>
 					) : (
 						<>
-							<Flex maw={800} justify="flex-end">
+							<Flex maw={800}>
 								<Button leftIcon={<IconUserPlus size={20} />} onClick={handleClickAddPerson}>
 									Add Person
 								</Button>

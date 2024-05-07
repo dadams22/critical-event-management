@@ -53,7 +53,7 @@ export default function MapView({
 	selectedFloorId,
 }: ComponentProps) {
 	const theme = useMantineTheme();
-	const colorScheme: ColorScheme = 'dark';
+	const colorScheme: ColorScheme = 'light';
 	const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
 	const [loaded, setLoaded] = useState<boolean>(false);
 

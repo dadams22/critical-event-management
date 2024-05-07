@@ -7,7 +7,5 @@ interface ComponentProps {
 }
 
 export default function LivePage({ params: { shortToken } }: ComponentProps) {
-	console.log(shortToken);
-
 	return null;
 }

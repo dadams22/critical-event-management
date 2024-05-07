@@ -9,9 +9,22 @@ import {
 	rem,
 	Title,
 	useMantineTheme,
+	Tooltip,
+	UnstyledButton,
+	Stack,
+	Center,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconShieldHalfFilled } from '@tabler/icons-react';
+import {
+	IconAlarm,
+	IconAsset,
+	IconLogout,
+	IconSettings,
+	IconShieldHalfFilled,
+	IconSquareLetterPFilled,
+	IconSquareRoundedLetterPFilled,
+	IconUrgent,
+} from '@tabler/icons-react';
 import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -25,7 +38,6 @@ const useStyles = createStyles((theme) => ({
 		height: 0,
 		minHeight: '100vh',
 		display: 'flex',
-		flexDirection: 'column',
 	},
 
 	main: {
@@ -37,65 +49,39 @@ const useStyles = createStyles((theme) => ({
 		zIndex: 1,
 	},
 
-	dropdown: {
-		position: 'absolute',
-		top: HEADER_HEIGHT,
-		left: 0,
-		right: 0,
-		zIndex: 0,
-		borderTopRightRadius: 0,
-		borderTopLeftRadius: 0,
-		borderTopWidth: 0,
-		overflow: 'hidden',
-
-		[theme.fn.largerThan('sm')]: {
-			display: 'none',
-		},
-	},
-
-	header: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		alignItems: 'center',
+	navbar: {
+		width: '80px',
 		height: '100%',
+		padding: theme.spacing.md,
+		display: 'flex',
+		flexDirection: 'column',
+		borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]}`,
+		zIndex: 2001,
 	},
 
-	links: {
-		[theme.fn.smallerThan('sm')]: {
-			display: 'none',
-		},
-	},
-
-	burger: {
-		[theme.fn.largerThan('sm')]: {
-			display: 'none',
-		},
+	navbarMain: {
+		flex: 1,
+		marginTop: '50px',
 	},
 
 	link: {
-		display: 'block',
-		lineHeight: 1,
-		padding: `${rem(8)} ${rem(12)}`,
-		borderRadius: theme.radius.sm,
-		textDecoration: 'none',
+		width: '50px',
+		height: '50px',
+		borderRadius: theme.radius.md,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
 		color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
-		fontSize: theme.fontSizes.sm,
-		fontWeight: 500,
 
 		'&:hover': {
-			backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+			backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0],
 		},
 
-		[theme.fn.smallerThan('sm')]: {
-			borderRadius: 0,
-			padding: theme.spacing.md,
-		},
-	},
-
-	linkActive: {
-		'&, &:hover': {
-			backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
-			color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+		'&[data-active]': {
+			'&, &:hover': {
+				backgroundColor: theme.colors.blue[1],
+				color: theme.colors.blue[8],
+			},
 		},
 	},
 }));
@@ -104,11 +90,38 @@ interface HeaderResponsiveProps {
 	links: { link: string; label: string }[];
 }
 
-const links: { link: string; label: string }[] = [
-	{ label: 'Assets', link: '/assets' },
-	{ label: 'Report', link: '/report' },
-	{ label: 'Prepare', link: '/prepare' },
+interface NavbarLinkProps {
+	icon: typeof IconAsset;
+	label: string;
+	link: string;
+	active?: boolean;
+}
+
+const links: NavbarLinkProps[] = [
+	{ label: 'Assets', link: '/assets', icon: IconAsset },
+	{ label: 'Report', link: '/report', icon: IconUrgent },
 ];
+
+function NavbarLink({ icon: Icon, label, active, link }: NavbarLinkProps) {
+	const { classes } = useStyles();
+	const router = useRouter();
+
+	const handleClick = () => {
+		router.push(link);
+	};
+
+	return (
+		<Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
+			<UnstyledButton
+				className={classes.link}
+				data-active={active || undefined}
+				onClick={handleClick}
+			>
+				<Icon size={20} />
+			</UnstyledButton>
+		</Tooltip>
+	);
+}
 
 interface ComponentProps {
 	children: React.ReactNode;
@@ -122,14 +135,8 @@ export default function AppLayout({ children }: ComponentProps) {
 
 	const pathname = usePathname();
 
-	const items = links.map((link) => (
-		<Link
-			key={link.label}
-			href={link.link}
-			className={cx(classes.link, { [classes.linkActive]: pathname.startsWith(link.link) })}
-		>
-			{link.label}
-		</Link>
+	const items = links.map((link, index) => (
+		<NavbarLink {...link} key={link.label} active={pathname.startsWith(link.link)} />
 	));
 
 	const router = useRouter();
@@ -142,29 +149,22 @@ export default function AppLayout({ children }: ComponentProps) {
 
 	return (
 		<div className={classes.pageContainer}>
-			<Header height={HEADER_HEIGHT} className={classes.root} px="lg">
-				<div className={classes.header}>
-					<Group>
-						<IconShieldHalfFilled color={theme.colors.blue[8]} />
-						<Title color="blue" order={3}>
-							KAKUNA
-						</Title>
-					</Group>
-					<Group spacing={5} className={classes.links}>
+			<nav className={classes.navbar}>
+				<Center>
+					<IconSquareLetterPFilled size={30} color={theme.colors.blue[8]} />
+				</Center>
+
+				<div className={classes.navbarMain}>
+					<Stack justify="center" gap={0}>
 						{items}
-					</Group>
-
-					<Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-
-					<Transition transition="pop-top-right" duration={200} mounted={opened}>
-						{(styles) => (
-							<Paper className={classes.dropdown} withBorder style={styles}>
-								{items}
-							</Paper>
-						)}
-					</Transition>
+					</Stack>
 				</div>
-			</Header>
+
+				<Stack justify="center" gap={0}>
+					<NavbarLink icon={IconSettings} label="Settings" link="/prepare" />
+					<NavbarLink icon={IconLogout} label="Logout" />
+				</Stack>
+			</nav>
 			<main className={classes.main}>{children}</main>
 		</div>
 	);

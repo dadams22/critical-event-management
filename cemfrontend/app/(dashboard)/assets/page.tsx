@@ -12,13 +12,15 @@ import {
 	Card,
 	Title,
 	Radio,
+	Group,
+	Text,
 } from '@mantine/core';
 import useSWR from 'swr';
 import Api from '../../../api/Api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { IconMapPin, IconPlus, IconSearch, IconStack } from '@tabler/icons-react';
 import _ from 'lodash';
 import MapView from '../../../components/map/MapView';
 import { AssetSummary } from './AssetSummary';
@@ -45,14 +47,14 @@ const OverlayGrid = styled.div`
 	padding: 16px;
 
 	display: grid;
-	grid-template-areas: 'sidebar actions actions' 'sidebar . controls' 'sidebar footer footer';
-	grid-template-columns: 300px 1fr min-content;
-	grid-template-rows: min-content 1fr min-content;
+	grid-template-areas: 'actions . sidebar' '. . sidebar';
+	grid-template-columns: max-content 1fr minmax(300px, 480px);
+	grid-template-rows: min-content 1fr;
 	gap: 10px;
 
 	pointer-events: none;
 
-	& > * {
+	& > * > * {
 		pointer-events: all;
 	}
 `;
@@ -77,10 +79,6 @@ const Controls = styled.div`
 	grid-area: controls;
 `;
 
-const Footer = styled.div`
-	grid-area: footer;
-`;
-
 export default function AssetsPage() {
 	const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites);
 	const { data: assetTypes, isLoading: assetTypesLoading } = useSWR(
@@ -93,8 +91,6 @@ export default function AssetsPage() {
 		mutate: mutateAssets,
 	} = useSWR('assets/all', Api.getAssets);
 
-	console.log(allAssets);
-
 	const siteOptions = useMemo<SelectItem[]>(
 		() =>
 			sites?.map((site) => ({
@@ -104,8 +100,9 @@ export default function AssetsPage() {
 		[sites]
 	);
 	const [selectedSiteId, setSelectedSiteId] = useState<string | null>();
-	const [selectedFloorId, setSelectedFloorId] = useState<string>();
+	const [selectedFloorId, setSelectedFloorId] = useState<string | null>();
 	const selectedSite = sites?.find((site) => site.id === selectedSiteId);
+	const floorOptions: SelectItem[] = selectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) || [];
 
 	const assets = useMemo<Asset[]>(
 		() => allAssets?.filter((asset: Asset) => String(asset.floor.id) === selectedFloorId) || [],
@@ -114,8 +111,18 @@ export default function AssetsPage() {
 	const [inspectedAssetId, setInspectedAssetId] = useState<string>();
 	const [addingAsset, setAddingAsset] = useState<boolean>(false);
 	const [addAssetLocation, setAddAssetLocation] = useState<Location>();
-
-	console.log(selectedFloorId);
+	const inspectedAsset = useMemo<Asset | undefined>(
+		() => _.find(assets, { id: inspectedAssetId }),
+		[assets, inspectedAssetId]
+	);
+	const assetAutocompleteItems = useMemo<AutocompleteItem[]>(
+		() =>
+			assets?.map((asset) => ({
+				value: asset.name,
+				asset,
+			})) || [],
+		[assets]
+	);
 
 	useEffect(() => {
 		if (!!sites?.length && !selectedSiteId) {
@@ -131,20 +138,6 @@ export default function AssetsPage() {
 		setAddingAsset(false);
 		setAddAssetLocation(undefined);
 	}, [selectedSiteId]);
-
-	const inspectedAsset = useMemo<Asset | undefined>(
-		() => _.find(assets, { id: inspectedAssetId }),
-		[assets, inspectedAssetId]
-	);
-
-	const assetAutocompleteItems = useMemo<AutocompleteItem[]>(
-		() =>
-			assets?.map((asset) => ({
-				value: asset.name,
-				asset,
-			})) || [],
-		[assets]
-	);
 
 	if (sitesLoading || assetTypesLoading || assetsLoading)
 		return (
@@ -195,7 +188,7 @@ export default function AssetsPage() {
 	};
 
 	return (
-		<MapContainer>
+		<MapContainer id="mapcontainer">
 			{selectedSite && (
 				<MapView
 					location={_.pick(selectedSite, ['longitude', 'latitude'])}
@@ -210,56 +203,40 @@ export default function AssetsPage() {
 			)}
 			<OverlayGrid>
 				<SideBar>
-					<Stack>
-						<Select data={siteOptions} value={selectedSiteId} onChange={setSelectedSiteId} />
-						{addingAsset ? (
-							<AddAssetForm
-								onSave={handleSaveAsset}
-								onCancel={handleCancelAddAsset}
-								locationSelected={!!addAssetLocation}
-								assetTypes={assetTypes!}
-							/>
-						) : inspectedAsset ? (
-							<InspectAssetCard
-								asset={inspectedAsset}
-								onUpdateAsset={() => mutateAssets()}
-								onClose={() => setInspectedAssetId(undefined)}
-							/>
-						) : null}
-					</Stack>
+					{addingAsset ? (
+						<AddAssetForm
+							onSave={handleSaveAsset}
+							onCancel={handleCancelAddAsset}
+							locationSelected={!!addAssetLocation}
+							assetTypes={assetTypes!}
+						/>
+					) : inspectedAsset ? (
+						<InspectAssetCard
+							asset={inspectedAsset}
+							onUpdateAsset={() => mutateAssets()}
+							onClose={() => setInspectedAssetId(undefined)}
+						/>
+					) : null}
 				</SideBar>
 				<ActionBar>
-					<div />
-					<Autocomplete
-						w={400}
-						data={assetAutocompleteItems}
-						icon={<IconSearch size={20} />}
-						placeholder="Search for assets..."
-						onItemSubmit={(assetAutocompleteItem) =>
-							setInspectedAssetId(assetAutocompleteItem.asset.id)
-						}
-					/>
-					<Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
-						Add Asset
-					</Button>
+					<Group>
+						<Title order={3}>Assets</Title>
+						<Select icon={<IconMapPin size={20} />} data={siteOptions} value={selectedSiteId} onChange={setSelectedSiteId} w={160} />
+						{(selectedSite?.floors.length || 0) > 1 && <Select w={100} icon={<IconStack size={20} />} data={floorOptions} value={selectedFloorId} onChange={setSelectedFloorId} />}
+						<Autocomplete
+							w={280}
+							data={assetAutocompleteItems}
+							icon={<IconSearch size={20} />}
+							placeholder="Search for assets..."
+							onItemSubmit={(assetAutocompleteItem) =>
+								setInspectedAssetId(assetAutocompleteItem.asset.id)
+							}
+						/>
+						<Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
+							Add Asset
+						</Button>
+					</Group>
 				</ActionBar>
-				<Controls>
-					{selectedSite && (
-						<Card miw={120} w="max-content">
-							<Stack>
-								<Title order={5}>Select Floor</Title>
-								<Radio.Group value={selectedFloorId} onChange={setSelectedFloorId} pl="sm">
-									<Stack>
-										{selectedSite.floors.map((floor) => (
-											<Radio value={String(floor.id)} label={floor.name} />
-										))}
-									</Stack>
-								</Radio.Group>
-							</Stack>
-						</Card>
-					)}
-				</Controls>
-				<Footer>{assets && <AssetSummary assets={assets} />}</Footer>
 			</OverlayGrid>
 		</MapContainer>
 	);

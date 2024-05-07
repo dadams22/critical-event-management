@@ -46,7 +46,7 @@ export default function MaintenanceLogModal({ opened, onClose, onSave }: Compone
 				setPhoto(undefined);
 				setPhotoUrl(undefined);
 				setNextMaintenanceDate(null);
-				onClose()
+				onClose();
 			})
 			.finally(() => setSaving(false));
 	};

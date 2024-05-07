@@ -7,9 +7,6 @@ module.exports = withBundleAnalyzer({
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
-	experimental: {
-		appDir: true,
-	},
 	typescript: {
 		// TODO: Remove this
 		ignoreBuildErrors: true,

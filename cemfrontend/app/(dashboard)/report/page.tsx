@@ -25,8 +25,6 @@ export default function ReportPage() {
 		getLocation();
 	}, []);
 
-	console.log(location);
-
 	const [loading, setLoading] = useState<boolean>(false);
 	const handleReportIncident = () => {
 		setLoading(true);

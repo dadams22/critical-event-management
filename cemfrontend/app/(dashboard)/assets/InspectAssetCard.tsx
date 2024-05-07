@@ -46,16 +46,19 @@ interface ComponentProps {
 }
 
 export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: ComponentProps) {
-	console.log(asset);
 	const [
 		maintenanceLogModalOpened,
 		{ open: openMaintenanceLogModal, close: closeMaintenanceLogModal },
 	] = useDisclosure();
 
-	const handleLogMaintenance = (payload: { notes: string; photo?: File, nextMaintenanceDate?: Date }) => {
+	const handleLogMaintenance = (payload: {
+		notes: string;
+		photo?: File;
+		nextMaintenanceDate?: Date;
+	}) => {
 		const { notes, photo, nextMaintenanceDate } = payload;
-		return Api.createMaintenanceLog({ assetId: asset.id, notes, photo, nextMaintenanceDate }).then(() =>
-			onUpdateAsset()
+		return Api.createMaintenanceLog({ assetId: asset.id, notes, photo, nextMaintenanceDate }).then(
+			() => onUpdateAsset()
 		);
 	};
 
@@ -92,7 +95,7 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
 						<Text>{formatMaintenanceDate(asset.next_maintenance_date)}</Text>
 					</Stack>
 					<Stack spacing="sm">
-						<Text>Maintenance History</Text>
+						<Text fz="sm">Maintenance History</Text>
 						{asset.maintenance_logs.length ? (
 							<Timeline active={asset.maintenance_logs.length - 1}>
 								{asset.maintenance_logs.map((maintenance_log) => (

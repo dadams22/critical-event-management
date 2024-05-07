@@ -29,7 +29,7 @@ export default function SitesPage() {
 			<Title order={2}>Sites</Title>
 			<Text c="dimmed">Create and manage sites.</Text>
 			{isLoading ? (
-				<Center h="100%">
+				<Center h="100%" w="100%">
 					<Loader />
 				</Center>
 			) : (

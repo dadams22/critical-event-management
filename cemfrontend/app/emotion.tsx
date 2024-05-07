@@ -26,7 +26,7 @@ export default function RootStyleRegistry({
 	const cache = useEmotionCache();
 	cache.compat = true;
 
-	const colorScheme = 'dark';
+	const colorScheme = 'light';
 	const toggleColorScheme = _.noop();
 	// const [colorScheme, setColorScheme] = useState<ColorScheme>(initialColorScheme);
 

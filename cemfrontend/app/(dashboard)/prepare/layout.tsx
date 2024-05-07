@@ -1,6 +1,6 @@
 'use client';
 
-import { createStyles, Navbar, getStylesRef, rem, Flex, Stack } from '@mantine/core';
+import { createStyles, Navbar, getStylesRef, rem, Flex, Stack, Title, ScrollArea } from '@mantine/core';
 import { IconAsset, IconBuildingCommunity, IconUsers, TablerIcon } from '@tabler/icons-react';
 import { usePathname } from 'next/navigation';
 
@@ -78,8 +78,9 @@ export default function NavbarSimple({ children }: ComponentProps) {
 	));
 
 	return (
-		<Flex>
-			<Navbar width={{ sm: 300 }} p="md">
+		<Flex mah="100vh">
+			<Navbar zIndex={2000} width={{ sm: 300 }} p="md">
+				<Title order={4} pb="md">Settings</Title>
 				<Navbar.Section grow>{links}</Navbar.Section>
 
 				{/* <Navbar.Section className={classes.footer}>
@@ -95,9 +96,11 @@ export default function NavbarSimple({ children }: ComponentProps) {
         </Navbar.Section> */}
 			</Navbar>
 
-			<Stack p="lg" w="100%">
-				{children}
-			</Stack>
+			<ScrollArea mah="100%" w="100%">
+				<Stack p="lg" w="100%">
+					{children}
+				</Stack>
+			</ScrollArea>
 		</Flex>
 	);
 }

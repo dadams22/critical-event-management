@@ -93,7 +93,6 @@ export default function IncidentReportPage({ params: { incidentReportId } }: Com
 	});
 
 	const { data: sites } = useSWR('sites/all', Api.getSites);
-	// console.log(sites);
 
 	const { data: people } = useSWR('people', Api.getPeople);
 
