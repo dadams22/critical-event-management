@@ -2,7 +2,7 @@
 
 import {
   Button,
-  Card,
+  Card, Center,
   CloseButton,
   Flex,
   Image,
@@ -95,7 +95,7 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
             <Text>{formatMaintenanceDate(asset.next_maintenance_date)}</Text>
           </Stack>
           <Stack spacing="sm">
-            <Text fz="sm">Maintenance History</Text>
+            <Text fz="sm" fw={600}>Maintenance History</Text>
             {asset.maintenance_logs.length ? (
               <Timeline active={asset.maintenance_logs.length - 1}>
                 {asset.maintenance_logs.map((maintenance_log) => (
@@ -109,7 +109,9 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
                 ))}
               </Timeline>
             ) : (
-              <Text c="dimmed">No maintenance recorded.</Text>
+                <Center py="md">
+                  <Text c="dimmed">No maintenance recorded.</Text>
+                </Center>
             )}
           </Stack>
           <Button leftIcon={<IconTool size={20} />} onClick={openMaintenanceLogModal}>
