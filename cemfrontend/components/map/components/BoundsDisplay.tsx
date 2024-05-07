@@ -4,6 +4,7 @@ import { useContext, useEffect, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 import { Bounds } from '../../../api/types';
 import { MapContext } from '../MapView';
+import {useMantineTheme} from "@mantine/core";
 
 const sourceId = (id: string) => `bounds-source-${id}`;
 const layerId = (id: string) => `bounds-layer-${id}`;
@@ -14,6 +15,7 @@ interface ComponentProps {
 
 export default function BoundsDisplay({ bounds }: ComponentProps) {
   const map = useContext(MapContext);
+  const theme = useMantineTheme();
 
   useEffect(() => {
     if (!map) return;
@@ -36,8 +38,8 @@ export default function BoundsDisplay({ bounds }: ComponentProps) {
       source: sourceId(id),
       layout: {},
       paint: {
-        'fill-color': '#0080ff',
-        'fill-opacity': 0.5,
+        'fill-color': theme.colors.blue[6],
+        'fill-opacity': 0.25,
       },
     });
 
