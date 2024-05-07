@@ -74,10 +74,10 @@ export default function MapView({
 		return map;
 	}, [mapContainer]);
 
-	const MAINTENANCE_STATUS_TO_COLOR: Record<MaintenanceStatus, MantineColor> = {
-		[MaintenanceStatus.COMPLIANT]: theme.colors.green[8],
-		[MaintenanceStatus.NEEDS_MAINTENANCE]: theme.colors.yellow[8],
-		[MaintenanceStatus.OUT_OF_COMPLIANCE]: theme.colors.red[8],
+	const MAINTENANCE_STATUS_TO_COLOR: Record<MaintenanceStatus, MantineColor | undefined> = {
+		[MaintenanceStatus.COMPLIANT]: undefined,
+		[MaintenanceStatus.NEEDS_MAINTENANCE]: theme.colors.yellow[6],
+		[MaintenanceStatus.OUT_OF_COMPLIANCE]: theme.colors.red[6],
 	};
 
 	return (
