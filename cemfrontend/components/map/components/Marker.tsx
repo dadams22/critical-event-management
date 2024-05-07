@@ -2,7 +2,7 @@
 
 import { useContext, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
-import {createStyles, Indicator, useMantineTheme} from '@mantine/core';
+import { createStyles, Indicator, useMantineTheme } from '@mantine/core';
 import ReactDOM from 'react-dom';
 import { Location } from '../../../api/types';
 import { MapContext } from '../MapView';
@@ -58,9 +58,9 @@ export default function Marker({ location, iconIdentifier, color, onClick }: Mar
 		if (iconIdentifier) {
 			iconElement = document.createElement('div');
 			const icon = (
-				<div style={{color}} className={classes.marker}>
+				<div style={{ color }} className={classes.marker}>
 					{color && <div className={classes.notification} style={{ backgroundColor: color }} />}
-					{getAssetIcon(iconIdentifier, {size: 20})}
+					{getAssetIcon(iconIdentifier, { size: 20 })}
 				</div>
 			);
 			ReactDOM.render(icon, iconElement);

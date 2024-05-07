@@ -17,7 +17,7 @@ import {
 	IconSquareLetterPFilled,
 	IconUrgent,
 } from '@tabler/icons-react';
-import {deleteCookie, getCookie} from 'cookies-next';
+import { deleteCookie, getCookie } from 'cookies-next';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Api, { AUTH_TOKEN_KEY } from '../../api/Api';
