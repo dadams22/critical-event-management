@@ -9,51 +9,51 @@ import _ from 'lodash';
 import { APP_MODALS } from './(modals)';
 
 const DEFAULT_MODAL_SETTINGS: ModalSettings = {
-	centered: true,
-	zIndex: 2000,
-	size: 'lg',
+  centered: true,
+  zIndex: 2000,
+  size: 'lg',
 };
 
 interface ComponentProps {
-	colorScheme: ColorScheme;
-	children: React.ReactNode;
+  colorScheme: ColorScheme;
+  children: React.ReactNode;
 }
 
 export default function RootStyleRegistry({
-	colorScheme: initialColorScheme,
-	children,
+  colorScheme: initialColorScheme,
+  children,
 }: ComponentProps) {
-	const cache = useEmotionCache();
-	cache.compat = true;
+  const cache = useEmotionCache();
+  cache.compat = true;
 
-	const colorScheme = 'light';
-	const toggleColorScheme = _.noop();
-	// const [colorScheme, setColorScheme] = useState<ColorScheme>(initialColorScheme);
+  const colorScheme = 'light';
+  const toggleColorScheme = _.noop();
+  // const [colorScheme, setColorScheme] = useState<ColorScheme>(initialColorScheme);
 
-	// const toggleColorScheme = (value?: ColorScheme) => {
-	// 	const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
-	// 	setColorScheme(nextColorScheme);
-	// 	setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 });
-	// };
+  // const toggleColorScheme = (value?: ColorScheme) => {
+  // 	const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
+  // 	setColorScheme(nextColorScheme);
+  // 	setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 });
+  // };
 
-	useServerInsertedHTML(() => (
-		<style
-			data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(' ')}`}
-			dangerouslySetInnerHTML={{
-				__html: Object.values(cache.inserted).join(' '),
-			}}
-		/>
-	));
+  useServerInsertedHTML(() => (
+    <style
+      data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(' ')}`}
+      dangerouslySetInnerHTML={{
+        __html: Object.values(cache.inserted).join(' '),
+      }}
+    />
+  ));
 
-	return (
-		<CacheProvider value={cache}>
-			<ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-				<MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-					<ModalsProvider modals={APP_MODALS} modalProps={DEFAULT_MODAL_SETTINGS}>
-						{children}
-					</ModalsProvider>
-				</MantineProvider>
-			</ColorSchemeProvider>
-		</CacheProvider>
-	);
+  return (
+    <CacheProvider value={cache}>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+          <ModalsProvider modals={APP_MODALS} modalProps={DEFAULT_MODAL_SETTINGS}>
+            {children}
+          </ModalsProvider>
+        </MantineProvider>
+      </ColorSchemeProvider>
+    </CacheProvider>
+  );
 }

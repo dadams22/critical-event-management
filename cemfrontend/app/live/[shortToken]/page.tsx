@@ -1,11 +1,11 @@
 'use client';
 
 interface ComponentProps {
-	params: {
-		shortToken: string;
-	};
+  params: {
+    shortToken: string;
+  };
 }
 
 export default function LivePage({ params: { shortToken } }: ComponentProps) {
-	return null;
+  return null;
 }

@@ -9,79 +9,79 @@ import { MapContext } from '../MapView';
 import { getAssetIcon, AssetIconIdentifier } from '../../../app/(icons)/assetTypes';
 
 const useStyles = createStyles((theme) => ({
-	marker: {
-		position: 'relative',
-		height: '28px',
-		width: '28px',
+  marker: {
+    position: 'relative',
+    height: '28px',
+    width: '28px',
 
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 
-		borderRadius: '100px',
-		backgroundColor: theme.colors.blue[8],
-		opacity: 0.9,
-		cursor: 'pointer',
+    borderRadius: '100px',
+    backgroundColor: theme.colors.blue[8],
+    opacity: 0.9,
+    cursor: 'pointer',
 
-		'& > svg': {
-			color: 'white',
-		},
-	},
+    '& > svg': {
+      color: 'white',
+    },
+  },
 
-	notification: {
-		position: 'absolute',
-		top: 0,
-		right: 0,
-		width: '8px',
-		height: '8px',
-		borderRadius: '100px',
-	},
+  notification: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: '8px',
+    height: '8px',
+    borderRadius: '100px',
+  },
 }));
 
 export interface MarkerProps {
-	location: Location;
-	color?: string;
-	iconIdentifier?: AssetIconIdentifier;
-	onClick?: () => void;
+  location: Location;
+  color?: string;
+  iconIdentifier?: AssetIconIdentifier;
+  onClick?: () => void;
 }
 
 export default function Marker({ location, iconIdentifier, color, onClick }: MarkerProps) {
-	const theme = useMantineTheme();
-	const { classes } = useStyles();
+  const theme = useMantineTheme();
+  const { classes } = useStyles();
 
-	const map = useContext(MapContext);
+  const map = useContext(MapContext);
 
-	useEffect(() => {
-		if (!map) return;
+  useEffect(() => {
+    if (!map) return;
 
-		let iconElement;
-		if (iconIdentifier) {
-			iconElement = document.createElement('div');
-			const icon = (
-				<div style={{ color }} className={classes.marker}>
-					{color && <div className={classes.notification} style={{ backgroundColor: color }} />}
-					{getAssetIcon(iconIdentifier, { size: 20 })}
-				</div>
-			);
-			ReactDOM.render(icon, iconElement);
-		}
+    let iconElement;
+    if (iconIdentifier) {
+      iconElement = document.createElement('div');
+      const icon = (
+        <div style={{ color }} className={classes.marker}>
+          {color && <div className={classes.notification} style={{ backgroundColor: color }} />}
+          {getAssetIcon(iconIdentifier, { size: 20 })}
+        </div>
+      );
+      ReactDOM.render(icon, iconElement);
+    }
 
-		const marker = new mapboxgl.Marker({
-			color: color || theme.colors.red[8],
-			element: iconElement || undefined,
-		})
-			.setLngLat([location.longitude, location.latitude])
-			.addTo(map);
+    const marker = new mapboxgl.Marker({
+      color: color || theme.colors.red[8],
+      element: iconElement || undefined,
+    })
+      .setLngLat([location.longitude, location.latitude])
+      .addTo(map);
 
-		if (onClick) {
-			marker.getElement().addEventListener('click', onClick);
-		}
+    if (onClick) {
+      marker.getElement().addEventListener('click', onClick);
+    }
 
-		return () => {
-			if (!map) return;
-			marker.remove();
-		};
-	}, [map, color]);
+    return () => {
+      if (!map) return;
+      marker.remove();
+    };
+  }, [map, color]);
 
-	return null;
+  return null;
 }
