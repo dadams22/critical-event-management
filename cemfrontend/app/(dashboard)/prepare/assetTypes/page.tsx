@@ -28,8 +28,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function AssetTypesPage() {
-  const theme = useMantineTheme();
-
   const { classes, cx } = useStyles();
 
   const { data: assetTypes, isLoading, mutate } = useSWR('/asset_types', Api.getAssetTypes);
@@ -116,6 +114,7 @@ export default function AssetTypesPage() {
                   <tr key={assetType.id}>
                     <td>{getAssetIcon(assetType.icon_identifier)}</td>
                     <td>{assetType.name}</td>
+                    <td />
                   </tr>
                 ))}
               </tbody>

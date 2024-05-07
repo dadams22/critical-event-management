@@ -14,13 +14,13 @@ import {
   Title,
   Radio,
   Group,
-  Text,
+  Text, Flex, SegmentedControl, SegmentedControlItem, Table, Badge,
 } from '@mantine/core';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import { IconMapPin, IconPlus, IconSearch, IconStack } from '@tabler/icons-react';
+import {IconMap, IconMapPin, IconMapPins, IconPlus, IconSearch, IconStack, IconTable} from '@tabler/icons-react';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import MapView from '../../../components/map/MapView';
@@ -29,6 +29,7 @@ import Api from '../../../api/Api';
 import { Asset, Location } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
+import {getAssetIcon} from "../../(icons)/assetTypes";
 
 dayjs.extend(relativeTime);
 
@@ -60,6 +61,11 @@ const OverlayGrid = styled.div`
   }
 `;
 
+const TableSection = styled.div`
+    grid-row: 2;
+    grid-column: 1/-1;
+`;
+
 const ActionBar = styled.div`
   grid-area: actions;
   width: 100%;
@@ -80,6 +86,12 @@ const Controls = styled.div`
   grid-area: controls;
 `;
 
+type DisplayType = 'map' | 'table';
+const DISPLAY_OPTIONS: SegmentedControlItem[] = [
+  { value: 'map', label: <Center><IconMap size={20} /></Center> },
+  { value: 'table', label: <Center><IconTable size={20} /></Center> },
+];
+
 export default function AssetsPage() {
   const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites);
   const { data: assetTypes, isLoading: assetTypesLoading } = useSWR(
@@ -91,6 +103,8 @@ export default function AssetsPage() {
     isLoading: assetsLoading,
     mutate: mutateAssets,
   } = useSWR('assets/all', Api.getAssets);
+
+  const [selectedDisplayType, setSelectedDisplayType] = useState<'map' | 'table'>('map');
 
   const siteOptions = useMemo<SelectItem[]>(
     () =>
@@ -192,7 +206,7 @@ export default function AssetsPage() {
 
   return (
     <MapContainer id="mapcontainer">
-      {selectedSite && (
+      {selectedSite && selectedDisplayType === 'map' && (
         <MapView
           location={_.pick(selectedSite, ['longitude', 'latitude'])}
           sites={sites}
@@ -219,6 +233,12 @@ export default function AssetsPage() {
               onUpdateAsset={() => mutateAssets()}
               onClose={() => setInspectedAssetId(undefined)}
             />
+          ) : selectedDisplayType === 'map' ? (
+              <Flex justify="flex-end">
+                <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
+                  Add Asset
+                </Button>
+              </Flex>
           ) : null}
         </SideBar>
         <ActionBar>
@@ -249,11 +269,51 @@ export default function AssetsPage() {
                 setInspectedAssetId(assetAutocompleteItem.asset.id)
               }
             />
-            <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
-              Add Asset
-            </Button>
+            <SegmentedControl
+                data={DISPLAY_OPTIONS}
+                onChange={(value) => setSelectedDisplayType(value as DisplayType)}
+            />
           </Group>
         </ActionBar>
+        {selectedDisplayType === 'table' && (
+            <TableSection>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Asset Name</th>
+                    <th>Type</th>
+                    <th>Maintenance Status</th>
+                    <th>Next Maintenance Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {assets.map((asset) => (
+                      <tr key={asset.id}>
+                        <td>{asset.name}</td>
+                        <td>
+                          <Flex gap="sm" align="center">
+                            {getAssetIcon(asset.asset_type.icon_identifier)}
+                            {asset.asset_type.name}
+                          </Flex>
+                        </td>
+                        <td>
+                          {asset.maintenance_status === 'COMPLIANT' ? (
+                              <Badge color="green">Compliant</Badge>
+                          ) : asset.maintenance_status === 'NEEDS_MAINTENANCE' ? (
+                              <Badge color="yellow">Maintenance Due</Badge>
+                          ) : asset.maintenance_status === 'OUT_OF_COMPLIANCE' ? (
+                              <Badge color="red">Overdue</Badge>
+                          ) : null}
+                        </td>
+                        <td>
+                          {dayjs(asset.next_maintenance_date).format('MMMM DD, YYYY')}
+                        </td>
+                      </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </TableSection>
+        )}
       </OverlayGrid>
     </MapContainer>
   );

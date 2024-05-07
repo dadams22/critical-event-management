@@ -153,7 +153,7 @@ export default function AppLayout({ children }: ComponentProps) {
         </div>
 
         <Stack justify="center" gap={0}>
-          <NavbarLink icon={IconSettings} label="Settings" link="/prepare" />
+          <NavbarLink icon={IconSettings} label="Settings" link="/prepare" active={pathname.startsWith('/prepare')} />
           <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
         </Stack>
       </nav>
