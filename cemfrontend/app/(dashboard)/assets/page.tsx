@@ -4,23 +4,19 @@ import {
   Center,
   Loader,
   Button,
-  useMantineTheme,
   Autocomplete,
   AutocompleteItem,
-  Stack,
   Select,
   SelectItem,
-  Card,
   Title,
-  Radio,
   Group,
-  Text, Flex, SegmentedControl, SegmentedControlItem, Table, Badge,
+  Flex, SegmentedControl, SegmentedControlItem, Table, Badge,
 } from '@mantine/core';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import {IconMap, IconMapPin, IconMapPins, IconPlus, IconSearch, IconStack, IconTable} from '@tabler/icons-react';
+import { IconMap, IconMapPin, IconMapPins, IconPlus, IconSearch, IconStack, IconTable } from '@tabler/icons-react';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import MapView from '../../../components/map/MapView';
@@ -29,7 +25,7 @@ import Api from '../../../api/Api';
 import { Asset, Location } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
-import {getAssetIcon} from "../../(icons)/assetTypes";
+import { getAssetIcon } from '../../(icons)/assetTypes';
 
 dayjs.extend(relativeTime);
 
@@ -80,10 +76,6 @@ const SideBar = styled.div`
   overflow-y: auto;
   margin: -16px -10px;
   padding: 16px 10px;
-`;
-
-const Controls = styled.div`
-  grid-area: controls;
 `;
 
 type DisplayType = 'map' | 'table';
@@ -270,8 +262,8 @@ export default function AssetsPage() {
               }
             />
             <SegmentedControl
-                data={DISPLAY_OPTIONS}
-                onChange={(value) => setSelectedDisplayType(value as DisplayType)}
+              data={DISPLAY_OPTIONS}
+              onChange={(value) => setSelectedDisplayType(value as DisplayType)}
             />
           </Group>
         </ActionBar>

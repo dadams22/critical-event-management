@@ -1,9 +1,9 @@
 'use client';
 
-import {Select, SelectItem} from '@mantine/core';
+import { Select, SelectItem } from '@mantine/core';
+import { forwardRef } from 'react';
+import styled from '@emotion/styled';
 import { AssetIconIdentifier, assetIconOptions, getAssetIcon } from './assetTypes';
-import {forwardRef} from "react";
-import styled from "@emotion/styled";
 
 const Item = styled.div`
     width: min-content;
@@ -28,10 +28,10 @@ export default function AssetIconSelector({
 }: AssetIconSelectorProps) {
   return (
       <Select
-          value={iconIdentifier}
-          data={assetIconOptions}
-          itemComponent={AssetIconItem}
-          onChange={onIconSelected}
+        value={iconIdentifier}
+        data={assetIconOptions}
+        itemComponent={AssetIconItem}
+        onChange={onIconSelected}
       />
   );
 }

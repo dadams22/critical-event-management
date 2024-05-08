@@ -164,8 +164,7 @@ export default function CreateSiteModal({ opened, onSave, onClose }: ComponentPr
       !siteBounds ||
       !floors.length ||
       floors.some((floor) => !floor.name || !floor.floorPlanImage || !floor.floorPlanImageUrl)
-    )
-      return;
+    ) return;
 
     setSaving(true);
     Api.createSite({
