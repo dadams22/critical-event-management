@@ -1,7 +1,21 @@
 'use client';
 
-import { Group, Button } from '@mantine/core';
+import {Select, SelectItem} from '@mantine/core';
 import { AssetIconIdentifier, assetIconOptions, getAssetIcon } from './assetTypes';
+import {forwardRef} from "react";
+import styled from "@emotion/styled";
+
+const Item = styled.div`
+    width: min-content;
+`;
+
+const AssetIconItem = forwardRef<HTMLDivElement, SelectItem>(
+    ({ value, label, ...others }: SelectItem, ref) => (
+        <Item ref={ref} {...others}>
+          {getAssetIcon(value)}
+        </Item>
+    )
+);
 
 interface AssetIconSelectorProps {
   iconIdentifier: string | undefined;
@@ -13,17 +27,11 @@ export default function AssetIconSelector({
   onIconSelected,
 }: AssetIconSelectorProps) {
   return (
-    <Group>
-      {assetIconOptions.map(({ value, label }) => (
-        <Button
-          key={value}
-          color={iconIdentifier === value ? 'blue' : 'gray'}
-          onClick={() => onIconSelected(value)}
-          title={label}
-        >
-          {getAssetIcon(value)}
-        </Button>
-      ))}
-    </Group>
+      <Select
+          value={iconIdentifier}
+          data={assetIconOptions}
+          itemComponent={AssetIconItem}
+          onChange={onIconSelected}
+      />
   );
 }
