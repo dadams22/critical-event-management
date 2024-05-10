@@ -14,6 +14,7 @@ from .serializers import (
     FloorSerializer,
     AssetTypeSerializer,
     AssetSerializer,
+    AssetCreateSerializer,
     MaintenanceLogSerializer,
 )
 
@@ -229,6 +230,16 @@ class AssetTypeViewSet(OrganizationedViewSet):
 class AssetViewSet(OrganizationedViewSet):
     model = Asset
     serializer_class = AssetSerializer
+
+    def create(self, request):
+        data = request.data
+        serializer = AssetCreateSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save(organization=self.request.user.organization)
+            return Response(serializer.data, status=201)
+
+        return Response(serializer.errors, status=400)
 
 
 class MaintenanceLogViewSet(OrganizationedViewSet):
