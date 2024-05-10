@@ -6,8 +6,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import RootStyleRegistry from './emotion';
 
 export const metadata = {
-  title: 'KAKUNA',
-  description: 'Critical Event Management made simple.',
+  title: 'HUMAN',
+  description: 'Safety for all.',
 };
 
 interface ComponentProps {
@@ -19,9 +19,8 @@ export default function RootLayout({ children }: ComponentProps) {
   return (
     <html lang="en-US">
       <Head>
-        <title>KAKUNA</title>
+        <title>HUMAN</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-        <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <body style={{ minHeight: '100vh', height: 0, minWidth: '100vw', width: 0 }}>
         <RootStyleRegistry colorScheme="dark">{children}</RootStyleRegistry>

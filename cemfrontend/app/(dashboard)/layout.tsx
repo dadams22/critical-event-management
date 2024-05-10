@@ -11,9 +11,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconAsset,
+  IconAsset, IconHome,
   IconLogout,
-  IconSettings,
+  IconSettings, IconSquareLetterHFilled,
   IconSquareLetterPFilled,
   IconUrgent,
 } from '@tabler/icons-react';
@@ -84,6 +84,7 @@ interface NavbarLinkProps {
 }
 
 const links: NavbarLinkProps[] = [
+  { label: 'Home', link: '/home', icon: IconHome },
   { label: 'Assets', link: '/assets', icon: IconAsset },
   { label: 'Report', link: '/report', icon: IconUrgent },
 ];
@@ -118,11 +119,9 @@ export default function AppLayout({ children }: ComponentProps) {
   const { classes, cx } = useStyles();
   const theme = useMantineTheme();
 
-  const [opened, { toggle, close }] = useDisclosure(false);
-
   const pathname = usePathname();
 
-  const items = links.map((link, index) => (
+  const items = links.map((link) => (
     <NavbarLink {...link} key={link.label} active={pathname.startsWith(link.link)} />
   ));
 
@@ -143,7 +142,7 @@ export default function AppLayout({ children }: ComponentProps) {
     <div className={classes.pageContainer}>
       <nav className={classes.navbar}>
         <Center>
-          <IconSquareLetterPFilled size={30} color={theme.colors.blue[8]} />
+          <IconSquareLetterHFilled size={30} color={theme.colors.blue[8]} />
         </Center>
 
         <div className={classes.navbarMain}>

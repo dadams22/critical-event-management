@@ -10,22 +10,25 @@ import {
   SelectItem,
   Title,
   Group,
-  Flex, SegmentedControl, SegmentedControlItem, Table, Badge,
+  Flex, SegmentedControl, SegmentedControlItem,
 } from '@mantine/core';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import { IconMap, IconMapPin, IconMapPins, IconPlus, IconSearch, IconStack, IconTable } from '@tabler/icons-react';
+import { IconMap, IconMapPin, IconPlus, IconSearch, IconStack, IconTable } from '@tabler/icons-react';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import MapView from '../../../components/map/MapView';
-import { AssetSummary } from './AssetSummary';
 import Api from '../../../api/Api';
-import { Asset, Location } from '../../../api/types';
+import {Asset, Bounds, Location, Site} from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
 import { getAssetIcon } from '../../(icons)/assetTypes';
+import {AddressAutofillRetrieveResponse} from "@mapbox/search-js-core";
+import {modals} from "@mantine/modals";
+import {ModalNames} from "../../(modals)";
+import AssetsTable from "./AssetsTable";
 
 dayjs.extend(relativeTime);
 
@@ -100,17 +103,23 @@ export default function AssetsPage() {
 
   const siteOptions = useMemo<SelectItem[]>(
     () =>
-      sites?.map((site) => ({
-        label: site.name,
-        value: site.id,
-      })) || [],
+      [
+          ...(sites?.map((site) => ({
+            label: site.name,
+            value: site.id,
+          })) || []),
+        // { label: 'New site', value: 'new' },
+      ],
     [sites]
   );
-  const [selectedSiteId, setSelectedSiteId] = useState<string | null>();
+  const [selectedSiteId, setSelectedSiteId] = useState<string | null | 'new'>();
   const [selectedFloorId, setSelectedFloorId] = useState<string | null>();
-  const selectedSite = sites?.find((site) => site.id === selectedSiteId);
+  const [lastSelectedSite, setLastSelectedSite] = useState<Site>();
+  useEffect(() => {
+    if (selectedSiteId !== 'new') setLastSelectedSite(sites?.find((site) => site.id === selectedSiteId));
+  }, [selectedSiteId, sites]);
   const floorOptions: SelectItem[] =
-    selectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) || [];
+    lastSelectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) || [];
 
   const assets = useMemo<Asset[]>(
     () => allAssets?.filter((asset: Asset) => String(asset.floor.id) === selectedFloorId) || [],
@@ -132,6 +141,18 @@ export default function AssetsPage() {
     [assets]
   );
 
+  const [siteInfo, setSiteInfo] = useState<{ name: string; address: AddressAutofillRetrieveResponse}>();
+
+  useEffect(() => {
+    if (selectedSiteId === 'new') modals.openContextModal({
+      modal: ModalNames.SiteInfo,
+      title: 'Enter Site Info',
+      innerProps: {
+        doneCallback: setSiteInfo,
+      },
+    });
+  }, [selectedSiteId]);
+
   useEffect(() => {
     if (!!sites?.length && !selectedSiteId) {
       const defaultSite = sites[0];
@@ -141,19 +162,11 @@ export default function AssetsPage() {
   }, [sites, selectedSiteId]);
 
   useEffect(() => {
-    setSelectedFloorId(String(selectedSite?.floors?.[0]?.id) || undefined);
+    setSelectedFloorId(String(lastSelectedSite?.floors?.[0]?.id) || undefined);
     setInspectedAssetId(undefined);
     setAddingAsset(false);
     setAddAssetLocation(undefined);
-  }, [selectedSiteId]);
-
-  if (sitesLoading || assetTypesLoading || assetsLoading) {
-    return (
-      <Center h="100%">
-        <Loader variant="bars" />
-      </Center>
-    );
-  }
+  }, [lastSelectedSite]);
 
   const handleClickAddAsset = () => {
     setAddingAsset(true);
@@ -196,11 +209,23 @@ export default function AssetsPage() {
     });
   };
 
+  if (sitesLoading || assetTypesLoading || assetsLoading) {
+    return (
+        <Center h="100%">
+          <Loader variant="bars" />
+        </Center>
+    );
+  }
+
   return (
     <MapContainer id="mapcontainer">
-      {selectedSite && selectedDisplayType === 'map' && (
+      {(lastSelectedSite && selectedDisplayType === 'map' || !!siteInfo?.address) && (
         <MapView
-          location={_.pick(selectedSite, ['longitude', 'latitude'])}
+          location={selectedSiteId === 'new' && !!siteInfo?.address ? {
+                longitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[0],
+                latitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[1],
+              } : _.pick(lastSelectedSite, ['longitude', 'latitude'])
+          }
           sites={sites}
           assets={assets}
           onClickAsset={setInspectedAssetId}
@@ -243,7 +268,7 @@ export default function AssetsPage() {
               onChange={setSelectedSiteId}
               w={160}
             />
-            {(selectedSite?.floors.length || 0) > 1 && (
+            {(lastSelectedSite?.floors.length || 0) > 1 && (
               <Select
                 w={100}
                 icon={<IconStack size={20} />}
@@ -269,41 +294,7 @@ export default function AssetsPage() {
         </ActionBar>
         {selectedDisplayType === 'table' && (
             <TableSection>
-              <Table>
-                <thead>
-                  <tr>
-                    <th>Asset Name</th>
-                    <th>Type</th>
-                    <th>Maintenance Status</th>
-                    <th>Next Maintenance Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {assets.map((asset) => (
-                      <tr key={asset.id}>
-                        <td>{asset.name}</td>
-                        <td>
-                          <Flex gap="sm" align="center">
-                            {getAssetIcon(asset.asset_type.icon_identifier)}
-                            {asset.asset_type.name}
-                          </Flex>
-                        </td>
-                        <td>
-                          {asset.maintenance_status === 'COMPLIANT' ? (
-                              <Badge color="green">Compliant</Badge>
-                          ) : asset.maintenance_status === 'NEEDS_MAINTENANCE' ? (
-                              <Badge color="yellow">Maintenance Due</Badge>
-                          ) : asset.maintenance_status === 'OUT_OF_COMPLIANCE' ? (
-                              <Badge color="red">Overdue</Badge>
-                          ) : null}
-                        </td>
-                        <td>
-                          {dayjs(asset.next_maintenance_date).format('MMMM DD, YYYY')}
-                        </td>
-                      </tr>
-                  ))}
-                </tbody>
-              </Table>
+              <AssetsTable assets={assets} />
             </TableSection>
         )}
       </OverlayGrid>

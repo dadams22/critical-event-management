@@ -11,7 +11,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import _ from 'lodash';
-import { IconCheck, IconUrgent, TablerIcon, IconClockExclamation } from '@tabler/icons-react';
+import {IconCheck, IconUrgent, TablerIcon, IconClockExclamation, IconAsset} from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { Asset, MaintenanceStatus } from '../../../api/types';
 
@@ -42,6 +42,13 @@ export function AssetSummary({ assets }: ComponentProps) {
     ).length;
     return [
       {
+        label: 'Total Assets',
+        progress: 100,
+        count: assets.length,
+        color: 'blue',
+        Icon: IconAsset,
+      },
+      {
         label: 'In Compliance',
         progress: (compliantCount / assets.length) * 100,
         count: compliantCount,
@@ -49,7 +56,7 @@ export function AssetSummary({ assets }: ComponentProps) {
         Icon: IconCheck,
       },
       {
-        label: 'Needs Maintenance',
+        label: 'Need Maintenance',
         progress: (needsMaintenanceCount / assets.length) * 100,
         count: needsMaintenanceCount,
         color: 'yellow',
@@ -94,7 +101,7 @@ export function AssetSummary({ assets }: ComponentProps) {
 
   return (
     <SimpleGrid
-      cols={3}
+      cols={4}
       spacing="sm"
       breakpoints={[
         { maxWidth: 'sm', cols: 1 },

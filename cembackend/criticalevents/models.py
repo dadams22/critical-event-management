@@ -133,7 +133,7 @@ class Site(BaseModel):
     address = models.CharField(max_length=255)
     longitude = models.DecimalField(max_digits=18, decimal_places=15)
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
-    bounds = models.JSONField()
+    bounds = models.JSONField(null=True, blank=True)
 
     # TODO: Remove floor plan stuff from site, move to floors
     floor_plan = models.ImageField(

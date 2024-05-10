@@ -51,6 +51,7 @@ export default function MapView({
   zoomToSite,
   selectedFloorId,
 }: ComponentProps) {
+  console.log(location);
   const theme = useMantineTheme();
   const colorScheme: ColorScheme = 'light';
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();
@@ -73,6 +74,10 @@ export default function MapView({
 
     return map;
   }, [mapContainer]);
+
+  useEffect(() => {
+    if (map) map.setCenter([location.longitude, location.latitude]);
+  }, [location.latitude, location.longitude]);
 
   const MAINTENANCE_STATUS_TO_COLOR: Record<MaintenanceStatus, MantineColor | undefined> = {
     [MaintenanceStatus.COMPLIANT]: undefined,
