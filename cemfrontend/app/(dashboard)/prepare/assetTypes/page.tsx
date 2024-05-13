@@ -30,7 +30,7 @@ const useStyles = createStyles((theme) => ({
 export default function AssetTypesPage() {
   const { classes, cx } = useStyles();
 
-  const { data: assetTypes, isLoading, mutate } = useSWR('/asset_types', Api.getAssetTypes);
+  const { data: assetTypes, isLoading, mutate } = useSWR('assetTypes/all', Api.getAssetTypes);
 
   const [adding, setAdding] = useState(false);
 

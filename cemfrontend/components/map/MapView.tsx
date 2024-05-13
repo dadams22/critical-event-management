@@ -51,7 +51,6 @@ export default function MapView({
   zoomToSite,
   selectedFloorId,
 }: ComponentProps) {
-  console.log(location);
   const theme = useMantineTheme();
   const colorScheme: ColorScheme = 'light';
   const [mapContainer, setMapContainer] = useState<HTMLDivElement | null>();

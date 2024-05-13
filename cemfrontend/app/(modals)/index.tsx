@@ -1,7 +1,7 @@
 import AddPersonModal from './AddPersonModal';
 import CreateSiteModal from '../(dashboard)/prepare/sites/CreateSiteModal';
 import SendAlertModal from './SendAlertModal';
-import SiteInfoModal from "./SiteInfoModal";
+import SiteInfoModal from './SiteInfoModal';
 
 export enum ModalNames {
   SendAlert = 'sendAlert',

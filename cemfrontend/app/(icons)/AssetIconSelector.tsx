@@ -6,15 +6,15 @@ import styled from '@emotion/styled';
 import { AssetIconIdentifier, assetIconOptions, getAssetIcon } from './assetTypes';
 
 const Item = styled.div`
-    width: min-content;
+  width: min-content;
 `;
 
 const AssetIconItem = forwardRef<HTMLDivElement, SelectItem>(
-    ({ value, label, ...others }: SelectItem, ref) => (
-        <Item ref={ref} {...others}>
-          {getAssetIcon(value)}
-        </Item>
-    )
+  ({ value, label, ...others }: SelectItem, ref) => (
+    <Item ref={ref} {...others}>
+      {getAssetIcon(value)}
+    </Item>
+  )
 );
 
 interface AssetIconSelectorProps {
@@ -27,11 +27,11 @@ export default function AssetIconSelector({
   onIconSelected,
 }: AssetIconSelectorProps) {
   return (
-      <Select
-        value={iconIdentifier}
-        data={assetIconOptions}
-        itemComponent={AssetIconItem}
-        onChange={onIconSelected}
-      />
+    <Select
+      value={iconIdentifier}
+      data={assetIconOptions}
+      itemComponent={AssetIconItem}
+      onChange={onIconSelected}
+    />
   );
 }

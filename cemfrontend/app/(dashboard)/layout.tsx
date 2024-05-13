@@ -11,9 +11,11 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconAsset, IconHome,
+  IconAsset,
+  IconHome,
   IconLogout,
-  IconSettings, IconSquareLetterHFilled,
+  IconSettings,
+  IconSquareLetterHFilled,
   IconSquareLetterPFilled,
   IconUrgent,
 } from '@tabler/icons-react';
@@ -152,7 +154,12 @@ export default function AppLayout({ children }: ComponentProps) {
         </div>
 
         <Stack justify="center" gap={0}>
-          <NavbarLink icon={IconSettings} label="Settings" link="/prepare" active={pathname.startsWith('/prepare')} />
+          <NavbarLink
+            icon={IconSettings}
+            label="Settings"
+            link="/prepare"
+            active={pathname.startsWith('/prepare')}
+          />
           <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
         </Stack>
       </nav>

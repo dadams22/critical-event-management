@@ -11,7 +11,13 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import _ from 'lodash';
-import {IconCheck, IconUrgent, TablerIcon, IconClockExclamation, IconAsset} from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconUrgent,
+  TablerIcon,
+  IconClockExclamation,
+  IconAsset,
+} from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { Asset, MaintenanceStatus } from '../../../api/types';
 

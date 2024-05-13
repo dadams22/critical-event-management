@@ -10,25 +10,42 @@ import {
   SelectItem,
   Title,
   Group,
-  Flex, SegmentedControl, SegmentedControlItem,
+  Flex,
+  SegmentedControl,
+  SegmentedControlItem,
+  ActionIcon,
+  Menu,
+  Stack,
 } from '@mantine/core';
 import useSWR from 'swr';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
-import { IconMap, IconMapPin, IconPlus, IconSearch, IconStack, IconTable } from '@tabler/icons-react';
+import {
+  IconAsset,
+  IconCalendar,
+  IconFilter,
+  IconMap,
+  IconMapPin,
+  IconPlus,
+  IconSearch,
+  IconStack,
+  IconTable,
+} from '@tabler/icons-react';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
 import MapView from '../../../components/map/MapView';
 import Api from '../../../api/Api';
-import {Asset, Bounds, Location, Site} from '../../../api/types';
+import { Asset, Bounds, Location, Site } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
 import { getAssetIcon } from '../../(icons)/assetTypes';
-import {AddressAutofillRetrieveResponse} from "@mapbox/search-js-core";
-import {modals} from "@mantine/modals";
-import {ModalNames} from "../../(modals)";
-import AssetsTable from "./AssetsTable";
+import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
+import { modals } from '@mantine/modals';
+import { ModalNames } from '../../(modals)';
+import AssetsTable from './AssetsTable';
+import useAssetFilters from './useAssetFilters';
+import AssetFilterBar from './AssetFilterBar';
 
 dayjs.extend(relativeTime);
 
@@ -61,8 +78,8 @@ const OverlayGrid = styled.div`
 `;
 
 const TableSection = styled.div`
-    grid-row: 2;
-    grid-column: 1/-1;
+  grid-row: 2;
+  grid-column: 1/-1;
 `;
 
 const ActionBar = styled.div`
@@ -83,8 +100,22 @@ const SideBar = styled.div`
 
 type DisplayType = 'map' | 'table';
 const DISPLAY_OPTIONS: SegmentedControlItem[] = [
-  { value: 'map', label: <Center><IconMap size={20} /></Center> },
-  { value: 'table', label: <Center><IconTable size={20} /></Center> },
+  {
+    value: 'map',
+    label: (
+      <Center>
+        <IconMap size={20} />
+      </Center>
+    ),
+  },
+  {
+    value: 'table',
+    label: (
+      <Center>
+        <IconTable size={20} />
+      </Center>
+    ),
+  },
 ];
 
 export default function AssetsPage() {
@@ -99,31 +130,37 @@ export default function AssetsPage() {
     mutate: mutateAssets,
   } = useSWR('assets/all', Api.getAssets);
 
+  const { filterFn, ...filterBarProps } = useAssetFilters({});
+
   const [selectedDisplayType, setSelectedDisplayType] = useState<'map' | 'table'>('map');
 
   const siteOptions = useMemo<SelectItem[]>(
-    () =>
-      [
-          ...(sites?.map((site) => ({
-            label: site.name,
-            value: site.id,
-          })) || []),
-        // { label: 'New site', value: 'new' },
-      ],
+    () => [
+      ...(sites?.map((site) => ({
+        label: site.name,
+        value: site.id,
+      })) || []),
+      // { label: 'New site', value: 'new' },
+    ],
     [sites]
   );
   const [selectedSiteId, setSelectedSiteId] = useState<string | null | 'new'>();
   const [selectedFloorId, setSelectedFloorId] = useState<string | null>();
   const [lastSelectedSite, setLastSelectedSite] = useState<Site>();
   useEffect(() => {
-    if (selectedSiteId !== 'new') setLastSelectedSite(sites?.find((site) => site.id === selectedSiteId));
+    if (selectedSiteId !== 'new')
+      setLastSelectedSite(sites?.find((site) => site.id === selectedSiteId));
   }, [selectedSiteId, sites]);
   const floorOptions: SelectItem[] =
-    lastSelectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) || [];
+    lastSelectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) ||
+    [];
 
   const assets = useMemo<Asset[]>(
-    () => allAssets?.filter((asset: Asset) => String(asset.floor.id) === selectedFloorId) || [],
-    [allAssets, selectedFloorId]
+    () =>
+      allAssets?.filter(
+        (asset: Asset) => String(asset.floor.id) === selectedFloorId && filterFn(asset)
+      ) || [],
+    [allAssets, selectedFloorId, filterFn]
   );
   const [inspectedAssetId, setInspectedAssetId] = useState<string>();
   const [addingAsset, setAddingAsset] = useState<boolean>(false);
@@ -141,16 +178,20 @@ export default function AssetsPage() {
     [assets]
   );
 
-  const [siteInfo, setSiteInfo] = useState<{ name: string; address: AddressAutofillRetrieveResponse}>();
+  const [siteInfo, setSiteInfo] = useState<{
+    name: string;
+    address: AddressAutofillRetrieveResponse;
+  }>();
 
   useEffect(() => {
-    if (selectedSiteId === 'new') modals.openContextModal({
-      modal: ModalNames.SiteInfo,
-      title: 'Enter Site Info',
-      innerProps: {
-        doneCallback: setSiteInfo,
-      },
-    });
+    if (selectedSiteId === 'new')
+      modals.openContextModal({
+        modal: ModalNames.SiteInfo,
+        title: 'Enter Site Info',
+        innerProps: {
+          doneCallback: setSiteInfo,
+        },
+      });
   }, [selectedSiteId]);
 
   useEffect(() => {
@@ -211,20 +252,23 @@ export default function AssetsPage() {
 
   if (sitesLoading || assetTypesLoading || assetsLoading) {
     return (
-        <Center h="100%">
-          <Loader variant="bars" />
-        </Center>
+      <Center h="100%">
+        <Loader variant="bars" />
+      </Center>
     );
   }
 
   return (
     <MapContainer id="mapcontainer">
-      {(lastSelectedSite && selectedDisplayType === 'map' || !!siteInfo?.address) && (
+      {((lastSelectedSite && selectedDisplayType === 'map') || !!siteInfo?.address) && (
         <MapView
-          location={selectedSiteId === 'new' && !!siteInfo?.address ? {
-                longitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[0],
-                latitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[1],
-              } : _.pick(lastSelectedSite, ['longitude', 'latitude'])
+          location={
+            selectedSiteId === 'new' && !!siteInfo?.address
+              ? {
+                  longitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[0],
+                  latitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[1],
+                }
+              : _.pick(lastSelectedSite, ['longitude', 'latitude'])
           }
           sites={sites}
           assets={assets}
@@ -251,51 +295,54 @@ export default function AssetsPage() {
               onClose={() => setInspectedAssetId(undefined)}
             />
           ) : selectedDisplayType === 'map' ? (
-              <Flex justify="flex-end">
-                <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
-                  Add Asset
-                </Button>
-              </Flex>
+            <Flex justify="flex-end">
+              <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
+                Add Asset
+              </Button>
+            </Flex>
           ) : null}
         </SideBar>
         <ActionBar>
-          <Group>
-            <Title order={3}>Assets</Title>
-            <Select
-              icon={<IconMapPin size={20} />}
-              data={siteOptions}
-              value={selectedSiteId}
-              onChange={setSelectedSiteId}
-              w={160}
-            />
-            {(lastSelectedSite?.floors.length || 0) > 1 && (
+          <Stack spacing="sm">
+            <Group>
+              <Title order={3}>Assets</Title>
               <Select
-                w={100}
-                icon={<IconStack size={20} />}
-                data={floorOptions}
-                value={selectedFloorId}
-                onChange={setSelectedFloorId}
+                icon={<IconMapPin size={20} />}
+                data={siteOptions}
+                value={selectedSiteId}
+                onChange={setSelectedSiteId}
+                w={160}
               />
-            )}
-            <Autocomplete
-              w={280}
-              data={assetAutocompleteItems}
-              icon={<IconSearch size={20} />}
-              placeholder="Search for assets..."
-              onItemSubmit={(assetAutocompleteItem) =>
-                setInspectedAssetId(assetAutocompleteItem.asset.id)
-              }
-            />
-            <SegmentedControl
-              data={DISPLAY_OPTIONS}
-              onChange={(value) => setSelectedDisplayType(value as DisplayType)}
-            />
-          </Group>
+              {(lastSelectedSite?.floors.length || 0) > 1 && (
+                <Select
+                  w={100}
+                  icon={<IconStack size={20} />}
+                  data={floorOptions}
+                  value={selectedFloorId}
+                  onChange={setSelectedFloorId}
+                />
+              )}
+              <Autocomplete
+                w={280}
+                data={assetAutocompleteItems}
+                icon={<IconSearch size={20} />}
+                placeholder="Search for assets..."
+                onItemSubmit={(assetAutocompleteItem) =>
+                  setInspectedAssetId(assetAutocompleteItem.asset.id)
+                }
+              />
+              <SegmentedControl
+                data={DISPLAY_OPTIONS}
+                onChange={(value) => setSelectedDisplayType(value as DisplayType)}
+              />
+            </Group>
+            <AssetFilterBar assetTypes={assetTypes || []} {...filterBarProps} />
+          </Stack>
         </ActionBar>
         {selectedDisplayType === 'table' && (
-            <TableSection>
-              <AssetsTable assets={assets} />
-            </TableSection>
+          <TableSection>
+            <AssetsTable assets={assets} />
+          </TableSection>
         )}
       </OverlayGrid>
     </MapContainer>
