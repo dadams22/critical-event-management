@@ -68,6 +68,8 @@ class AssetViewSetTest(BaseTestCase):
         if response.status_code != 201:
             print(response.content)
 
+        assert response.data["asset_type"]["name"] == self.asset_type.name
+
         # Check that the status code is 201 (created)
         self.assertEqual(response.status_code, 201)
 

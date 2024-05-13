@@ -237,7 +237,8 @@ class AssetViewSet(OrganizationedViewSet):
 
         if serializer.is_valid():
             serializer.save(organization=self.request.user.organization)
-            return Response(serializer.data, status=201)
+            response_serializer = AssetSerializer(serializer.instance)
+            return Response(response_serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
 
