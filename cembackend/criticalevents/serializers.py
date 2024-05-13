@@ -176,6 +176,7 @@ class AssetCreateSerializer(serializers.ModelSerializer):
             "latitude",
             "photo",
             "next_maintenance_date",
+            "managed_by",
         )
 
 
@@ -183,6 +184,7 @@ class AssetSerializer(serializers.ModelSerializer):
     maintenance_logs = MaintenanceLogSerializer(many=True, read_only=True)
     asset_type = AssetTypeSerializer()
     floor = FloorSerializer()
+    managed_by = MinimalUserSerializer(read_only=True)
 
     class Meta:
         model = Asset

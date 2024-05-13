@@ -194,6 +194,9 @@ class Asset(BaseModel):
     latitude = models.DecimalField(max_digits=18, decimal_places=15)
     photo = models.ImageField(upload_to=asset_upload_to, null=True, blank=True)
     next_maintenance_date = models.DateField(default=default_next_maintenance_date)
+    managed_by = models.ForeignKey(
+        User, on_delete=models.RESTRICT, null=True, blank=True
+    )
 
     @property
     def maintenance_status(self):

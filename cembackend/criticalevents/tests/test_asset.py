@@ -184,3 +184,36 @@ class AssetViewSetTest(BaseTestCase):
         self.assertEqual(
             response.data["maintenance_logs"][0]["reported_by"]["id"], self.user.id
         )
+
+    def test_create_asset_managed_by(self):
+        # Authenticate the user
+        self.client.login(username="testuser", password="12345")
+
+        # Define the new asset data
+        new_asset_data = {
+            "name": "New Asset",
+            "asset_type": self.asset_type.id,
+            "floor": self.floor.id,
+            "longitude": 0.0,
+            "latitude": 0.0,
+            "next_maintenance_date": "2022-01-01",
+            "managed_by": self.user.id,
+        }
+
+        # Make a POST request to the AssetViewSet
+        response = self.client.post("/api/asset/", data=new_asset_data, format="json")
+
+        if response.status_code != 201:
+            print(response.content)
+
+        assert response.data["asset_type"]["name"] == self.asset_type.name
+        assert response.data["managed_by"]["email"] == self.user.email
+
+        # Check that the status code is 201 (created)
+        self.assertEqual(response.status_code, 201)
+
+        # Retrieve the newly created asset from the database
+        asset = Asset.objects.get(id=response.data["id"])
+
+        # Check that the name of the new asset is correct
+        self.assertEqual(asset.name, "New Asset")
