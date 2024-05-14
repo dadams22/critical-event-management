@@ -207,7 +207,7 @@ class AssetViewSetTest(BaseTestCase):
             print(response.content)
 
         assert response.data["asset_type"]["name"] == self.asset_type.name
-        assert response.data["managed_by"]["email"] == self.user.email
+        assert response.data["managed_by"]["username"] == self.user.username
 
         # Check that the status code is 201 (created)
         self.assertEqual(response.status_code, 201)

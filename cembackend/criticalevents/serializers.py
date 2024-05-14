@@ -199,5 +199,6 @@ class AssetSerializer(serializers.ModelSerializer):
             "next_maintenance_date",
             "maintenance_status",
             "maintenance_logs",
+            "managed_by",
         )
         read_only_fields = ("maintenance_status",)
