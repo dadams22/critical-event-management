@@ -89,5 +89,12 @@ def send_compliance_report(organization_id: int):
     send_email(users, subject, report)
 
 
+def send_compliance_report_all_orgs():
+    """Send a compliance report for all organizations to the organization's users"""
+    organizations = User.objects.values_list("organization_id", flat=True).distinct()
+    for organization_id in organizations:
+        send_compliance_report(organization_id)
+
+
 if __name__ == "__main__":
     send_compliance_report(1)
