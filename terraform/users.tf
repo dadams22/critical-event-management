@@ -37,12 +37,21 @@ resource "aws_iam_user_login_profile" "dadams" {
   pgp_key = file("pgp.public")
 }
 
+resource "aws_iam_user" "deploy_user" {
+  name = "deploy"
+
+  tags = {
+    "AKIAVRUVQRE7VAZBSNIG" = "github"
+  }
+}
+
 resource "aws_iam_group_membership" "admin_memberships" {
   name = "admin_membership"
 
   users = [
     "${aws_iam_user.mike.name}",
     "${aws_iam_user.dadams.name}",
+    "${aws_iam_user.deploy_user.name}",
   ]
 
   group = aws_iam_group.admins.name

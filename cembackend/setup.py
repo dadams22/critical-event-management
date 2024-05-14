@@ -56,6 +56,9 @@ setup(
         "django-storages==1.14.2",
         "dj_inmemorystorage==2.1.0",
         "drf-yasg==1.21.7",
+        "resend==0.8.0",
+        "python-dotenv==1.0.1",
+        "jinja2==3.1.3",
     ],
     extras_require={
         "dev": [

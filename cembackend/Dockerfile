@@ -8,9 +8,14 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 RUN mkdir -p /code
-
-ADD . /code
 WORKDIR /code
+
+# Install dependencies first to cache them
+ADD setup.py /code
+RUN pip install -e .
+
+# Install the rest of the code
+ADD . /code
 RUN pip install -e .
 
 RUN python manage.py collectstatic --noinput && mv ../static static
