@@ -16,4 +16,4 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
     - name: Run deploy script
-      run: cd cembackend/; ./script/deploy_lambdas.sh
+      run: cd cembackend/; ./script/deploy_images.sh

@@ -13,4 +13,3 @@ docker tag $IMAGE_TAG $IMAGE_TAG_LATEST
 aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin $IMAGE_BASE
 docker push $IMAGE_TAG
 docker push $IMAGE_TAG_LATEST
-aws lambda update-function-code --region=us-west-1 --function-name pyrite_emails_cron_py --image-uri $IMAGE_TAG
