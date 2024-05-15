@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconAsset,
+  IconAsset, IconBriefcase, IconBriefcase2,
   IconHome,
   IconLogout,
   IconSettings,
@@ -88,7 +88,7 @@ interface NavbarLinkProps {
 
 const links: NavbarLinkProps[] = [
   { label: 'Home', link: '/home', icon: IconHome },
-  { label: 'Assets', link: '/assets', icon: IconAsset },
+  { label: 'Assets', link: '/assets', icon: IconBriefcase2 },
   { label: 'Report', link: '/report', icon: IconUrgent },
 ];
 
