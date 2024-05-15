@@ -8,5 +8,5 @@ from criticalevents.shared.assets.compliance_report import (
 
 class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> str | None:
-        send_compliance_report_all_orgs(1)
+        send_compliance_report_all_orgs()
         sys.exit(0)
