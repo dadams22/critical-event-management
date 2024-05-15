@@ -2,10 +2,10 @@
 
 import { ActionIcon, Anchor, Group, Menu } from '@mantine/core';
 import { IconAsset, IconCalendar, IconFilterPlus } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 import AssetTypeFilter from './AssetTypeFilter';
 import NextMaintenanceDateFilter, { SelectionMode } from './NextMaintenanceDateFilter';
 import { AssetType } from '../../../api/types';
-import { useDisclosure } from '@mantine/hooks';
 
 interface ComponentProps {
   assetTypes: AssetType[];

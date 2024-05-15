@@ -30,6 +30,7 @@ interface ComponentProps {
   sites?: Site[];
   assets?: Asset[];
   onClickAsset?: (assetId: string) => void;
+  selectedAssetId?: string;
   drawBounds?: DrawBoundsControlsProps;
   floorPlan?: PlaceFloorPlanControlsProps;
   addAsset?: AddAssetControlsProps;
@@ -44,6 +45,7 @@ export default function MapView({
   sites,
   assets,
   onClickAsset,
+  selectedAssetId,
   drawBounds,
   floorPlan,
   addAsset,
@@ -78,6 +80,12 @@ export default function MapView({
     if (map) map.setCenter([location.longitude, location.latitude]);
   }, [location.latitude, location.longitude]);
 
+  const selectedAsset = assets?.find((asset) => asset.id === selectedAssetId);
+  useEffect(() => {
+    if (!selectedAsset || !map) return;
+    map.flyTo({ center: [selectedAsset.longitude, selectedAsset.latitude], speed: 0.8 });
+  }, [map, selectedAsset]);
+
   const MAINTENANCE_STATUS_TO_COLOR: Record<MaintenanceStatus, MantineColor | undefined> = {
     [MaintenanceStatus.COMPLIANT]: undefined,
     [MaintenanceStatus.NEEDS_MAINTENANCE]: theme.colors.yellow[6],
@@ -107,6 +115,7 @@ export default function MapView({
                   iconIdentifier={asset.asset_type.icon_identifier}
                   color={MAINTENANCE_STATUS_TO_COLOR[asset.maintenance_status]}
                   onClick={() => onClickAsset(asset.id)}
+                  selected={selectedAssetId && selectedAssetId === asset.id}
                 />
               ))}
             {drawBounds && <DrawBoundsControls {...drawBounds} />}

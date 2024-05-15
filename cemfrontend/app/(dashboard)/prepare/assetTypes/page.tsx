@@ -13,7 +13,7 @@ import {
   Table,
   Text,
   useMantineTheme,
-  Stack,
+  Stack, Group,
 } from '@mantine/core';
 import { IconUserPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
@@ -24,6 +24,10 @@ import IconSelector from '../../../(icons)/AssetIconSelector';
 const useStyles = createStyles((theme) => ({
   inlineForm: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+  },
+
+  iconColumn: {
+    width: '80px',
   },
 }));
 
@@ -79,7 +83,7 @@ export default function AssetTypesPage() {
             <Table sx={{ maxWidth: 800 }} verticalSpacing="sm">
               <thead>
                 <tr>
-                  <th>Icon</th>
+                  <th className={classes.iconColumn}>Icon</th>
                   <th>Name</th>
                   <th />
                 </tr>
@@ -87,7 +91,7 @@ export default function AssetTypesPage() {
               <tbody>
                 {adding && (
                   <tr className={cx(classes.inlineForm)}>
-                    <td>
+                    <td className={classes.iconColumn}>
                       <IconSelector
                         iconIdentifier={newAssetIconIdentifier}
                         onIconSelected={setNewAssetIconIdentifier}
@@ -104,15 +108,24 @@ export default function AssetTypesPage() {
                       />
                     </td>
                     <td>
-                      <Button disabled={saving} onClick={handleSave}>
-                        Save
-                      </Button>
+                      <Group>
+                        <Button variant="outline" disabled={saving} onClick={() => setAdding(false)}>
+                          Cancel
+                        </Button>
+                        <Button disabled={saving} onClick={handleSave}>
+                          Save
+                        </Button>
+                      </Group>
                     </td>
                   </tr>
                 )}
                 {(assetTypes || []).map((assetType) => (
                   <tr key={assetType.id}>
-                    <td>{getAssetIcon(assetType.icon_identifier)}</td>
+                    <td className={classes.iconColumn}>
+                      <Flex align="center">
+                        {getAssetIcon(assetType.icon_identifier)}
+                      </Flex>
+                    </td>
                     <td>{assetType.name}</td>
                     <td />
                   </tr>

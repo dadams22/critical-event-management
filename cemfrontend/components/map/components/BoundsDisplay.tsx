@@ -4,7 +4,7 @@ import { useContext, useEffect, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 import { Bounds } from '../../../api/types';
 import { MapContext } from '../MapView';
-import {useMantineTheme} from "@mantine/core";
+import { useMantineTheme } from '@mantine/core';
 
 const sourceId = (id: string) => `bounds-source-${id}`;
 const layerId = (id: string) => `bounds-layer-${id}`;

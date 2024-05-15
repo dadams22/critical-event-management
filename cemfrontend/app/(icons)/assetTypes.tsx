@@ -7,24 +7,90 @@ import {
   IconBleach,
   IconAsset,
   IconProps,
+  IconDoor,
+  IconElevator,
+  IconFlame,
+  IconFireHydrant,
+  IconDroplet,
+  IconUrgent,
+  IconSquareKey,
+  IconBandage,
+  IconBiohazard,
+  IconDeviceCctv,
+  IconLadder,
+  IconBolt,
+  IconFountain,
+  IconAdjustments,
+  IconPlugConnected,
+  IconRouter,
+  IconNetwork, IconWifi, IconCircuitSwitchOpen, IconRipple, IconLock, IconVolume, IconSpeakerphone, IconDeviceTv,
 } from '@tabler/icons-react';
+import { SelectItem } from '@mantine/core';
 
 const DEFAULT_ASSET_ICON = IconAsset;
 
 export enum AssetIconIdentifier {
   FireExtinguisher = 'fire-extinguisher',
   HeartBolt = 'heart-bolt',
-  Bleach = 'bleach',
   FirstAid = 'first-aid-kit',
   Asset = 'asset',
+  Door = 'door',
+  Elevator = 'elevator',
+  Flame = 'flame',
+  FireHydrant = 'fire-hydrant',
+  Droplet = 'droplet',
+  Urgent = 'urgent',
+  SquareKey = 'square-key',
+  Bandage = 'bandage',
+  Biohazard = 'biohazard',
+  DeviceCctv = 'device-cctv',
+  Ladder = 'ladder',
+  Bolt = 'bolt',
+  Fountain = 'fountain',
+  Adjustments = 'adjustments',
+  PlugConnected = 'plug-connected',
+  Router = 'router',
+  Network = 'network',
+  Wifi = 'wifi',
+  CircuitSwitchOpen = 'circuit-switch-open',
+  Ripple = 'ripple',
+  Lock = 'lock',
+  Volume = 'volume',
+  Speakerphone = 'speakerphone',
+  DeviceTv = 'device-tv',
+  Bleach = 'bleach',
 }
 
 export const assetIconMap: Record<AssetIconIdentifier, React.ReactComponentElement<IconProps>> = {
   [AssetIconIdentifier.FireExtinguisher]: IconFireExtinguisher,
   [AssetIconIdentifier.FirstAid]: IconFirstAidKit,
   [AssetIconIdentifier.HeartBolt]: IconHeartBolt,
-  [AssetIconIdentifier.Bleach]: IconBleach,
   [AssetIconIdentifier.Asset]: IconAsset,
+  [AssetIconIdentifier.Door]: IconDoor,
+  [AssetIconIdentifier.Elevator]: IconElevator,
+  [AssetIconIdentifier.Flame]: IconFlame,
+  [AssetIconIdentifier.FireHydrant]: IconFireHydrant,
+  [AssetIconIdentifier.Droplet]: IconDroplet,
+  [AssetIconIdentifier.Urgent]: IconUrgent,
+  [AssetIconIdentifier.SquareKey]: IconSquareKey,
+  [AssetIconIdentifier.Bandage]: IconBandage,
+  [AssetIconIdentifier.Biohazard]: IconBiohazard,
+  [AssetIconIdentifier.DeviceCctv]: IconDeviceCctv,
+  [AssetIconIdentifier.Ladder]: IconLadder,
+  [AssetIconIdentifier.Bolt]: IconBolt,
+  [AssetIconIdentifier.Fountain]: IconFountain,
+  [AssetIconIdentifier.Adjustments]: IconAdjustments,
+  [AssetIconIdentifier.PlugConnected]: IconPlugConnected,
+  [AssetIconIdentifier.Router]: IconRouter,
+  [AssetIconIdentifier.Network]: IconNetwork,
+  [AssetIconIdentifier.Wifi]: IconWifi,
+  [AssetIconIdentifier.CircuitSwitchOpen]: IconCircuitSwitchOpen,
+  [AssetIconIdentifier.Ripple]: IconRipple,
+  [AssetIconIdentifier.Lock]: IconLock,
+  [AssetIconIdentifier.Volume]: IconVolume,
+  [AssetIconIdentifier.Speakerphone]: IconSpeakerphone,
+  [AssetIconIdentifier.DeviceTv]: IconDeviceTv,
+  [AssetIconIdentifier.Bleach]: IconBleach,
 };
 
 export function getAssetIcon(identifier: string, options?: { size?: number; color?: string }) {
@@ -32,10 +98,9 @@ export function getAssetIcon(identifier: string, options?: { size?: number; colo
   return <Icon size={options?.size || 20} color={options?.color} />;
 }
 
-export const assetIconOptions = [
-  { value: AssetIconIdentifier.FireExtinguisher, label: 'Fire Extinguisher' },
-  { value: AssetIconIdentifier.HeartBolt, label: 'AED' },
-  { value: AssetIconIdentifier.Bleach, label: 'Chemical Wash Station' },
-  { value: AssetIconIdentifier.FirstAid, label: 'First Aid Kit' },
-  { value: AssetIconIdentifier.Asset, label: 'Other' },
-];
+export const assetIconOptions: SelectItem[] = Object.values(AssetIconIdentifier).map(
+  (iconIdentifier) => ({
+    value: iconIdentifier,
+    label: '',
+  })
+);

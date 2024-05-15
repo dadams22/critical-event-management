@@ -34,14 +34,15 @@ import {
 } from '@tabler/icons-react';
 import _ from 'lodash';
 import { useEffect, useMemo, useState } from 'react';
+import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
+import { modals } from '@mantine/modals';
+import { produce } from 'immer';
 import MapView from '../../../components/map/MapView';
 import Api from '../../../api/Api';
 import { Asset, Bounds, Location, Site } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
 import { getAssetIcon } from '../../(icons)/assetTypes';
-import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
-import { modals } from '@mantine/modals';
 import { ModalNames } from '../../(modals)';
 import AssetsTable from './AssetsTable';
 import useAssetFilters from './useAssetFilters';
@@ -133,6 +134,7 @@ export default function AssetsPage() {
   const { filterFn, ...filterBarProps } = useAssetFilters({});
 
   const [selectedDisplayType, setSelectedDisplayType] = useState<'map' | 'table'>('map');
+  const [searchValue, setSearchValue] = useState('');
 
   const siteOptions = useMemo<SelectItem[]>(
     () => [
@@ -158,9 +160,14 @@ export default function AssetsPage() {
   const assets = useMemo<Asset[]>(
     () =>
       allAssets?.filter(
-        (asset: Asset) => String(asset.floor.id) === selectedFloorId && filterFn(asset)
+        (asset: Asset) =>
+          String(asset.floor.id) === selectedFloorId &&
+          filterFn(asset) &&
+          (selectedDisplayType === 'map' ||
+            searchValue.length < 3 ||
+            asset.name.toLowerCase().includes(searchValue.toLowerCase()))
       ) || [],
-    [allAssets, selectedFloorId, filterFn]
+    [allAssets, selectedFloorId, filterFn, searchValue, selectedDisplayType]
   );
   const [inspectedAssetId, setInspectedAssetId] = useState<string>();
   const [addingAsset, setAddingAsset] = useState<boolean>(false);
@@ -184,7 +191,7 @@ export default function AssetsPage() {
   }>();
 
   useEffect(() => {
-    if (selectedSiteId === 'new')
+    if (selectedSiteId === 'new') {
       modals.openContextModal({
         modal: ModalNames.SiteInfo,
         title: 'Enter Site Info',
@@ -192,6 +199,7 @@ export default function AssetsPage() {
           doneCallback: setSiteInfo,
         },
       });
+    }
   }, [selectedSiteId]);
 
   useEffect(() => {
@@ -244,9 +252,14 @@ export default function AssetsPage() {
       photo,
       nextMaintenanceDate,
     }).then((asset) => {
-      mutateAssets();
+      mutateAssets(
+        produce(assets, (draft) => {
+          draft.push(asset);
+        })
+      );
       setAddingAsset(false);
       setAddAssetLocation(undefined);
+      setInspectedAssetId(asset.id);
     });
   };
 
@@ -273,6 +286,7 @@ export default function AssetsPage() {
           sites={sites}
           assets={assets}
           onClickAsset={setInspectedAssetId}
+          selectedAssetId={inspectedAssetId}
           addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
           marker={addAssetLocation ? { location: addAssetLocation } : undefined}
           zoomToSite={selectedSiteId}
@@ -330,6 +344,8 @@ export default function AssetsPage() {
                 onItemSubmit={(assetAutocompleteItem) =>
                   setInspectedAssetId(assetAutocompleteItem.asset.id)
                 }
+                value={searchValue}
+                onChange={setSearchValue}
               />
               <SegmentedControl
                 data={DISPLAY_OPTIONS}
@@ -341,7 +357,7 @@ export default function AssetsPage() {
         </ActionBar>
         {selectedDisplayType === 'table' && (
           <TableSection>
-            <AssetsTable assets={assets} />
+            <AssetsTable assets={assets} onInspectAsset={setInspectedAssetId} />
           </TableSection>
         )}
       </OverlayGrid>

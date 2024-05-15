@@ -1,10 +1,10 @@
 'use client';
 
-import { AssetType } from '../../../api/types';
 import { ActionIcon, Button, Checkbox, Chip, Flex, Group, Menu, Text } from '@mantine/core';
 import { IconAsset, IconFilter, IconX } from '@tabler/icons-react';
-import { getAssetIcon } from '../../(icons)/assetTypes';
 import { produce } from 'immer';
+import { getAssetIcon } from '../../(icons)/assetTypes';
+import { AssetType } from '../../../api/types';
 
 interface ComponentProps {
   assetTypes: AssetType[];

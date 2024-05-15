@@ -26,15 +26,21 @@ const useStyles = createStyles((theme) => ({
     '& > svg': {
       color: 'white',
     },
+
+    transition: 'transform 300ms ease-in-out',
   },
 
   notification: {
     position: 'absolute',
     top: 0,
     right: 0,
-    width: '8px',
-    height: '8px',
+    width: '12px',
+    height: '12px',
     borderRadius: '100px',
+  },
+
+  selected: {
+    transform: 'scale(1.25)',
   },
 }));
 
@@ -43,11 +49,18 @@ export interface MarkerProps {
   color?: string;
   iconIdentifier?: AssetIconIdentifier;
   onClick?: () => void;
+  selected?: boolean;
 }
 
-export default function Marker({ location, iconIdentifier, color, onClick }: MarkerProps) {
+export default function Marker({
+  location,
+  iconIdentifier,
+  color,
+  onClick,
+  selected,
+}: MarkerProps) {
   const theme = useMantineTheme();
-  const { classes } = useStyles();
+  const { classes, cx } = useStyles();
 
   const map = useContext(MapContext);
 
@@ -58,7 +71,7 @@ export default function Marker({ location, iconIdentifier, color, onClick }: Mar
     if (iconIdentifier) {
       iconElement = document.createElement('div');
       const icon = (
-        <div style={{ color }} className={classes.marker}>
+        <div style={{ color }} className={cx(classes.marker, selected && classes.selected)}>
           {color && <div className={classes.notification} style={{ backgroundColor: color }} />}
           {getAssetIcon(iconIdentifier, { size: 20 })}
         </div>
@@ -81,7 +94,7 @@ export default function Marker({ location, iconIdentifier, color, onClick }: Mar
       if (!map) return;
       marker.remove();
     };
-  }, [map, color]);
+  }, [map, color, selected]);
 
   return null;
 }

@@ -1,11 +1,10 @@
 'use client';
 
-import { Asset, AssetType } from '../../../api/types';
 import {
   ActionIcon,
   Anchor,
   Badge,
-  Center,
+  Center, createStyles,
   Flex,
   Group,
   Menu,
@@ -13,19 +12,33 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import { getAssetIcon } from '../../(icons)/assetTypes';
 import dayjs from 'dayjs';
-import AssetTypeFilter from './AssetTypeFilter';
 import _ from 'lodash';
 import { useState } from 'react';
 import { IconAsset, IconCalendar, IconFilter, IconFilterPlus } from '@tabler/icons-react';
+import AssetTypeFilter from './AssetTypeFilter';
+import { getAssetIcon } from '../../(icons)/assetTypes';
+import { Asset, AssetType } from '../../../api/types';
 import NextMaintenanceDateFilter from './NextMaintenanceDateFilter';
+
+const useStyles = createStyles((theme) => ({
+  row: {
+    ':hover': {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    },
+
+    cursor: 'pointer',
+  },
+}));
 
 interface ComponentProps {
   assets: Asset[];
+  onInspectAsset: (assetId: string) => void;
 }
 
-export default function AssetsTable({ assets }: ComponentProps) {
+export default function AssetsTable({ assets, onInspectAsset }: ComponentProps) {
+  const { classes } = useStyles();
+
   return assets.length > 0 ? (
     <Table>
       <thead>
@@ -38,7 +51,7 @@ export default function AssetsTable({ assets }: ComponentProps) {
       </thead>
       <tbody>
         {assets.map((asset) => (
-          <tr key={asset.id}>
+          <tr key={asset.id} className={classes.row} onClick={() => onInspectAsset(asset.id)}>
             <td>{asset.name}</td>
             <td>
               <Flex gap="sm" align="center">

@@ -3,9 +3,9 @@
 import { Button, Flex, Group, Stack, TextInput } from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import React, { useState } from 'react';
+import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
 import Api from '../../api/Api';
 import { Person } from '../../api/types';
-import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
 import AddressField from '../../components/AddressField';
 
 interface ComponentProps {
