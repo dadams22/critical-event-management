@@ -109,7 +109,7 @@ export default function AssetFilterBar({
           clear={handleClearManagers}
         />
       )}
-      {(showAssetTypesFilter || showNextMaintenanceDateFilter) && (
+      {(showAssetTypesFilter || showNextMaintenanceDateFilter || showManagerFilter) && (
         <Anchor size="sm" fw={600} underline={false} onClick={handleClearAll}>
           Clear all
         </Anchor>
