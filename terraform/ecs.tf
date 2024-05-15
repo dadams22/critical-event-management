@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "cembackend_task_definition" {
 [
     {
       "name": "cembackend_container",
-      "image": "381491906879.dkr.ecr.us-west-1.amazonaws.com/pyrite_emails_cron_py-lambda",
+      "image": "381491906879.dkr.ecr.us-west-1.amazonaws.com/compliance-emails:latest",
       "cpu": 256,
       "memory": 512,
       "portMappings": [],
