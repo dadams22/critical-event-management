@@ -285,8 +285,6 @@ export default function AssetsPage() {
     );
   }
 
-  console.log(addingAsset);
-
   return (
     <MapContainer id="mapcontainer">
       {((lastSelectedSite && selectedDisplayType === 'map') || !!siteInfo?.address) && (
