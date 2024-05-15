@@ -21,7 +21,7 @@ import AssetTypeFilter from './AssetTypeFilter';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import { Asset, AssetType } from '../../../api/types';
 import NextMaintenanceDateFilter from './NextMaintenanceDateFilter';
-import AssetStatusPill from "./AssetStatusPill";
+import AssetStatusPill from './AssetStatusPill';
 
 const useStyles = createStyles((theme) => ({
   row: {

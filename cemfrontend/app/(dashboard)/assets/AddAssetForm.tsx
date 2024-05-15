@@ -20,7 +20,7 @@ import {
 import { IconCheck, IconClick, IconCrosshair, IconPhoto, IconSelector } from '@tabler/icons-react';
 import { forwardRef, useState } from 'react';
 import { DateInput } from '@mantine/dates';
-import {AssetType, MinimalUser} from '../../../api/types';
+import { AssetType, MinimalUser } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import Api from '../../../api/Api';
 
@@ -97,7 +97,8 @@ export default function AddAssetForm({
 
   const userOptions: SelectItem[] = users.map((user) => ({
     value: user.id,
-    label: !user.first_name && !user.last_name ? user.email : `${user.first_name} ${user.last_name}`,
+    label:
+      !user.first_name && !user.last_name ? user.email : `${user.first_name} ${user.last_name}`,
   }));
 
   const [saving, setSaving] = useState<boolean>(false);
@@ -154,12 +155,7 @@ export default function AddAssetForm({
           popoverProps={{ position: 'right', withinPortal: true }}
           firstDayOfWeek={0}
         />
-        <Select
-          label="Manager"
-          data={userOptions}
-          value={managerId}
-          onChange={setManagerId}
-        />
+        <Select label="Manager" data={userOptions} value={managerId} onChange={setManagerId} />
         {assetImageUrl && <Image src={assetImageUrl} radius="sm" caption={assetImage?.name} />}
         <FileButton accept="image/png,image/jpeg" onChange={handleImageUpload}>
           {(props) => (

@@ -12,7 +12,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
-  IconAsset, IconBriefcase, IconBriefcase2,
+  IconAsset,
+  IconBriefcase,
+  IconBriefcase2,
   IconHome,
   IconLogout,
   IconSettings,

@@ -19,7 +19,7 @@ import { Asset } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import MaintenanceLogModal from './MaintenanceLogModal';
 import Api from '../../../api/Api';
-import AssetStatusPill from "./AssetStatusPill";
+import AssetStatusPill from './AssetStatusPill';
 
 const formatMaintenanceDate = (dateString: string): string => {
   const targetDate = dayjs(dateString, 'YYYY-MM-DD');
@@ -110,7 +110,9 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
                 Manager
               </Text>
               <Text>
-                {(!asset.managed_by.first_name && !asset.managed_by.last_name) ? asset.managed_by.email : `${asset.managed_by.first_name} ${asset.managed_by.last_name}`}
+                {!asset.managed_by.first_name && !asset.managed_by.last_name
+                  ? asset.managed_by.email
+                  : `${asset.managed_by.first_name} ${asset.managed_by.last_name}`}
               </Text>
             </Stack>
           )}

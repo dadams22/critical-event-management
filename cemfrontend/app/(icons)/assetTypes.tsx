@@ -30,7 +30,9 @@ import {
   IconLock,
   IconVolume,
   IconSpeakerphone,
-  IconDeviceTv, IconRippleOff, IconBoltOff,
+  IconDeviceTv,
+  IconRippleOff,
+  IconBoltOff,
 } from '@tabler/icons-react';
 import { SelectItem } from '@mantine/core';
 

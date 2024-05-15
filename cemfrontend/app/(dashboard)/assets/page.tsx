@@ -154,11 +154,12 @@ export default function AssetsPage() {
     if (selectedSiteId !== 'new')
       setLastSelectedSite(sites?.find((site) => site.id === selectedSiteId));
   }, [selectedSiteId, sites]);
-  const floorOptions: SelectItem[] =
-    lastSelectedSite ? [
-      { value: 'all', label: 'All Floors' },
-      ...lastSelectedSite.floors.map((floor) => ({ value: String(floor.id), label: floor.name }))
-    ] : [];
+  const floorOptions: SelectItem[] = lastSelectedSite
+    ? [
+        { value: 'all', label: 'All Floors' },
+        ...lastSelectedSite.floors.map((floor) => ({ value: String(floor.id), label: floor.name })),
+      ]
+    : [];
 
   const assets = useMemo<Asset[]>(
     () =>
@@ -214,7 +215,9 @@ export default function AssetsPage() {
   }, [sites, selectedSiteId]);
 
   useEffect(() => {
-    setSelectedFloorId(lastSelectedSite?.floors?.length > 1 ? 'all' : String(lastSelectedSite?.floors?.[0]?.id));
+    setSelectedFloorId(
+      lastSelectedSite?.floors?.length > 1 ? 'all' : String(lastSelectedSite?.floors?.[0]?.id)
+    );
     setInspectedAssetId(undefined);
     setAddingAsset(false);
     setAddAssetLocation(undefined);
@@ -357,8 +360,8 @@ export default function AssetsPage() {
             </Group>
             <Group>
               <SegmentedControl
-                  data={DISPLAY_OPTIONS}
-                  onChange={(value) => setSelectedDisplayType(value as DisplayType)}
+                data={DISPLAY_OPTIONS}
+                onChange={(value) => setSelectedDisplayType(value as DisplayType)}
               />
               <AssetFilterBar assetTypes={assetTypes || []} {...filterBarProps} />
             </Group>

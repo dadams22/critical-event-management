@@ -1,6 +1,6 @@
 'use client';
 
-import {useMemo, useState} from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   createStyles,
@@ -21,8 +21,8 @@ import useSWR from 'swr';
 import Api from '../../../../api/Api';
 import { getAssetIcon } from '../../../(icons)/assetTypes';
 import IconSelector from '../../../(icons)/AssetIconSelector';
-import {produce} from "immer";
-import _ from "lodash";
+import { produce } from 'immer';
+import _ from 'lodash';
 
 const useStyles = createStyles((theme) => ({
   inlineForm: {
@@ -37,10 +37,17 @@ const useStyles = createStyles((theme) => ({
 export default function AssetTypesPage() {
   const { classes, cx } = useStyles();
 
-  const { data: assetTypes, isLoading: assetTypesLoading, mutate } = useSWR('assetTypes/all', Api.getAssetTypes);
+  const {
+    data: assetTypes,
+    isLoading: assetTypesLoading,
+    mutate,
+  } = useSWR('assetTypes/all', Api.getAssetTypes);
   const { data: assets, isLoading: assetsLoading } = useSWR('asset/all', Api.getAssets);
 
-  const assetsByAssetType = useMemo(() => _.chain(assets).groupBy('asset_type.id').mapValues('length').value(), [assets]);
+  const assetsByAssetType = useMemo(
+    () => _.chain(assets).groupBy('asset_type.id').mapValues('length').value(),
+    [assets]
+  );
 
   const [adding, setAdding] = useState(false);
   const [saving, setSaving] = useState<boolean>(false);
@@ -60,9 +67,11 @@ export default function AssetTypesPage() {
         setNewAssetTypeName('');
         setNewAssetIconIdentifier('');
         setAdding(false);
-        mutate(produce(assetTypes, (draft) => {
-          draft?.unshift(assetType);
-        }));
+        mutate(
+          produce(assetTypes, (draft) => {
+            draft?.unshift(assetType);
+          })
+        );
       })
       .finally(() => setSaving(false));
   };
@@ -92,9 +101,7 @@ export default function AssetTypesPage() {
                 <tr>
                   <th className={classes.iconColumn}>Icon</th>
                   <th>Name</th>
-                  <th>
-                    Total Assets
-                  </th>
+                  <th>Total Assets</th>
                 </tr>
               </thead>
               <tbody>
