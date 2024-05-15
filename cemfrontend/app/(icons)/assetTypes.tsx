@@ -23,7 +23,14 @@ import {
   IconAdjustments,
   IconPlugConnected,
   IconRouter,
-  IconNetwork, IconWifi, IconCircuitSwitchOpen, IconRipple, IconLock, IconVolume, IconSpeakerphone, IconDeviceTv,
+  IconNetwork,
+  IconWifi,
+  IconCircuitSwitchOpen,
+  IconRipple,
+  IconLock,
+  IconVolume,
+  IconSpeakerphone,
+  IconDeviceTv,
 } from '@tabler/icons-react';
 import { SelectItem } from '@mantine/core';
 

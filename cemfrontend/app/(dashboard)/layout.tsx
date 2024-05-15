@@ -8,6 +8,7 @@ import {
   UnstyledButton,
   Stack,
   Center,
+  Loader,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -21,7 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { deleteCookie, getCookie } from 'cookies-next';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Api, { AUTH_TOKEN_KEY } from '../../api/Api';
 
 const useStyles = createStyles((theme) => ({
@@ -123,6 +124,8 @@ export default function AppLayout({ children }: ComponentProps) {
 
   const pathname = usePathname();
 
+  const [authenticating, setAuthenticating] = useState(true);
+
   const items = links.map((link) => (
     <NavbarLink {...link} key={link.label} active={pathname.startsWith(link.link)} />
   ));
@@ -130,9 +133,11 @@ export default function AppLayout({ children }: ComponentProps) {
   const router = useRouter();
   const token = getCookie(AUTH_TOKEN_KEY);
   useEffect(() => {
-    Api.checkAuth().then((authenticated) => {
-      if (!authenticated) router.replace('/login');
-    });
+    Api.checkAuth()
+      .then((authenticated) => {
+        if (!authenticated) router.replace(`/login?next=${pathname}`);
+      })
+      .finally(() => setAuthenticating(false));
   }, [token]);
 
   const handleLogout = () => {
@@ -163,7 +168,15 @@ export default function AppLayout({ children }: ComponentProps) {
           <NavbarLink icon={IconLogout} label="Logout" onClick={handleLogout} />
         </Stack>
       </nav>
-      <main className={classes.main}>{children}</main>
+      <main className={classes.main}>
+        {authenticating ? (
+          <Center h="100%">
+            <Loader variant="bars" size="lg" />
+          </Center>
+        ) : (
+          children
+        )}
+      </main>
     </div>
   );
 }

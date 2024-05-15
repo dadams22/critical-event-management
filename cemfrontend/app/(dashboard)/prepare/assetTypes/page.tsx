@@ -13,7 +13,8 @@ import {
   Table,
   Text,
   useMantineTheme,
-  Stack, Group,
+  Stack,
+  Group,
 } from '@mantine/core';
 import { IconUserPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
@@ -109,7 +110,11 @@ export default function AssetTypesPage() {
                     </td>
                     <td>
                       <Group>
-                        <Button variant="outline" disabled={saving} onClick={() => setAdding(false)}>
+                        <Button
+                          variant="outline"
+                          disabled={saving}
+                          onClick={() => setAdding(false)}
+                        >
                           Cancel
                         </Button>
                         <Button disabled={saving} onClick={handleSave}>
@@ -122,9 +127,7 @@ export default function AssetTypesPage() {
                 {(assetTypes || []).map((assetType) => (
                   <tr key={assetType.id}>
                     <td className={classes.iconColumn}>
-                      <Flex align="center">
-                        {getAssetIcon(assetType.icon_identifier)}
-                      </Flex>
+                      <Flex align="center">{getAssetIcon(assetType.icon_identifier)}</Flex>
                     </td>
                     <td>{assetType.name}</td>
                     <td />

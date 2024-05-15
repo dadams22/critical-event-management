@@ -9,11 +9,11 @@ export default function HomePage() {
   const { data: assets, isLoading } = useSWR('assets/all', Api.getAssets);
 
   if (isLoading) {
-      return (
-          <Center h="100%">
-              <Loader variant="bars" />
-          </Center>
-      )
+    return (
+      <Center h="100%">
+        <Loader variant="bars" />
+      </Center>
+    );
   }
 
   return (

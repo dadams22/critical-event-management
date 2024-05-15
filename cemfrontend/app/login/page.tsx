@@ -2,11 +2,14 @@
 
 import { TextInput, PasswordInput, Paper, Title, Container, Group, Button } from '@mantine/core';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Api from '../../api/Api';
+
+const DEFAULT_NEXT_URL = '/home';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -15,9 +18,11 @@ export default function LoginPage() {
   const handleLogin = () => {
     if (!username || !password) return;
 
+    const nextUrl = searchParams.get('next');
+
     setAuthenticating(true);
     Api.login(username, password)
-      .then(() => router.push('/report'))
+      .then(() => router.push(nextUrl || DEFAULT_NEXT_URL))
       .finally(() => setAuthenticating(false));
   };
 
