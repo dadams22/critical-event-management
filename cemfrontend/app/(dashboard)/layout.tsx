@@ -89,7 +89,7 @@ interface NavbarLinkProps {
 }
 
 const links: NavbarLinkProps[] = [
-  { label: 'Home', link: '/home', icon: IconHome },
+  // { label: 'Home', link: '/home', icon: IconHome },
   { label: 'Assets', link: '/assets', icon: IconBriefcase2 },
   { label: 'Report', link: '/report', icon: IconUrgent },
 ];
