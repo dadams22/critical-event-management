@@ -29,6 +29,7 @@ export default function FloorPlanDisplay({ floor }: ComponentProps) {
       source: floorPlanSourceId(floor),
       paint: {
         'raster-fade-duration': 0,
+        'raster-opacity': 0.8,
       },
     });
 
