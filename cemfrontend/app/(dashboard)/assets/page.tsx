@@ -120,7 +120,12 @@ const DISPLAY_OPTIONS: SegmentedControlItem[] = [
 ];
 
 export default function AssetsPage() {
-  const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites);
+  const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites, {
+    revalidateOnMount: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    refreshInterval: 0,
+  });
   const { data: assetTypes, isLoading: assetTypesLoading } = useSWR(
     'assetTypes/all',
     Api.getAssetTypes
@@ -279,6 +284,8 @@ export default function AssetsPage() {
       </Center>
     );
   }
+
+  console.log(addingAsset);
 
   return (
     <MapContainer id="mapcontainer">
