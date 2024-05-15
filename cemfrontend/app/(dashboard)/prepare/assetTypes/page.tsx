@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import {useMemo, useState} from 'react';
 
 import {
   createStyles,
@@ -21,6 +21,8 @@ import useSWR from 'swr';
 import Api from '../../../../api/Api';
 import { getAssetIcon } from '../../../(icons)/assetTypes';
 import IconSelector from '../../../(icons)/AssetIconSelector';
+import {produce} from "immer";
+import _ from "lodash";
 
 const useStyles = createStyles((theme) => ({
   inlineForm: {
@@ -35,10 +37,12 @@ const useStyles = createStyles((theme) => ({
 export default function AssetTypesPage() {
   const { classes, cx } = useStyles();
 
-  const { data: assetTypes, isLoading, mutate } = useSWR('assetTypes/all', Api.getAssetTypes);
+  const { data: assetTypes, isLoading: assetTypesLoading, mutate } = useSWR('assetTypes/all', Api.getAssetTypes);
+  const { data: assets, isLoading: assetsLoading } = useSWR('asset/all', Api.getAssets);
+
+  const assetsByAssetType = useMemo(() => _.chain(assets).groupBy('asset_type.id').mapValues('length').value(), [assets]);
 
   const [adding, setAdding] = useState(false);
-
   const [saving, setSaving] = useState<boolean>(false);
   const [newAssetTypeName, setNewAssetTypeName] = useState<string>('');
   const [newAssetIconIdentifier, setNewAssetIconIdentifier] = useState<string | undefined>(
@@ -52,11 +56,13 @@ export default function AssetTypesPage() {
     setSaving(true);
 
     Api.createAssetType({ name: newAssetTypeName, iconIdentifier: newAssetIconIdentifier })
-      .then(() => {
+      .then((assetType) => {
         setNewAssetTypeName('');
         setNewAssetIconIdentifier('');
         setAdding(false);
-        mutate();
+        mutate(produce(assetTypes, (draft) => {
+          draft?.unshift(assetType);
+        }));
       })
       .finally(() => setSaving(false));
   };
@@ -65,7 +71,7 @@ export default function AssetTypesPage() {
     <>
       <Title order={2}>Asset Types</Title>
       <Text c="dimmed">Configure common asset types to track asset locations and maintenance.</Text>
-      {isLoading ? (
+      {assetsLoading || assetTypesLoading ? (
         <Center my="xl">
           <Loader />
         </Center>
@@ -86,6 +92,9 @@ export default function AssetTypesPage() {
                 <tr>
                   <th className={classes.iconColumn}>Icon</th>
                   <th>Name</th>
+                  <th>
+                    Total Assets
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -97,7 +106,7 @@ export default function AssetTypesPage() {
                         onIconSelected={setNewAssetIconIdentifier}
                       />
                     </td>
-                    <td>
+                    <td colSpan={2}>
                       <Group>
                         <TextInput
                           placeholder="Asset Type Name"
@@ -128,6 +137,7 @@ export default function AssetTypesPage() {
                       <Flex align="center">{getAssetIcon(assetType.icon_identifier)}</Flex>
                     </td>
                     <td>{assetType.name}</td>
+                    <td>{assetsByAssetType[assetType.id] || 0}</td>
                   </tr>
                 ))}
               </tbody>

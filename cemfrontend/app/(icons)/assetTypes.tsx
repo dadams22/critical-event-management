@@ -30,7 +30,7 @@ import {
   IconLock,
   IconVolume,
   IconSpeakerphone,
-  IconDeviceTv,
+  IconDeviceTv, IconRippleOff, IconBoltOff,
 } from '@tabler/icons-react';
 import { SelectItem } from '@mantine/core';
 
@@ -53,6 +53,7 @@ export enum AssetIconIdentifier {
   DeviceCctv = 'device-cctv',
   Ladder = 'ladder',
   Bolt = 'bolt',
+  BoltOff = 'bolt-off',
   Fountain = 'fountain',
   Adjustments = 'adjustments',
   PlugConnected = 'plug-connected',
@@ -61,6 +62,7 @@ export enum AssetIconIdentifier {
   Wifi = 'wifi',
   CircuitSwitchOpen = 'circuit-switch-open',
   Ripple = 'ripple',
+  RippleOff = 'ripple-off',
   Lock = 'lock',
   Volume = 'volume',
   Speakerphone = 'speakerphone',
@@ -85,6 +87,7 @@ export const assetIconMap: Record<AssetIconIdentifier, React.ReactComponentEleme
   [AssetIconIdentifier.DeviceCctv]: IconDeviceCctv,
   [AssetIconIdentifier.Ladder]: IconLadder,
   [AssetIconIdentifier.Bolt]: IconBolt,
+  [AssetIconIdentifier.BoltOff]: IconBoltOff,
   [AssetIconIdentifier.Fountain]: IconFountain,
   [AssetIconIdentifier.Adjustments]: IconAdjustments,
   [AssetIconIdentifier.PlugConnected]: IconPlugConnected,
@@ -93,6 +96,7 @@ export const assetIconMap: Record<AssetIconIdentifier, React.ReactComponentEleme
   [AssetIconIdentifier.Wifi]: IconWifi,
   [AssetIconIdentifier.CircuitSwitchOpen]: IconCircuitSwitchOpen,
   [AssetIconIdentifier.Ripple]: IconRipple,
+  [AssetIconIdentifier.RippleOff]: IconRippleOff,
   [AssetIconIdentifier.Lock]: IconLock,
   [AssetIconIdentifier.Volume]: IconVolume,
   [AssetIconIdentifier.Speakerphone]: IconSpeakerphone,
