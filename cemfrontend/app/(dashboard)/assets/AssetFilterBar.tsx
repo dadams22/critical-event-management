@@ -1,11 +1,12 @@
 'use client';
 
 import { ActionIcon, Anchor, Group, Menu } from '@mantine/core';
-import { IconAsset, IconCalendar, IconFilterPlus } from '@tabler/icons-react';
+import {IconAsset, IconCalendar, IconFilterPlus, IconUser} from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import AssetTypeFilter from './AssetTypeFilter';
 import NextMaintenanceDateFilter, { SelectionMode } from './NextMaintenanceDateFilter';
-import { AssetType } from '../../../api/types';
+import {AssetType, MinimalUser} from '../../../api/types';
+import AssetManagerFilter from "./AssetManagerFilter";
 
 interface ComponentProps {
   assetTypes: AssetType[];
@@ -15,6 +16,9 @@ interface ComponentProps {
   setSelectionMode: (mode: SelectionMode) => void;
   selectedDate: Date | null | [Date | null, Date | null];
   setSelectedDate: (selectedDate: Date | null | [Date | null, Date | null]) => void;
+  users: MinimalUser[];
+  selectedManagers: string[];
+  setSelectedManagers: (selected: string[]) => void;
 }
 
 export default function AssetFilterBar({
@@ -25,9 +29,13 @@ export default function AssetFilterBar({
   setSelectionMode,
   selectedDate,
   setSelectedDate,
+    users,
+    selectedManagers,
+    setSelectedManagers,
 }: ComponentProps) {
   const [showAssetTypesFilter, assetTypesFilterHandlers] = useDisclosure();
   const [showNextMaintenanceDateFilter, nextMaintenanceDateFilterHandlers] = useDisclosure();
+  const [showManagerFilter, managerFilterHandlers] = useDisclosure();
 
   const handleClearAssetTypes = () => {
     setSelectedAssetTypes([]);
@@ -38,6 +46,11 @@ export default function AssetFilterBar({
     setSelectionMode('before');
     setSelectedDate(null);
     nextMaintenanceDateFilterHandlers.close();
+  };
+
+  const handleClearManagers = () => {
+    setSelectedManagers([]);
+    managerFilterHandlers.close();
   };
 
   const handleClearAll = () => {
@@ -66,6 +79,9 @@ export default function AssetFilterBar({
           >
             Next Maintenance Date
           </Menu.Item>
+          <Menu.Item icon={<IconUser size={16} />} onClick={managerFilterHandlers.open}>
+            Manager
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
       {showAssetTypesFilter && (
@@ -84,6 +100,9 @@ export default function AssetFilterBar({
           setSelectedDate={setSelectedDate}
           clear={handleClearNextMaintenanceDate}
         />
+      )}
+      {showManagerFilter && (
+          <AssetManagerFilter users={users} selected={selectedManagers} onChange={setSelectedManagers} clear={handleClearManagers} />
       )}
       {(showAssetTypesFilter || showNextMaintenanceDateFilter) && (
         <Anchor size="sm" fw={600} underline={false} onClick={handleClearAll}>
