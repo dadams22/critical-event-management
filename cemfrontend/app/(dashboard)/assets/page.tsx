@@ -209,12 +209,12 @@ export default function AssetsPage() {
     if (!!sites?.length && !selectedSiteId) {
       const defaultSite = sites[0];
       setSelectedSiteId(defaultSite.id);
-      setSelectedFloorId(defaultSite.floors.length  > 1 ? 'all' : defaultSite.floors[0].id);
+      setSelectedFloorId(defaultSite.floors.length > 1 ? 'all' : String(defaultSite.floors[0].id));
     }
   }, [sites, selectedSiteId]);
 
   useEffect(() => {
-    setSelectedFloorId(lastSelectedSite?.floors?.length || 0 > 1 ? 'all' : lastSelectedSite?.floors?.[0]?.id);
+    setSelectedFloorId(lastSelectedSite?.floors?.length > 1 ? 'all' : String(lastSelectedSite?.floors?.[0]?.id));
     setInspectedAssetId(undefined);
     setAddingAsset(false);
     setAddAssetLocation(undefined);
