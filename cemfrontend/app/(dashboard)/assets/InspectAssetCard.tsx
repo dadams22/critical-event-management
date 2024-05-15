@@ -19,6 +19,7 @@ import { Asset } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import MaintenanceLogModal from './MaintenanceLogModal';
 import Api from '../../../api/Api';
+import AssetStatusPill from "./AssetStatusPill";
 
 const formatMaintenanceDate = (dateString: string): string => {
   const targetDate = dayjs(dateString, 'YYYY-MM-DD');
@@ -88,6 +89,14 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
                 {asset.asset_type.name}
               </Flex>
             </Text>
+          </Stack>
+          <Stack spacing={0}>
+            <Text fz="sm" fw={600}>
+              Maintenance Status
+            </Text>
+            <div>
+              <AssetStatusPill status={asset.maintenance_status} />
+            </div>
           </Stack>
           <Stack spacing={0}>
             <Text fz="sm" fw={600}>

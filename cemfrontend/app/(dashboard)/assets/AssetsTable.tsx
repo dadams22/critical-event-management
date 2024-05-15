@@ -21,6 +21,7 @@ import AssetTypeFilter from './AssetTypeFilter';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import { Asset, AssetType } from '../../../api/types';
 import NextMaintenanceDateFilter from './NextMaintenanceDateFilter';
+import AssetStatusPill from "./AssetStatusPill";
 
 const useStyles = createStyles((theme) => ({
   row: {
@@ -61,13 +62,7 @@ export default function AssetsTable({ assets, onInspectAsset }: ComponentProps) 
               </Flex>
             </td>
             <td>
-              {asset.maintenance_status === 'COMPLIANT' ? (
-                <Badge color="green">Compliant</Badge>
-              ) : asset.maintenance_status === 'NEEDS_MAINTENANCE' ? (
-                <Badge color="yellow">Maintenance Due</Badge>
-              ) : asset.maintenance_status === 'OUT_OF_COMPLIANCE' ? (
-                <Badge color="red">Overdue</Badge>
-              ) : null}
+              <AssetStatusPill status={asset.maintenance_status} />
             </td>
             <td>{dayjs(asset.next_maintenance_date).format('MMMM D, YYYY')}</td>
           </tr>
