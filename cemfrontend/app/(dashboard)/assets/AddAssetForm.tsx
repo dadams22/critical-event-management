@@ -147,7 +147,7 @@ export default function AddAssetForm({
           required
         />
         <DateInput
-          label="Next Mainenance Date"
+          label="Next Maintenance Date"
           value={nextMaintenanceDate}
           onChange={setNextMaintenanceDate}
           required
