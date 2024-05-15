@@ -363,7 +363,11 @@ export default function AssetsPage() {
                 data={DISPLAY_OPTIONS}
                 onChange={(value) => setSelectedDisplayType(value as DisplayType)}
               />
-              <AssetFilterBar assetTypes={assetTypes || []} users={users || []} {...filterBarProps} />
+              <AssetFilterBar
+                assetTypes={assetTypes || []}
+                users={users || []}
+                {...filterBarProps}
+              />
             </Group>
           </Stack>
         </ActionBar>

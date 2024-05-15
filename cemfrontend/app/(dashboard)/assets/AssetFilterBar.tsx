@@ -1,12 +1,12 @@
 'use client';
 
 import { ActionIcon, Anchor, Group, Menu } from '@mantine/core';
-import {IconAsset, IconCalendar, IconFilterPlus, IconUser} from '@tabler/icons-react';
+import { IconAsset, IconCalendar, IconFilterPlus, IconUser } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import AssetTypeFilter from './AssetTypeFilter';
 import NextMaintenanceDateFilter, { SelectionMode } from './NextMaintenanceDateFilter';
-import {AssetType, MinimalUser} from '../../../api/types';
-import AssetManagerFilter from "./AssetManagerFilter";
+import { AssetType, MinimalUser } from '../../../api/types';
+import AssetManagerFilter from './AssetManagerFilter';
 
 interface ComponentProps {
   assetTypes: AssetType[];
@@ -29,9 +29,9 @@ export default function AssetFilterBar({
   setSelectionMode,
   selectedDate,
   setSelectedDate,
-    users,
-    selectedManagers,
-    setSelectedManagers,
+  users,
+  selectedManagers,
+  setSelectedManagers,
 }: ComponentProps) {
   const [showAssetTypesFilter, assetTypesFilterHandlers] = useDisclosure();
   const [showNextMaintenanceDateFilter, nextMaintenanceDateFilterHandlers] = useDisclosure();
@@ -102,7 +102,12 @@ export default function AssetFilterBar({
         />
       )}
       {showManagerFilter && (
-          <AssetManagerFilter users={users} selected={selectedManagers} onChange={setSelectedManagers} clear={handleClearManagers} />
+        <AssetManagerFilter
+          users={users}
+          selected={selectedManagers}
+          onChange={setSelectedManagers}
+          clear={handleClearManagers}
+        />
       )}
       {(showAssetTypesFilter || showNextMaintenanceDateFilter) && (
         <Anchor size="sm" fw={600} underline={false} onClick={handleClearAll}>
