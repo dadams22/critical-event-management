@@ -373,7 +373,11 @@ export default function AssetsPage() {
         </ActionBar>
         {selectedDisplayType === 'table' && (
           <TableSection>
-            <AssetsTable assets={assets} onInspectAsset={setInspectedAssetId} inspectedAssetId={inspectedAssetId} />
+            <AssetsTable
+              assets={assets}
+              onInspectAsset={setInspectedAssetId}
+              inspectedAssetId={inspectedAssetId}
+            />
           </TableSection>
         )}
       </OverlayGrid>

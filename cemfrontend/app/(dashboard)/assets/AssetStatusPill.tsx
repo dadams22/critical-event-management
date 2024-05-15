@@ -1,7 +1,7 @@
 'use client';
 
-import { MaintenanceStatus } from '../../../api/types';
 import { Badge } from '@mantine/core';
+import { MaintenanceStatus } from '../../../api/types';
 
 interface ComponentProps {
   status: MaintenanceStatus;

@@ -18,11 +18,11 @@ import {
 } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
+import { produce } from 'immer';
+import _ from 'lodash';
 import Api from '../../../../api/Api';
 import { getAssetIcon } from '../../../(icons)/assetTypes';
 import IconSelector from '../../../(icons)/AssetIconSelector';
-import { produce } from 'immer';
-import _ from 'lodash';
 
 const useStyles = createStyles((theme) => ({
   inlineForm: {
