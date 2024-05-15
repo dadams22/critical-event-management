@@ -81,6 +81,7 @@ export interface MaintenanceLog {
   created_at: string;
   notes: string;
   photo?: string;
+  reported_by: MinimalUser;
 }
 
 export interface Asset {

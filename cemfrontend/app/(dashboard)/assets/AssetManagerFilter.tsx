@@ -5,7 +5,7 @@ import { IconAsset, IconX } from '@tabler/icons-react';
 import { MinimalUser } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 
-function getUserDisplayName(user: MinimalUser): string {
+export function getUserDisplayName(user: MinimalUser): string {
   return !user.first_name && !user.last_name ? user.email : `${user.first_name} ${user.last_name}`;
 }
 
