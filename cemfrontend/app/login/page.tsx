@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Api from '../../api/Api';
 
-const DEFAULT_NEXT_URL = '/home';
+const DEFAULT_NEXT_URL = '/assets';
 
 export default function LoginPage() {
   const router = useRouter();
