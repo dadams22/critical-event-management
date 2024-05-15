@@ -20,6 +20,7 @@ from .views import (
     AssetTypeViewSet,
     AssetViewSet,
     MaintenanceLogViewSet,
+    MinimalUserReadOnlyViewSet,
 )
 
 schema_view = get_schema_view(
@@ -44,6 +45,7 @@ router.register(r"floor", FloorViewSet, basename="floor")
 router.register(r"asset_type", AssetTypeViewSet, basename="asset_type")
 router.register(r"asset", AssetViewSet, basename="asset")
 router.register(r"maintenance_log", MaintenanceLogViewSet, basename="maintenance_log")
+router.register(r"user", MinimalUserReadOnlyViewSet, basename="user")
 
 urlpatterns = [
     path("auth", views.obtain_auth_token),

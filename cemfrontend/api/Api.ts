@@ -9,7 +9,7 @@ import {
   Location,
   Site,
   AssetType,
-  Bounds,
+  Bounds, MinimalUser,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -194,6 +194,7 @@ const Api = (() => {
       latitude,
       photo,
       nextMaintenanceDate,
+      managedBy,
     }: {
       floor: string;
       name: string;
@@ -202,8 +203,8 @@ const Api = (() => {
       latitude: number;
       photo?: File;
       nextMaintenanceDate: Date;
+      managedBy?: string;
     }): Promise<Asset> => {
-      const formData = new FormData();
       const payload = {
         floor,
         name,
@@ -211,11 +212,10 @@ const Api = (() => {
         longitude,
         latitude,
         next_maintenance_date: nextMaintenanceDate.toISOString().split('T')[0],
+        managed_by: managedBy,
       };
 
-      if (photo) {
-        payload.photo = await fileToBase64(photo);
-      }
+      if (photo) payload.photo = await fileToBase64(photo);
 
       const response = await axiosInstance.post('asset/', payload, {
         method: 'CREATE',
@@ -247,6 +247,11 @@ const Api = (() => {
       const response = await axiosInstance.post<MaintenanceLog>('maintenance_log/', payload, {
         method: 'CREATE',
       });
+      return response.data;
+    },
+
+    getUsers: async (): Promise<MinimalUser[]> => {
+      const response = await axiosInstance.get('user/');
       return response.data;
     },
   };

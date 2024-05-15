@@ -16,7 +16,7 @@ import {
   Stack,
   Group,
 } from '@mantine/core';
-import { IconUserPlus } from '@tabler/icons-react';
+import { IconPlus } from '@tabler/icons-react';
 import useSWR from 'swr';
 import Api from '../../../../api/Api';
 import { getAssetIcon } from '../../../(icons)/assetTypes';
@@ -75,7 +75,7 @@ export default function AssetTypesPage() {
             <Flex maw={800}>
               <Button
                 disabled={adding}
-                leftIcon={<IconUserPlus size={20} />}
+                leftIcon={<IconPlus size={20} />}
                 onClick={() => setAdding(true)}
               >
                 Add Asset Type
@@ -86,7 +86,6 @@ export default function AssetTypesPage() {
                 <tr>
                   <th className={classes.iconColumn}>Icon</th>
                   <th>Name</th>
-                  <th />
                 </tr>
               </thead>
               <tbody>
@@ -99,17 +98,16 @@ export default function AssetTypesPage() {
                       />
                     </td>
                     <td>
-                      <TextInput
-                        placeholder="Asset Type Name"
-                        required
-                        disabled={saving}
-                        value={newAssetTypeName}
-                        onChange={(e) => setNewAssetTypeName(e.target.value)}
-                        autoFocus
-                      />
-                    </td>
-                    <td>
                       <Group>
+                        <TextInput
+                          placeholder="Asset Type Name"
+                          required
+                          disabled={saving}
+                          value={newAssetTypeName}
+                          onChange={(e) => setNewAssetTypeName(e.target.value)}
+                          autoFocus
+                          style={{ flex: 2 }}
+                        />
                         <Button
                           variant="outline"
                           disabled={saving}
@@ -117,7 +115,7 @@ export default function AssetTypesPage() {
                         >
                           Cancel
                         </Button>
-                        <Button disabled={saving} onClick={handleSave}>
+                        <Button loading={saving} onClick={handleSave}>
                           Save
                         </Button>
                       </Group>
@@ -130,7 +128,6 @@ export default function AssetTypesPage() {
                       <Flex align="center">{getAssetIcon(assetType.icon_identifier)}</Flex>
                     </td>
                     <td>{assetType.name}</td>
-                    <td />
                   </tr>
                 ))}
               </tbody>

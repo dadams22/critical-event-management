@@ -1,10 +1,11 @@
-import { IconIdentifier } from '../app/(icons)/assetTypes';
+import { AssetIconIdentifier } from '../app/(icons)/assetTypes';
 
 export interface MinimalUser {
   id: string;
   username: string;
   first_name: string;
   last_name: string;
+  email: string;
 }
 
 export interface Person {
@@ -59,14 +60,14 @@ export interface Site {
   longitude: number;
   latitude: number;
   location: Location;
-  bounds: string;
+  bounds: Bounds;
   floors: Floor[];
 }
 
 export interface AssetType {
   id: string;
   name: string;
-  icon_identifier: IconIdentifier;
+  icon_identifier: AssetIconIdentifier;
 }
 
 export enum MaintenanceStatus {
@@ -93,4 +94,5 @@ export interface Asset {
   next_maintenance_date: string;
   maintenance_status: MaintenanceStatus;
   maintenance_logs: MaintenanceLog[];
+  managed_by?: MinimalUser;
 }

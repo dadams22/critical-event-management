@@ -68,7 +68,7 @@ export default function MapView({
           ? 'mapbox://styles/mapbox/dark-v11'
           : 'mapbox://styles/mapbox/light-v11',
       center: [location.longitude, location.latitude],
-      zoom: 18,
+      zoom: 19,
     });
 
     map.on('load', () => setLoaded(true));
@@ -77,7 +77,10 @@ export default function MapView({
   }, [mapContainer]);
 
   useEffect(() => {
-    if (map) map.setCenter([location.longitude, location.latitude]);
+    if (map) {
+      map.setCenter([location.longitude, location.latitude]);
+      map.setZoom(19);
+    }
   }, [location.latitude, location.longitude]);
 
   const selectedAsset = assets?.find((asset) => asset.id === selectedAssetId);

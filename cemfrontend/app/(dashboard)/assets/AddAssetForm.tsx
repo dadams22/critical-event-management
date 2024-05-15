@@ -20,7 +20,7 @@ import {
 import { IconCheck, IconClick, IconCrosshair, IconPhoto, IconSelector } from '@tabler/icons-react';
 import { forwardRef, useState } from 'react';
 import { DateInput } from '@mantine/dates';
-import { AssetType } from '../../../api/types';
+import {AssetType, MinimalUser} from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import Api from '../../../api/Api';
 
@@ -30,10 +30,12 @@ interface ComponentProps {
     assetType: string;
     photo?: File;
     nextMaintenanceDate: Date;
+    managedBy?: string;
   }) => Promise<void>;
   onCancel: () => void;
   locationSelected: boolean;
   assetTypes: AssetType[];
+  users: MinimalUser[];
 }
 
 interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
@@ -60,6 +62,7 @@ export default function AddAssetForm({
   onCancel,
   locationSelected,
   assetTypes,
+  users,
 }: ComponentProps) {
   const theme = useMantineTheme();
 
@@ -68,6 +71,7 @@ export default function AddAssetForm({
   const [assetImage, setAssetImage] = useState<File>();
   const [assetImageUrl, setAssetImageUrl] = useState<string>();
   const [nextMaintenanceDate, setNextMaintenanceDate] = useState<Date | null>();
+  const [managerId, setManagerId] = useState<string | null>();
 
   const handleImageUpload = (file: File | null) => {
     if (!file) {
@@ -91,6 +95,11 @@ export default function AddAssetForm({
     icon_identifier,
   }));
 
+  const userOptions: SelectItem[] = users.map((user) => ({
+    value: user.id,
+    label: !user.first_name && !user.last_name ? user.email : `${user.first_name} ${user.last_name}`,
+  }));
+
   const [saving, setSaving] = useState<boolean>(false);
   const disableSave: boolean = !name || !locationSelected || !assetType || !nextMaintenanceDate;
   const handleSave = () => {
@@ -101,6 +110,7 @@ export default function AddAssetForm({
       assetType: assetType!,
       photo: assetImage,
       nextMaintenanceDate: nextMaintenanceDate!,
+      managedBy: managerId || undefined,
     }).finally(() => setSaving(false));
   };
 
@@ -143,6 +153,12 @@ export default function AddAssetForm({
           minDate={new Date()}
           popoverProps={{ position: 'right', withinPortal: true }}
           firstDayOfWeek={0}
+        />
+        <Select
+          label="Manager"
+          data={userOptions}
+          value={managerId}
+          onChange={setManagerId}
         />
         {assetImageUrl && <Image src={assetImageUrl} radius="sm" caption={assetImage?.name} />}
         <FileButton accept="image/png,image/jpeg" onChange={handleImageUpload}>

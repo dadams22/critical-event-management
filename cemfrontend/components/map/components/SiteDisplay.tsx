@@ -18,21 +18,8 @@ interface ComponentProps {
   selectedFloorId?: string;
 }
 
-export default function SiteDisplay({ site, zoomToBounds, selectedFloorId }: ComponentProps) {
-  const map = useContext(MapContext);
-
+export default function SiteDisplay({ site, selectedFloorId }: ComponentProps) {
   const selectedFloor = site.floors.find((floor) => String(floor.id) === selectedFloorId);
-
-  useEffect(() => {
-    if (!map) return;
-    if (zoomToBounds) {
-      const zoomBounds = new mapboxgl.LngLatBounds();
-      (typeof site.bounds === 'string' ? JSON.parse(site.bounds) : site.bounds).forEach((coord) =>
-        zoomBounds.extend(coord)
-      );
-      map.fitBounds(zoomBounds, { padding: 40 });
-    }
-  }, [zoomToBounds, map]);
 
   return (
     <>

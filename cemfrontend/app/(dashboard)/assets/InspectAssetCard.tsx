@@ -95,6 +95,16 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
             </Text>
             <Text>{formatMaintenanceDate(asset.next_maintenance_date)}</Text>
           </Stack>
+          {asset.managed_by && (
+            <Stack spacing={0}>
+              <Text fz="sm" fw={600}>
+                Manager
+              </Text>
+              <Text>
+                {(!asset.managed_by.first_name && !asset.managed_by.last_name) ? asset.managed_by.email : `${asset.managed_by.first_name} ${asset.managed_by.last_name}`}
+              </Text>
+            </Stack>
+          )}
           <Stack spacing="sm">
             <Text fz="sm" fw={600}>
               Maintenance History

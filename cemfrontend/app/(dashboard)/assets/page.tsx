@@ -130,6 +130,7 @@ export default function AssetsPage() {
     isLoading: assetsLoading,
     mutate: mutateAssets,
   } = useSWR('assets/all', Api.getAssets);
+  const { data: users, loading: usersLoading } = useSWR('user/all', Api.getUsers);
 
   const { filterFn, ...filterBarProps } = useAssetFilters({});
 
@@ -154,14 +155,16 @@ export default function AssetsPage() {
       setLastSelectedSite(sites?.find((site) => site.id === selectedSiteId));
   }, [selectedSiteId, sites]);
   const floorOptions: SelectItem[] =
-    lastSelectedSite?.floors?.map((floor) => ({ value: String(floor.id), label: floor.name })) ||
-    [];
+    lastSelectedSite ? [
+      { value: 'all', label: 'All Floors' },
+      ...lastSelectedSite.floors.map((floor) => ({ value: String(floor.id), label: floor.name }))
+    ] : [];
 
   const assets = useMemo<Asset[]>(
     () =>
       allAssets?.filter(
         (asset: Asset) =>
-          String(asset.floor.id) === selectedFloorId &&
+          (selectedFloorId === 'all' || String(asset.floor.id) === selectedFloorId) &&
           filterFn(asset) &&
           (selectedDisplayType === 'map' ||
             searchValue.length < 3 ||
@@ -206,12 +209,12 @@ export default function AssetsPage() {
     if (!!sites?.length && !selectedSiteId) {
       const defaultSite = sites[0];
       setSelectedSiteId(defaultSite.id);
-      setSelectedFloorId(String(defaultSite.floors[0].id));
+      setSelectedFloorId('all');
     }
   }, [sites, selectedSiteId]);
 
   useEffect(() => {
-    setSelectedFloorId(String(lastSelectedSite?.floors?.[0]?.id) || undefined);
+    setSelectedFloorId('all');
     setInspectedAssetId(undefined);
     setAddingAsset(false);
     setAddAssetLocation(undefined);
@@ -235,11 +238,13 @@ export default function AssetsPage() {
     assetType,
     photo,
     nextMaintenanceDate,
+    managedBy,
   }: {
     name: string;
     assetType: string;
     photo?: File;
     nextMaintenanceDate: Date;
+    managedBy?: string;
   }) => {
     if (!addAssetLocation || !selectedFloorId) return;
 
@@ -251,6 +256,7 @@ export default function AssetsPage() {
       latitude: addAssetLocation.latitude,
       photo,
       nextMaintenanceDate,
+      managedBy,
     }).then((asset) => {
       mutateAssets(
         produce(assets, (draft) => {
@@ -263,7 +269,7 @@ export default function AssetsPage() {
     });
   };
 
-  if (sitesLoading || assetTypesLoading || assetsLoading) {
+  if (sitesLoading || assetTypesLoading || assetsLoading || usersLoading) {
     return (
       <Center h="100%">
         <Loader variant="bars" />
@@ -300,7 +306,8 @@ export default function AssetsPage() {
               onSave={handleSaveAsset}
               onCancel={handleCancelAddAsset}
               locationSelected={!!addAssetLocation}
-              assetTypes={assetTypes!}
+              assetTypes={assetTypes || []}
+              users={users || []}
             />
           ) : inspectedAsset ? (
             <InspectAssetCard
@@ -329,7 +336,7 @@ export default function AssetsPage() {
               />
               {(lastSelectedSite?.floors.length || 0) > 1 && (
                 <Select
-                  w={100}
+                  w={160}
                   icon={<IconStack size={20} />}
                   data={floorOptions}
                   value={selectedFloorId}
@@ -347,12 +354,14 @@ export default function AssetsPage() {
                 value={searchValue}
                 onChange={setSearchValue}
               />
-              <SegmentedControl
-                data={DISPLAY_OPTIONS}
-                onChange={(value) => setSelectedDisplayType(value as DisplayType)}
-              />
             </Group>
-            <AssetFilterBar assetTypes={assetTypes || []} {...filterBarProps} />
+            <Group>
+              <SegmentedControl
+                  data={DISPLAY_OPTIONS}
+                  onChange={(value) => setSelectedDisplayType(value as DisplayType)}
+              />
+              <AssetFilterBar assetTypes={assetTypes || []} {...filterBarProps} />
+            </Group>
           </Stack>
         </ActionBar>
         {selectedDisplayType === 'table' && (

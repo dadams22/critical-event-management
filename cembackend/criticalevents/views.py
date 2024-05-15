@@ -16,6 +16,7 @@ from .serializers import (
     AssetSerializer,
     AssetCreateSerializer,
     MaintenanceLogSerializer,
+    MinimalUserSerializer,
 )
 
 from .models import (
@@ -28,6 +29,7 @@ from .models import (
     AssetType,
     Asset,
     MaintenanceLog,
+    User,
 )
 from .twilio_utils import send_twilio_message
 
@@ -207,6 +209,16 @@ class OrganizationedViewSet(viewsets.ModelViewSet):
         serializer.save(organization=self.request.user.organization)
 
 
+class OrganizationedReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """An abstract read-only viewset that filters by the current user's organization"""
+
+    model = None
+    parser_classes = (Base64FileJSONParser, parsers.MultiPartParser)
+
+    def get_queryset(self):
+        return self.model.objects.filter(organization=self.request.user.organization)
+
+
 class PersonViewSet(OrganizationedViewSet):
     model = Person
     serializer_class = PersonSerializer
@@ -255,3 +267,8 @@ class MaintenanceLogViewSet(OrganizationedViewSet):
         serializer.save(
             organization=self.request.user.organization, reported_by=self.request.user
         )
+
+
+class MinimalUserReadOnlyViewSet(OrganizationedReadOnlyViewSet):
+    model = User
+    serializer_class = MinimalUserSerializer

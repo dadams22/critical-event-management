@@ -25,7 +25,7 @@ export default function HomePage() {
         </Center>
       ) : (
         <>
-          <AssetSummary assets={assets} />
+          <AssetSummary assets={assets || []} />
         </>
       )}
     </Stack>
