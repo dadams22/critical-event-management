@@ -31,15 +31,20 @@ const useStyles = createStyles((theme) => ({
 
     cursor: 'pointer',
   },
+
+  selected: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+  }
 }));
 
 interface ComponentProps {
   assets: Asset[];
   onInspectAsset: (assetId: string) => void;
+  inspectedAssetId: string;
 }
 
-export default function AssetsTable({ assets, onInspectAsset }: ComponentProps) {
-  const { classes } = useStyles();
+export default function AssetsTable({ assets, onInspectAsset, inspectedAssetId }: ComponentProps) {
+  const { classes, cx } = useStyles();
 
   return assets.length > 0 ? (
     <Table>
@@ -53,7 +58,7 @@ export default function AssetsTable({ assets, onInspectAsset }: ComponentProps) 
       </thead>
       <tbody>
         {assets.map((asset) => (
-          <tr key={asset.id} className={classes.row} onClick={() => onInspectAsset(asset.id)}>
+          <tr key={asset.id} className={cx(classes.row, String(asset.id) === String(inspectedAssetId) && classes.selected)} onClick={() => onInspectAsset(asset.id)}>
             <td>{asset.name}</td>
             <td>
               <Flex gap="sm" align="center">
