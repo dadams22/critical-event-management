@@ -38,8 +38,8 @@ export default function BoundsDisplay({ bounds }: ComponentProps) {
       source: sourceId(id),
       layout: {},
       paint: {
-        'fill-color': theme.colors.blue[6],
-        'fill-opacity': 0.25,
+        'fill-color': theme.colors.blue[4],
+        'fill-opacity': 0.15,
       },
     });
 

@@ -93,18 +93,6 @@ export default function NavbarSimple({ children }: ComponentProps) {
           Settings
         </Title>
         <Navbar.Section grow>{links}</Navbar.Section>
-
-        {/* <Navbar.Section className={classes.footer}>
-            <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-            <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-            <span>Change account</span>
-            </a>
-
-            <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
-            <IconLogout className={classes.linkIcon} stroke={1.5} />
-            <span>Logout</span>
-            </a>
-        </Navbar.Section> */}
       </Navbar>
 
       <ScrollArea mah="100%" w="100%">

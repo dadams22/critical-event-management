@@ -1,6 +1,6 @@
 'use client';
 
-import {useContext, useEffect, useRef} from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import { createStyles, Indicator, useMantineTheme } from '@mantine/core';
 import ReactDOM from 'react-dom';

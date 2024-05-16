@@ -21,6 +21,7 @@ import MaintenanceLogModal from './MaintenanceLogModal';
 import Api from '../../../api/Api';
 import AssetStatusPill from './AssetStatusPill';
 import { getUserDisplayName } from './AssetManagerFilter';
+import ExpandableImage from '../../../components/ExpandableImage';
 
 const formatMaintenanceDate = (dateString: string): string => {
   const targetDate = dayjs(dateString, 'YYYY-MM-DD');
@@ -73,7 +74,15 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
           <CloseButton onClick={onClose} />
         </Flex>
         <Stack spacing="sm">
-          {asset.photo && <Image src={asset.photo} radius="sm" />}
+          {asset.photo && (
+            <ExpandableImage
+              title={asset.name}
+              height={200}
+              src={asset.photo}
+              radius="sm"
+              fit="contain"
+            />
+          )}
           <Stack spacing={0}>
             <Text fz="sm" fw={600}>
               Name
@@ -130,7 +139,14 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
                       {getUserDisplayName(maintenance_log.reported_by)}
                     </Text>
                     <Text>{maintenance_log.notes}</Text>
-                    {maintenance_log.photo && <Image src={maintenance_log.photo} />}
+                    {maintenance_log.photo && (
+                      <ExpandableImage
+                        title={`Maintenance on ${asset.name} (${dayjs(maintenance_log.created_at).format('MM/D/YYYY h:mm A')})`}
+                        src={maintenance_log.photo}
+                        height={120}
+                        fit="contain"
+                      />
+                    )}
                   </Timeline.Item>
                 ))}
               </Timeline>

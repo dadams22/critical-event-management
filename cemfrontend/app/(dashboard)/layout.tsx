@@ -50,7 +50,6 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]}`,
-    zIndex: 2001,
   },
 
   navbarMain: {
@@ -89,7 +88,7 @@ interface NavbarLinkProps {
 }
 
 const links: NavbarLinkProps[] = [
-  // { label: 'Home', link: '/home', icon: IconHome },
+  { label: 'Home', link: '/home', icon: IconHome },
   { label: 'Assets', link: '/assets', icon: IconBriefcase2 },
   { label: 'Report', link: '/report', icon: IconUrgent },
 ];
@@ -104,7 +103,7 @@ function NavbarLink({ icon: Icon, label, active, link, onClick }: NavbarLinkProp
   };
 
   return (
-    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
+    <Tooltip label={label} position="right" transitionProps={{ duration: 0 }} zIndex={2001}>
       <UnstyledButton
         className={classes.link}
         data-active={active || undefined}
@@ -121,7 +120,7 @@ interface ComponentProps {
 }
 
 export default function AppLayout({ children }: ComponentProps) {
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
   const theme = useMantineTheme();
 
   const pathname = usePathname();
