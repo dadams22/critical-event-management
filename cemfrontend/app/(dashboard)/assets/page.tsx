@@ -13,8 +13,6 @@ import {
   Flex,
   SegmentedControl,
   SegmentedControlItem,
-  ActionIcon,
-  Menu,
   Stack,
 } from '@mantine/core';
 import useSWR from 'swr';
@@ -22,9 +20,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
 import {
-  IconAsset,
-  IconCalendar,
-  IconFilter,
   IconMap,
   IconMapPin,
   IconPlus,
@@ -39,16 +34,26 @@ import { modals } from '@mantine/modals';
 import { produce } from 'immer';
 import MapView from '../../../components/map/MapView';
 import Api from '../../../api/Api';
-import { Asset, Bounds, Location, Site } from '../../../api/types';
+import { Asset, Location, Site } from '../../../api/types';
 import AddAssetForm from './AddAssetForm';
 import InspectAssetCard from './InspectAssetCard';
-import { getAssetIcon } from '../../(icons)/assetTypes';
 import { ModalNames } from '../../(modals)';
 import AssetsTable from './AssetsTable';
 import useAssetFilters from './useAssetFilters';
 import AssetFilterBar from './AssetFilterBar';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 dayjs.extend(relativeTime);
+
+function assetPageRoute(params: { site?: string; floor?: string; asset?: string }): string {
+  if (!params) return '/assets';
+  return (
+    '/assets?' +
+    Object.entries(params)
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&')
+  );
+}
 
 const MapContainer = styled.div`
   position: relative;
@@ -120,6 +125,23 @@ const DISPLAY_OPTIONS: SegmentedControlItem[] = [
 ];
 
 export default function AssetsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const siteId = searchParams.get('site');
+  const floorId = searchParams.get('floor');
+  const inspectedAssetId = searchParams.get('asset');
+
+  const updateUrl = (params: { site?: string; floor?: string; asset?: string }) => {
+    const updatedParams = {
+      site: siteId || undefined,
+      floor: floorId || undefined,
+      asset: inspectedAssetId,
+      ...params,
+    };
+    router.push(assetPageRoute(_.omitBy(updatedParams, _.isUndefined)));
+  };
+
   const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites, {
     revalidateOnMount: true,
     revalidateOnFocus: false,
@@ -137,32 +159,26 @@ export default function AssetsPage() {
   } = useSWR('assets/all', Api.getAssets);
   const { data: users, loading: usersLoading } = useSWR('user/all', Api.getUsers);
 
-  const { filterFn, ...filterBarProps } = useAssetFilters({});
-
   const [selectedDisplayType, setSelectedDisplayType] = useState<'map' | 'table'>('map');
   const [searchValue, setSearchValue] = useState('');
 
+  const { filterFn, ...filterBarProps } = useAssetFilters({});
+
+  const selectedSite = sites?.find((site) => String(site.id) === siteId);
   const siteOptions = useMemo<SelectItem[]>(
     () => [
       ...(sites?.map((site) => ({
         label: site.name,
-        value: site.id,
+        value: String(site.id),
       })) || []),
       // { label: 'New site', value: 'new' },
     ],
     [sites]
   );
-  const [selectedSiteId, setSelectedSiteId] = useState<string | null | 'new'>();
-  const [selectedFloorId, setSelectedFloorId] = useState<string | null>();
-  const [lastSelectedSite, setLastSelectedSite] = useState<Site>();
-  useEffect(() => {
-    if (selectedSiteId !== 'new')
-      setLastSelectedSite(sites?.find((site) => site.id === selectedSiteId));
-  }, [selectedSiteId, sites]);
-  const floorOptions: SelectItem[] = lastSelectedSite
+  const floorOptions: SelectItem[] = selectedSite
     ? [
         { value: 'all', label: 'All Floors' },
-        ...lastSelectedSite.floors.map((floor) => ({ value: String(floor.id), label: floor.name })),
+        ...selectedSite.floors.map((floor) => ({ value: String(floor.id), label: floor.name })),
       ]
     : [];
 
@@ -170,19 +186,18 @@ export default function AssetsPage() {
     () =>
       allAssets?.filter(
         (asset: Asset) =>
-          (selectedFloorId === 'all' || String(asset.floor.id) === selectedFloorId) &&
+          (floorId === 'all' || String(asset.floor.id) === floorId) &&
           filterFn(asset) &&
           (selectedDisplayType === 'map' ||
             searchValue.length < 3 ||
             asset.name.toLowerCase().includes(searchValue.toLowerCase()))
       ) || [],
-    [allAssets, selectedFloorId, filterFn, searchValue, selectedDisplayType]
+    [allAssets, floorId, filterFn, searchValue, selectedDisplayType]
   );
-  const [inspectedAssetId, setInspectedAssetId] = useState<string>();
   const [addingAsset, setAddingAsset] = useState<boolean>(false);
   const [addAssetLocation, setAddAssetLocation] = useState<Location>();
   const inspectedAsset = useMemo<Asset | undefined>(
-    () => _.find(assets, { id: inspectedAssetId }),
+    () => assets.find((asset) => String(asset.id) === inspectedAssetId),
     [assets, inspectedAssetId]
   );
   const assetAutocompleteItems = useMemo<AutocompleteItem[]>(
@@ -199,34 +214,17 @@ export default function AssetsPage() {
     address: AddressAutofillRetrieveResponse;
   }>();
 
-  useEffect(() => {
-    if (selectedSiteId === 'new') {
-      modals.openContextModal({
-        modal: ModalNames.SiteInfo,
-        title: 'Enter Site Info',
-        innerProps: {
-          doneCallback: setSiteInfo,
-        },
-      });
-    }
-  }, [selectedSiteId]);
-
-  useEffect(() => {
-    if (!!sites?.length && !selectedSiteId) {
-      const defaultSite = sites[0];
-      setSelectedSiteId(defaultSite.id);
-      setSelectedFloorId(defaultSite.floors.length > 1 ? 'all' : String(defaultSite.floors[0].id));
-    }
-  }, [sites, selectedSiteId]);
-
-  useEffect(() => {
-    setSelectedFloorId(
-      lastSelectedSite?.floors?.length > 1 ? 'all' : String(lastSelectedSite?.floors?.[0]?.id)
-    );
-    setInspectedAssetId(undefined);
-    setAddingAsset(false);
-    setAddAssetLocation(undefined);
-  }, [lastSelectedSite]);
+  // useEffect(() => {
+  //   if (selectedSiteId === 'new') {
+  //     modals.openContextModal({
+  //       modal: ModalNames.SiteInfo,
+  //       title: 'Enter Site Info',
+  //       innerProps: {
+  //         doneCallback: setSiteInfo,
+  //       },
+  //     });
+  //   }
+  // }, [selectedSiteId]);
 
   const handleClickAddAsset = () => {
     setAddingAsset(true);
@@ -254,10 +252,10 @@ export default function AssetsPage() {
     nextMaintenanceDate: Date;
     managedBy?: string;
   }) => {
-    if (!addAssetLocation || !selectedFloorId) return;
+    if (!addAssetLocation || !floorId) return;
 
     await Api.createAsset({
-      floor: selectedFloorId,
+      floor: floorId,
       name,
       assetType,
       longitude: addAssetLocation.longitude,
@@ -273,7 +271,7 @@ export default function AssetsPage() {
       );
       setAddingAsset(false);
       setAddAssetLocation(undefined);
-      setInspectedAssetId(asset.id);
+      updateUrl({ asset: asset.id });
     });
   };
 
@@ -285,26 +283,31 @@ export default function AssetsPage() {
     );
   }
 
+  if (!siteId)
+    router.replace(
+      assetPageRoute({ site: String(sites?.[0].id), floor: String(sites?.[0]?.floors?.[0]?.id) })
+    );
+
   return (
     <MapContainer id="mapcontainer">
-      {((lastSelectedSite && selectedDisplayType === 'map') || !!siteInfo?.address) && (
+      {((selectedSite && selectedDisplayType === 'map') || !!siteInfo?.address) && (
         <MapView
           location={
-            selectedSiteId === 'new' && !!siteInfo?.address
+            siteId === 'new' && !!siteInfo?.address
               ? {
                   longitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[0],
                   latitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[1],
                 }
-              : _.pick(lastSelectedSite, ['longitude', 'latitude'])
+              : _.pick(selectedSite, ['longitude', 'latitude'])
           }
           sites={sites}
           assets={assets}
-          onClickAsset={setInspectedAssetId}
+          onClickAsset={(assetId) => updateUrl({ asset: assetId })}
           selectedAssetId={inspectedAssetId}
           addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
           marker={addAssetLocation ? { location: addAssetLocation } : undefined}
-          zoomToSite={selectedSiteId}
-          selectedFloorId={selectedFloorId}
+          zoomToSite={siteId || undefined}
+          selectedFloorId={floorId || undefined}
         />
       )}
       <OverlayGrid>
@@ -321,7 +324,7 @@ export default function AssetsPage() {
             <InspectAssetCard
               asset={inspectedAsset}
               onUpdateAsset={() => mutateAssets()}
-              onClose={() => setInspectedAssetId(undefined)}
+              onClose={() => updateUrl({ asset: undefined })}
             />
           ) : selectedDisplayType === 'map' ? (
             <Flex justify="flex-end">
@@ -338,17 +341,26 @@ export default function AssetsPage() {
               <Select
                 icon={<IconMapPin size={20} />}
                 data={siteOptions}
-                value={selectedSiteId}
-                onChange={setSelectedSiteId}
+                value={siteId}
+                onChange={(siteId) => {
+                  const newSite = sites?.find((site) => String(site.id) === siteId);
+                  updateUrl({
+                    site: siteId || undefined,
+                    floor: (newSite?.floors?.length || 0) > 1 ? 'all' : newSite?.floors?.[0]?.id,
+                    asset: undefined,
+                  });
+                }}
                 w={160}
               />
-              {(lastSelectedSite?.floors.length || 0) > 1 && (
+              {(selectedSite?.floors.length || 0) > 1 && (
                 <Select
                   w={160}
                   icon={<IconStack size={20} />}
                   data={floorOptions}
-                  value={selectedFloorId}
-                  onChange={setSelectedFloorId}
+                  value={floorId}
+                  onChange={(floorId) =>
+                    updateUrl({ floor: floorId || undefined, asset: undefined })
+                  }
                 />
               )}
               <Autocomplete
@@ -357,7 +369,7 @@ export default function AssetsPage() {
                 icon={<IconSearch size={20} />}
                 placeholder="Search for assets..."
                 onItemSubmit={(assetAutocompleteItem) =>
-                  setInspectedAssetId(assetAutocompleteItem.asset.id)
+                  updateUrl({ asset: assetAutocompleteItem.asset.id })
                 }
                 value={searchValue}
                 onChange={setSearchValue}
@@ -380,8 +392,8 @@ export default function AssetsPage() {
           <TableSection>
             <AssetsTable
               assets={assets}
-              onInspectAsset={setInspectedAssetId}
-              inspectedAssetId={inspectedAssetId}
+              onInspectAsset={(assetId) => updateUrl({ asset: assetId })}
+              inspectedAssetId={inspectedAssetId || undefined}
             />
           </TableSection>
         )}

@@ -20,7 +20,7 @@ import { getAssetIcon } from '../../(icons)/assetTypes';
 import MaintenanceLogModal from './MaintenanceLogModal';
 import Api from '../../../api/Api';
 import AssetStatusPill from './AssetStatusPill';
-import {getUserDisplayName} from "./AssetManagerFilter";
+import { getUserDisplayName } from './AssetManagerFilter';
 
 const formatMaintenanceDate = (dateString: string): string => {
   const targetDate = dayjs(dateString, 'YYYY-MM-DD');
@@ -126,7 +126,8 @@ export default function InspectAssetCard({ asset, onUpdateAsset, onClose }: Comp
                 {asset.maintenance_logs.map((maintenance_log) => (
                   <Timeline.Item title="Maintenance Recorded">
                     <Text c="dimmed">
-                      {dayjs(maintenance_log.created_at).format('MMMM D, YYYY h:mm A')} - {getUserDisplayName(maintenance_log.reported_by)}
+                      {dayjs(maintenance_log.created_at).format('MMMM D, YYYY h:mm A')} -{' '}
+                      {getUserDisplayName(maintenance_log.reported_by)}
                     </Text>
                     <Text>{maintenance_log.notes}</Text>
                     {maintenance_log.photo && <Image src={maintenance_log.photo} />}

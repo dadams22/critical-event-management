@@ -40,7 +40,7 @@ const useStyles = createStyles((theme) => ({
 interface ComponentProps {
   assets: Asset[];
   onInspectAsset: (assetId: string) => void;
-  inspectedAssetId: string;
+  inspectedAssetId?: string;
 }
 
 export default function AssetsTable({ assets, onInspectAsset, inspectedAssetId }: ComponentProps) {

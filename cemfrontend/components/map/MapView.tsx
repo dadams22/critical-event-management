@@ -83,7 +83,7 @@ export default function MapView({
     }
   }, [location.latitude, location.longitude]);
 
-  const selectedAsset = assets?.find((asset) => asset.id === selectedAssetId);
+  const selectedAsset = assets?.find((asset) => String(asset.id) === selectedAssetId);
   useEffect(() => {
     if (!selectedAsset || !map) return;
     map.flyTo({ center: [selectedAsset.longitude, selectedAsset.latitude], speed: 0.8 });

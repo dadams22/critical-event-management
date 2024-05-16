@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import {useContext, useEffect, useRef} from 'react';
 import mapboxgl from 'mapbox-gl';
 import { createStyles, Indicator, useMantineTheme } from '@mantine/core';
 import ReactDOM from 'react-dom';
@@ -63,6 +63,8 @@ export default function Marker({
   const { classes, cx } = useStyles();
 
   const map = useContext(MapContext);
+  const markerRef = useRef<Marker>(null);
+  const onClickRef = useRef<() => void>(null);
 
   useEffect(() => {
     if (!map) return;
@@ -86,7 +88,10 @@ export default function Marker({
       .setLngLat([location.longitude, location.latitude])
       .addTo(map);
 
+    markerRef.current = marker;
+
     if (onClick) {
+      onClickRef.current = onClick;
       marker.getElement().addEventListener('click', onClick);
     }
 
@@ -95,6 +100,15 @@ export default function Marker({
       marker.remove();
     };
   }, [map, color, selected]);
+
+  useEffect(() => {
+    if (!markerRef.current) return;
+    const markerElement = markerRef.current.getElement();
+    if (!markerElement) return;
+    if (onClickRef.current) markerElement.removeEventListener('click', onClickRef.current);
+    markerElement.addEventListener('click', onClick);
+    onClickRef.current = onClick;
+  }, [onClick]);
 
   return null;
 }
