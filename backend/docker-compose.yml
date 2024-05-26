@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: human
+      POSTGRES_USER: human
+      POSTGRES_PASSWORD: dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbvolume:/var/lib/postgresql/data
+  backend:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    entrypoint: ["script/dev-docker-entrypoint.sh"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - .:/code
+
+volumes:
+  dbvolume:

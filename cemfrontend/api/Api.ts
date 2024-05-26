@@ -36,7 +36,7 @@ const Api = (() => {
     const token = getCookie(AUTH_TOKEN_KEY);
 
     if (token) {
-      config.headers.Authorization = `Token ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -47,7 +47,7 @@ const Api = (() => {
       const response = await axiosInstance.post('auth', { username, password });
 
       if (response.status === 200) {
-        setCookie(AUTH_TOKEN_KEY, response.data.token);
+        setCookie(AUTH_TOKEN_KEY, response.data.access_token);
       }
     },
 

@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - ml/fast-api
 jobs:
   deploy:
     name: Deploy app
@@ -11,6 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: cd cembackend && flyctl deploy --remote-only
+      - run: cd backend && flyctl deploy --remote-only
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN_HUMAN_BACKEND }}
