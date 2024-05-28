@@ -37,9 +37,7 @@ const Api = (() => {
     const token = getCookie(AUTH_TOKEN_KEY);
 
     if (token) {
-      // Change this to Bearer when we use the new backend
-      // config.headers.Authorization = `Bearer ${token}`;
-      config.headers.Authorization = `Token ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
@@ -50,9 +48,7 @@ const Api = (() => {
       const response = await axiosInstance.post('auth', { username, password });
 
       if (response.status === 200) {
-        // Change this to access_token when we use the new backend
-        // setCookie(AUTH_TOKEN_KEY, response.data.access_token);
-        setCookie(AUTH_TOKEN_KEY, response.data.token);
+        setCookie(AUTH_TOKEN_KEY, response.data.access_token);
       }
     },
 
