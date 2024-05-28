@@ -36,7 +36,9 @@ const Api = (() => {
     const token = getCookie(AUTH_TOKEN_KEY);
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // Change this to Bearer when we use the new backend
+      // config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Token ${token}`;
     }
 
     return config;
