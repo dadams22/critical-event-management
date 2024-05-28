@@ -178,7 +178,7 @@ const Api = (() => {
       const response = await axiosInstance.post<Building>(
           'building/',
           {
-            site: siteId,
+            site_id: siteId,
             name,
             floors: formattedFloors,
           },
