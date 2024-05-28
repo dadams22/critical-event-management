@@ -10,7 +10,8 @@ from dotenv import load_dotenv as _load_dotenv
 
 
 def load_dotenv():
-    _load_dotenv()
+    if not _load_dotenv():
+        print("No .env file found")
 
 
 def load_secrets_into_env(session: Boto3Session):
