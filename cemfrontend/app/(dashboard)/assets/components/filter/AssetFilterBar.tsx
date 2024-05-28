@@ -5,7 +5,7 @@ import { IconAsset, IconCalendar, IconFilterPlus, IconUser } from '@tabler/icons
 import { useDisclosure } from '@mantine/hooks';
 import AssetTypeFilter from './AssetTypeFilter';
 import NextMaintenanceDateFilter, { SelectionMode } from './NextMaintenanceDateFilter';
-import { AssetType, MinimalUser } from '../../../api/types';
+import { AssetType, MinimalUser } from '../../../../../api/types';
 import AssetManagerFilter from './AssetManagerFilter';
 
 interface ComponentProps {

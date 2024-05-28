@@ -14,15 +14,11 @@ import {
 import { IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import useSWR from 'swr';
-import CreateSiteModal from './CreateSiteModal';
 import Api from '../../../../api/Api';
 import SiteCard from './SiteCard';
 
 export default function SitesPage() {
-  const { data: sites, isLoading, mutate: mutateSites } = useSWR('sites/all', Api.getSites);
-
-  const [createSiteModalOpened, { open: openCreateSiteModal, close: closeCreateSiteModal }] =
-    useDisclosure();
+  const { data: sites, isLoading } = useSWR('sites/all', Api.getSites);
 
   return (
     <>
@@ -33,23 +29,14 @@ export default function SitesPage() {
           <Loader />
         </Center>
       ) : (
-        <>
-          <Stack>
-            <div>
-              <Button leftIcon={<IconPlus size={20} />} onClick={openCreateSiteModal}>
-                Create Site
-              </Button>
-            </div>
-            <SimpleGrid cols={3}>
-              {sites?.map((site) => <SiteCard key={site.id} site={site} />)}
-            </SimpleGrid>
-          </Stack>
-          <CreateSiteModal
-            opened={createSiteModalOpened}
-            onClose={closeCreateSiteModal}
-            onSave={mutateSites}
-          />
-        </>
+        <Stack>
+          <div>
+            <Button leftIcon={<IconPlus size={20} />}>Create Site</Button>
+          </div>
+          <SimpleGrid cols={3}>
+            {sites?.map((site) => <SiteCard key={site.id} site={site} />)}
+          </SimpleGrid>
+        </Stack>
       )}
     </>
   );

@@ -9,6 +9,7 @@ from .models import (
     Person,
     PersonStatus,
     Site,
+    Building,
     Floor,
     Asset,
     AssetType,
@@ -84,17 +85,53 @@ class IncidentReportSerializer(serializers.ModelSerializer):
 
 
 class FloorSerializer(serializers.ModelSerializer):
+    building = serializers.PrimaryKeyRelatedField(
+        queryset=Building.objects.all(), required=False
+    )
+
+    class Meta:
+        model = Floor
+        fields = (
+            "id",
+            "name",
+            "building",
+            "sort_order",
+            "floor_plan",
+            "floor_plan_bounds",
+        )
+
+
+class BuildingSerializer(serializers.ModelSerializer):
+    floors = FloorSerializer(many=True, required=False)
     site = serializers.PrimaryKeyRelatedField(
         queryset=Site.objects.all(), required=False
     )
 
     class Meta:
-        model = Floor
-        fields = ("id", "name", "site", "sort_order", "floor_plan", "floor_plan_bounds")
+        model = Building
+        fields = ("id", "name", "floors", "site")
+
+    def create(self, validated_data):
+        floors_data = None
+        if "floors" in validated_data:
+            floors_data = validated_data.pop("floors")
+
+        validated_data["organization"] = self.context["organization"]
+        building = Building.objects.create(**validated_data)
+
+        if floors_data:
+            for floor_data in floors_data:
+                Floor.objects.create(
+                    building=building,
+                    organization=self.context["organization"],
+                    **floor_data
+                )
+
+        return building
 
 
 class SiteSerializer(serializers.ModelSerializer):
-    floors = FloorSerializer(many=True, required=False)
+    buildings = BuildingSerializer(many=True, required=False)
 
     class Meta:
         model = Site
@@ -107,21 +144,20 @@ class SiteSerializer(serializers.ModelSerializer):
             "bounds",
             "floor_plan",
             "floor_plan_bounds",
-            "floors",
+            "buildings",
         )
 
     def create(self, validated_data):
-        floors_data = None
-        if "floors" in validated_data:
-            floors_data = validated_data.pop("floors")
+        buildings_data = None
+        if "buildings" in validated_data:
+            buildings_data = validated_data.pop("buildings")
 
         site = Site.objects.create(**validated_data)
 
-        if floors_data:
-            for floor_data in floors_data:
-                Floor.objects.create(
-                    site=site, organization=self.context["organization"], **floor_data
-                )
+        if buildings_data:
+            for building_data in buildings_data:
+                building_data["site"] = site
+                BuildingSerializer(context=self.context).create(building_data)
 
         return site
 

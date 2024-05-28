@@ -4,8 +4,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from criticalevents.models import Site, Organization
-from criticalevents.models import Floor, Site
+from criticalevents.models import Site, Organization, Floor, Building
 
 from criticalevents.tests.libs.images import generate_upload_image
 from criticalevents.tests.libs.base_test_case import BaseTestCase
@@ -23,9 +22,12 @@ class FloorViewSetTest(BaseTestCase):
             bounds="{}",
             floor_plan_bounds="{}",
         )
+        self.building = Building.objects.create(
+            name="Test Building", site=self.site, organization=self.organization
+        )
         self.floor = Floor.objects.create(
             name="Test Floor",
-            site=self.site,
+            building=self.building,
             sort_order=1,
             floor_plan_bounds="{}",
             organization=self.organization,
@@ -50,7 +52,7 @@ class FloorViewSetTest(BaseTestCase):
         # Define the new floor data
         new_floor_data = {
             "name": "New Floor",
-            "site": self.site.id,
+            "building": self.building.id,
             "sort_order": 2,
             "floor_plan_bounds": "{}",
             "floor_plan": generate_upload_image(),
@@ -69,7 +71,7 @@ class FloorViewSetTest(BaseTestCase):
         floor = Floor.objects.get(id=response.data["id"])
 
         # Check that the site of the new floor is the same as the current user's site
-        self.assertEqual(floor.site.id, self.site.id)
+        self.assertEqual(floor.building.id, self.building.id)
 
     def test_get_floors_from_different_organization(self):
         # Create a new organization, site, and floor
@@ -82,9 +84,12 @@ class FloorViewSetTest(BaseTestCase):
             bounds="{}",
             floor_plan_bounds="{}",
         )
+        other_building = Building.objects.create(
+            name="Other Building", site=other_site, organization=other_organization
+        )
         other_floor = Floor.objects.create(
             name="Other Floor",
-            site=other_site,
+            building=other_building,
             sort_order=1,
             floor_plan_bounds="{}",
             organization=other_organization,

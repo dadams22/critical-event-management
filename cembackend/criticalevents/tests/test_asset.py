@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 
 from criticalevents.tests.libs.base_test_case import BaseTestCase
 
-from criticalevents.models import Organization, AssetType, Asset, Floor, Site
+from criticalevents.models import Organization, AssetType, Asset, Floor, Building, Site
 
 
 class AssetViewSetTest(BaseTestCase):
@@ -17,9 +17,12 @@ class AssetViewSetTest(BaseTestCase):
             bounds="{}",
             floor_plan_bounds="{}",
         )
+        self.buiding = Building.objects.create(
+            name="Test Building", site=self.site, organization=self.organization
+        )
         self.floor = Floor.objects.create(
             name="Test Floor",
-            site=self.site,
+            building=self.buiding,
             sort_order=1,
             floor_plan_bounds="{}",
             organization=self.organization,
@@ -90,9 +93,12 @@ class AssetViewSetTest(BaseTestCase):
             bounds="{}",
             floor_plan_bounds="{}",
         )
+        other_building = Building.objects.create(
+            name="Other Building", site=other_site, organization=other_organization
+        )
         other_floor = Floor.objects.create(
             name="Other Floor",
-            site=other_site,
+            building=other_building,
             sort_order=1,
             floor_plan_bounds="{}",
             organization=other_organization,

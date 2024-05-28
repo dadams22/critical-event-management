@@ -3,7 +3,7 @@
 import styled from '@emotion/styled';
 import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ColorScheme, MantineColor, useMantineTheme } from '@mantine/core';
+import {ColorScheme, createStyles, MantineColor, useMantineTheme} from '@mantine/core';
 import _ from 'lodash';
 import { Asset, Bounds, Location, MaintenanceStatus, Site } from '../../api/types';
 import Marker, { MarkerProps } from './components/Marker';
@@ -36,7 +36,9 @@ interface ComponentProps {
   addAsset?: AddAssetControlsProps;
   marker?: MarkerProps;
   zoomToSite?: string;
+  selectedBuildingId?: string;
   selectedFloorId?: string;
+  overlay?: React.ReactNode;
 }
 
 export default function MapView({
@@ -51,7 +53,9 @@ export default function MapView({
   addAsset,
   marker,
   zoomToSite,
+  selectedBuildingId,
   selectedFloorId,
+  overlay,
 }: ComponentProps) {
   const theme = useMantineTheme();
   const colorScheme: ColorScheme = 'light';
@@ -107,6 +111,7 @@ export default function MapView({
                   key={site.id}
                   site={site}
                   zoomToBounds={sites.length === 1 || zoomToSite === site.id}
+                  selectedBuildingId={selectedBuildingId}
                   selectedFloorId={selectedFloorId}
                 />
               ))}
@@ -130,6 +135,7 @@ export default function MapView({
           </>
         )}
       </MapContext.Provider>
+      {overlay}
     </MapContainer>
   );
 }

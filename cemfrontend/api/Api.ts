@@ -9,8 +9,9 @@ import {
   Location,
   Site,
   AssetType,
-  Bounds, MinimalUser,
+  Bounds, MinimalUser, Building, Floor,
 } from './types';
+import {FloorDraft} from "../app/(dashboard)/assets/components/filter/createBuilding/useCreateBuildingState";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 export const AUTH_TOKEN_KEY = 'auth-token';
@@ -129,27 +130,13 @@ const Api = (() => {
       bounds,
       longitude,
       latitude,
-      floors,
     }: {
       name: string;
       address: string;
       bounds: Bounds;
       longitude: number;
       latitude: number;
-      floors: { name: string; floorPlanImage: File; floorPlanBounds: Bounds }[];
     }): Promise<Site> => {
-      const formattedFloors = await Promise.all(
-        floors.map(async ({ name: floorName, floorPlanImage, floorPlanBounds }, i) => {
-          const base64Image = await fileToBase64(floorPlanImage);
-          return {
-            name: floorName,
-            floor_plan: base64Image,
-            floor_plan_bounds: floorPlanBounds,
-            sort_order: i,
-          };
-        })
-      );
-
       const response = await axiosInstance.post<Site>(
         'site/',
         {
@@ -158,7 +145,6 @@ const Api = (() => {
           longitude,
           latitude,
           bounds,
-          floors: formattedFloors,
         },
         {
           method: 'CREATE',
@@ -169,6 +155,41 @@ const Api = (() => {
 
     getSites: async (): Promise<Site[]> => {
       const response = await axiosInstance.get<Site[]>('site/');
+      return response.data;
+    },
+
+    createBuilding: async ({
+      siteId,
+       name,
+       floors,
+     }: {
+      siteId: string;
+      name: string;
+      floors: FloorDraft[];
+    }): Promise<Site> => {
+      const formattedFloors = await Promise.all(
+        floors.map(async ({ name: floorName, floorPlanImage, floorPlanBounds }, i) => {
+          const base64Image = await fileToBase64(floorPlanImage!);
+          return {
+            name: floorName,
+            floor_plan: base64Image,
+            floor_plan_bounds: floorPlanBounds,
+            sort_order: i,
+          };
+        })
+      );
+
+      const response = await axiosInstance.post<Building>(
+          'building/',
+          {
+            site: siteId,
+            name,
+            floors: formattedFloors,
+          },
+          {
+            method: 'CREATE',
+          }
+      );
       return response.data;
     },
 

@@ -17,11 +17,11 @@ import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useState } from 'react';
 import { IconAsset, IconCalendar, IconFilter, IconFilterPlus } from '@tabler/icons-react';
-import AssetTypeFilter from './AssetTypeFilter';
+import AssetTypeFilter from './components/filter/AssetTypeFilter';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import { Asset, AssetType } from '../../../api/types';
-import NextMaintenanceDateFilter from './NextMaintenanceDateFilter';
-import AssetStatusPill from './AssetStatusPill';
+import NextMaintenanceDateFilter from './components/filter/NextMaintenanceDateFilter';
+import AssetStatusPill from '../../../components/asset/AssetStatusPill';
 
 const useStyles = createStyles((theme) => ({
   row: {

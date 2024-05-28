@@ -53,6 +53,12 @@ export interface Floor {
   floor_plan_bounds: Bounds;
 }
 
+export interface Building {
+  id: string;
+  name: string;
+  floors: Floor[];
+}
+
 export interface Site {
   id: string;
   name: string;
@@ -61,7 +67,7 @@ export interface Site {
   latitude: number;
   location: Location;
   bounds: Bounds;
-  floors: Floor[];
+  buildings: Building[]
 }
 
 export interface AssetType {

@@ -10,6 +10,7 @@ from .models import (
     PersonStatus,
     ShortToken,
     Site,
+    Building,
     Floor,
     Asset,
     AssetType,
@@ -29,6 +30,7 @@ admin.site.register(Alert)
 admin.site.register(PersonStatus)
 admin.site.register(ShortToken)
 admin.site.register(Site)
+admin.site.register(Building)
 admin.site.register(Floor)
 admin.site.register(Asset)
 admin.site.register(AssetType)

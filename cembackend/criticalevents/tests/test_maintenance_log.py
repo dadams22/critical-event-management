@@ -1,6 +1,13 @@
 from criticalevents.tests.libs.base_test_case import BaseTestCase
 
-from criticalevents.models import Site, Floor, AssetType, Asset, MaintenanceLog
+from criticalevents.models import (
+    Site,
+    Building,
+    Floor,
+    AssetType,
+    Asset,
+    MaintenanceLog,
+)
 
 
 class TestMaintenanceLog(BaseTestCase):
@@ -15,9 +22,12 @@ class TestMaintenanceLog(BaseTestCase):
             bounds="{}",
             floor_plan_bounds="{}",
         )
+        self.building = Building.objects.create(
+            name="Test Building", site=self.site, organization=self.organization
+        )
         self.floor = Floor.objects.create(
             name="Test Floor",
-            site=self.site,
+            building=self.building,
             sort_order=1,
             floor_plan_bounds="{}",
             organization=self.organization,

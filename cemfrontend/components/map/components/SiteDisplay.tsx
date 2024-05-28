@@ -15,16 +15,20 @@ const siteFloorPlanLayerId = (site: Site) => `site-floor-plan-layer-${site.id}`;
 interface ComponentProps {
   site: Site;
   zoomToBounds?: boolean;
+  selectedBuildingId?: string;
   selectedFloorId?: string;
 }
 
-export default function SiteDisplay({ site, selectedFloorId }: ComponentProps) {
-  const selectedFloor = site.floors.find((floor) => String(floor.id) === selectedFloorId);
+export default function SiteDisplay({ site, selectedBuildingId, selectedFloorId }: ComponentProps) {
+  const selectedBuilding = site.buildings.find((building) => String(building.id) === selectedBuildingId);
+  const selectedFloor = selectedBuilding?.floors?.length === 1 ? selectedBuilding.floors[0] : selectedBuilding?.floors?.find((floor) => String(floor.id) === selectedFloorId);
 
   return (
     <>
       <BoundsDisplay bounds={site.bounds} />
-      {selectedFloor && <FloorPlanDisplay floor={selectedFloor} />}
+      {selectedFloor && (
+          <FloorPlanDisplay floor={selectedFloor} />
+      )}
     </>
   );
 }

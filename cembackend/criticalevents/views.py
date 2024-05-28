@@ -11,6 +11,7 @@ from .serializers import (
     IncidentReportSerializer,
     PersonSerializer,
     SiteSerializer,
+    BuildingSerializer,
     FloorSerializer,
     AssetTypeSerializer,
     AssetSerializer,
@@ -25,6 +26,7 @@ from .models import (
     IncidentReport,
     PersonStatus,
     Site,
+    Building,
     Floor,
     AssetType,
     Asset,
@@ -227,6 +229,11 @@ class PersonViewSet(OrganizationedViewSet):
 class SiteViewSet(OrganizationedViewSet):
     model = Site
     serializer_class = SiteSerializer
+
+
+class BuildingViewSet(OrganizationedViewSet):
+    model = Building
+    serializer_class = BuildingSerializer
 
 
 class FloorViewSet(OrganizationedViewSet):

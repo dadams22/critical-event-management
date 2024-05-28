@@ -14,12 +14,19 @@ import {
   SegmentedControl,
   SegmentedControlItem,
   Stack,
+  Menu,
+  Overlay,
+  Text,
+  createStyles,
 } from '@mantine/core';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import styled from '@emotion/styled';
 import {
+  IconBriefcase,
+  IconBuilding,
+  IconClick,
   IconMap,
   IconMapPin,
   IconPlus,
@@ -28,31 +35,31 @@ import {
   IconTable,
 } from '@tabler/icons-react';
 import _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
-import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
-import { modals } from '@mantine/modals';
+import React, { useEffect, useMemo, useState } from 'react';
 import { produce } from 'immer';
 import MapView from '../../../components/map/MapView';
 import Api from '../../../api/Api';
-import { Asset, Location, Site } from '../../../api/types';
-import AddAssetForm from './AddAssetForm';
-import InspectAssetCard from './InspectAssetCard';
-import { ModalNames } from '../../(modals)';
+import { Asset, Bounds, Location } from '../../../api/types';
+import CreateAssetCard from './components/CreateAssetCard';
 import AssetsTable from './AssetsTable';
-import useAssetFilters from './useAssetFilters';
-import AssetFilterBar from './AssetFilterBar';
+import useAssetFilters from './components/filter/useAssetFilters';
+import AssetFilterBar from './components/filter/AssetFilterBar';
 import { useRouter, useSearchParams } from 'next/navigation';
+import CreateSiteCard from './components/filter/createSite/CreateSiteCard';
+import CreateBuildingCard from './components/filter/createBuilding/CreateBuildingCard';
+import InspectAssetCard from './InspectAssetCard';
+import useCreateSiteState from './components/filter/createSite/useCreateSiteState';
+import { AddressAutofillRetrieveResponse } from '@mapbox/search-js-core';
+import useCreateBuildingState from './components/filter/createBuilding/useCreateBuildingState';
+import SiteBuildingFloorSelector from './components/SiteBuildingFloorSelector';
 
 dayjs.extend(relativeTime);
 
 function assetPageRoute(params: { site?: string; floor?: string; asset?: string }): string {
   if (!params) return '/assets';
-  return (
-    '/assets?' +
-    Object.entries(params)
-      .map(([key, value]) => `${key}=${value}`)
-      .join('&')
-  );
+  return `/assets?${Object.entries(params)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&')}`;
 }
 
 const MapContainer = styled.div`
@@ -77,6 +84,7 @@ const OverlayGrid = styled.div`
   gap: 10px;
 
   pointer-events: none;
+  z-index: 2;
 
   & > * > * {
     pointer-events: all;
@@ -124,64 +132,118 @@ const DISPLAY_OPTIONS: SegmentedControlItem[] = [
   },
 ];
 
+type CreateMode = 'site' | 'building' | 'asset';
+
 export default function AssetsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const siteId = searchParams.get('site');
+  const buildingId = searchParams.get('building');
   const floorId = searchParams.get('floor');
   const inspectedAssetId = searchParams.get('asset');
 
-  const updateUrl = (params: { site?: string; floor?: string; asset?: string }) => {
+  const updateUrl = (params: {
+    site?: string;
+    building?: string;
+    floor?: string;
+    asset?: string;
+  }) => {
     const updatedParams = {
       site: siteId || undefined,
+      building: buildingId || undefined,
       floor: floorId || undefined,
-      asset: inspectedAssetId,
+      asset: inspectedAssetId || undefined,
       ...params,
     };
     router.push(assetPageRoute(_.omitBy(updatedParams, _.isUndefined)));
   };
 
-  const { data: sites, isLoading: sitesLoading } = useSWR('sites/all', Api.getSites, {
+  const [selectedDisplayType, setSelectedDisplayType] = useState<'map' | 'table'>('map');
+  const [searchValue, setSearchValue] = useState('');
+  const [createMode, setCreateMode] = useState<CreateMode | null>(null);
+
+  const {
+    data: sites,
+    isLoading: sitesLoading,
+    mutate: mutateSites,
+  } = useSWR('sites/all', Api.getSites, {
     revalidateOnMount: true,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
     refreshInterval: 0,
   });
+  const [location, setLocation] = useState<Location>();
+  const createSiteState = useCreateSiteState();
+  const handleSetCreateSiteAddress = (address: AddressAutofillRetrieveResponse) => {
+    setLocation({
+      longitude: address.features?.[0]?.geometry?.coordinates[0],
+      latitude: address.features?.[0]?.geometry?.coordinates[1],
+    });
+    createSiteState.setAddress(address);
+  };
+  const selectedSite = sites?.find((site) => String(site.id) === siteId);
+  useEffect(() => {
+    if (!selectedSite) return;
+    setLocation(_.pick(selectedSite, ['longitude', 'latitude']));
+  }, [selectedSite]);
+  const handleCreateSite = ({
+    name,
+    address,
+    bounds,
+  }: {
+    name: string;
+    address: AddressAutofillRetrieveResponse;
+    bounds: Bounds;
+  }): Promise<any> => {
+    return Api.createSite({
+      name,
+      address: address.features[0].properties.full_address!,
+      bounds,
+      longitude: address.features[0].geometry.coordinates[0],
+      latitude: address.features[0].geometry.coordinates[1],
+    }).then((site) => {
+      setCreateMode(null);
+      mutateSites();
+      createSiteState.reset();
+      updateUrl({ site: site.id });
+    });
+  };
+  const handleCancelCreateSite = () => {
+    setCreateMode(null);
+    createSiteState.reset();
+  };
+
+  const createBuildingState = useCreateBuildingState();
+  const handleCreateBuilding = ({ name }: { name: string }): Promise<void> => {
+    if (!siteId) return;
+    return Api.createBuilding({
+      siteId,
+      name,
+      floors: createBuildingState.floors,
+    }).then(() => {
+      setCreateMode(null);
+      mutateSites();
+      createBuildingState.reset();
+    });
+  };
+  const handleCancelCreateBuilding = () => {
+    setCreateMode(null);
+    createBuildingState.reset();
+  };
+
   const { data: assetTypes, isLoading: assetTypesLoading } = useSWR(
     'assetTypes/all',
     Api.getAssetTypes
   );
+
   const {
     data: allAssets,
     isLoading: assetsLoading,
     mutate: mutateAssets,
   } = useSWR('assets/all', Api.getAssets);
   const { data: users, loading: usersLoading } = useSWR('user/all', Api.getUsers);
-
-  const [selectedDisplayType, setSelectedDisplayType] = useState<'map' | 'table'>('map');
-  const [searchValue, setSearchValue] = useState('');
-
   const { filterFn, ...filterBarProps } = useAssetFilters({});
-
-  const selectedSite = sites?.find((site) => String(site.id) === siteId);
-  const siteOptions = useMemo<SelectItem[]>(
-    () => [
-      ...(sites?.map((site) => ({
-        label: site.name,
-        value: String(site.id),
-      })) || []),
-      // { label: 'New site', value: 'new' },
-    ],
-    [sites]
-  );
-  const floorOptions: SelectItem[] = selectedSite
-    ? [
-        { value: 'all', label: 'All Floors' },
-        ...selectedSite.floors.map((floor) => ({ value: String(floor.id), label: floor.name })),
-      ]
-    : [];
-
   const assets = useMemo<Asset[]>(
     () =>
       allAssets?.filter(
@@ -194,9 +256,7 @@ export default function AssetsPage() {
       ) || [],
     [allAssets, floorId, filterFn, searchValue, selectedDisplayType]
   );
-  const [addingAsset, setAddingAsset] = useState<boolean>(false);
-  const [addAssetLocation, setAddAssetLocation] = useState<Location>();
-  const inspectedAsset = useMemo<Asset | undefined>(
+  const inspectedAsset = useMemo(
     () => assets.find((asset) => String(asset.id) === inspectedAssetId),
     [assets, inspectedAssetId]
   );
@@ -209,36 +269,7 @@ export default function AssetsPage() {
     [assets]
   );
 
-  const [siteInfo, setSiteInfo] = useState<{
-    name: string;
-    address: AddressAutofillRetrieveResponse;
-  }>();
-
-  // useEffect(() => {
-  //   if (selectedSiteId === 'new') {
-  //     modals.openContextModal({
-  //       modal: ModalNames.SiteInfo,
-  //       title: 'Enter Site Info',
-  //       innerProps: {
-  //         doneCallback: setSiteInfo,
-  //       },
-  //     });
-  //   }
-  // }, [selectedSiteId]);
-
-  const handleClickAddAsset = () => {
-    setAddingAsset(true);
-  };
-
-  const handleAddAsset = (location: Location) => {
-    setAddAssetLocation(location);
-  };
-
-  const handleCancelAddAsset = () => {
-    setAddingAsset(false);
-    setAddAssetLocation(undefined);
-  };
-
+  const [addAssetLocation, setAddAssetLocation] = useState<Location>();
   const handleSaveAsset = async ({
     name,
     assetType,
@@ -269,10 +300,53 @@ export default function AssetsPage() {
           draft.push(asset);
         })
       );
-      setAddingAsset(false);
+      setCreateMode(null);
       setAddAssetLocation(undefined);
       updateUrl({ asset: asset.id });
     });
+  };
+  const handleCancelCreateAsset = () => {
+    setCreateMode(null);
+    setAddAssetLocation(undefined);
+  };
+
+  const createModeToComponent: Record<CreateMode, React.ReactNode> = {
+    site: (
+      <CreateSiteCard
+        onSave={handleCreateSite}
+        onCancel={handleCancelCreateSite}
+        address={createSiteState.address}
+        onSelectAddress={handleSetCreateSiteAddress}
+        bounds={createSiteState.bounds}
+      />
+    ),
+    building: (
+      <CreateBuildingCard
+        sites={sites}
+        siteId={siteId!}
+        onChangeSite={(selectedSiteId) => updateUrl({ site: selectedSiteId })}
+        floors={createBuildingState.floors}
+        setFloors={createBuildingState.setFloors}
+        floorPlanPlacementIndex={createBuildingState.floorPlanPlacementIndex}
+        setFloorPlanPlacementIndex={createBuildingState.setFloorPlanPlacementIndex}
+        onSave={handleCreateBuilding}
+        onCancel={handleCancelCreateBuilding}
+      />
+    ),
+    asset: (
+      <CreateAssetCard
+        onSave={handleSaveAsset}
+        onCancel={handleCancelCreateAsset}
+        locationSelected={!!addAssetLocation}
+        assetTypes={assetTypes || []}
+        users={users || []}
+        sites={sites || []}
+        siteId={siteId || undefined}
+        buildingId={buildingId || undefined}
+        floorId={floorId || undefined}
+        updateLocation={updateUrl}
+      />
+    ),
   };
 
   if (sitesLoading || assetTypesLoading || assetsLoading || usersLoading) {
@@ -283,84 +357,88 @@ export default function AssetsPage() {
     );
   }
 
-  if (!siteId)
+  if (!siteId && sites?.length)
     router.replace(
-      assetPageRoute({ site: String(sites?.[0].id), floor: String(sites?.[0]?.floors?.[0]?.id) })
+      assetPageRoute({ site: String(sites[0].id), building: String(sites[0]?.floors?.[0]?.id) })
     );
 
   return (
     <MapContainer id="mapcontainer">
-      {((selectedSite && selectedDisplayType === 'map') || !!siteInfo?.address) && (
+      {selectedDisplayType === 'map' && !!location && (
         <MapView
-          location={
-            siteId === 'new' && !!siteInfo?.address
-              ? {
-                  longitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[0],
-                  latitude: siteInfo?.address?.features?.[0]?.geometry?.coordinates?.[1],
-                }
-              : _.pick(selectedSite, ['longitude', 'latitude'])
-          }
+          location={location}
           sites={sites}
           assets={assets}
           onClickAsset={(assetId) => updateUrl({ asset: assetId })}
-          selectedAssetId={inspectedAssetId}
-          addAsset={addingAsset ? { onAdd: handleAddAsset } : undefined}
+          selectedAssetId={inspectedAssetId || undefined}
+          addAsset={createMode === 'asset' ? { onAdd: setAddAssetLocation } : undefined}
           marker={addAssetLocation ? { location: addAssetLocation } : undefined}
           zoomToSite={siteId || undefined}
+          selectedBuildingId={buildingId || undefined}
           selectedFloorId={floorId || undefined}
+          drawBounds={
+            createMode === 'site'
+              ? { bounds: createSiteState.bounds, onUpdateBounds: createSiteState.setBounds }
+              : undefined
+          }
+          floorPlan={createBuildingState.placeFloorPlanControls}
         />
       )}
       <OverlayGrid>
         <SideBar>
-          {addingAsset ? (
-            <AddAssetForm
-              onSave={handleSaveAsset}
-              onCancel={handleCancelAddAsset}
-              locationSelected={!!addAssetLocation}
-              assetTypes={assetTypes || []}
-              users={users || []}
-            />
-          ) : inspectedAsset ? (
-            <InspectAssetCard
-              asset={inspectedAsset}
-              onUpdateAsset={() => mutateAssets()}
-              onClose={() => updateUrl({ asset: undefined })}
-            />
-          ) : selectedDisplayType === 'map' ? (
-            <Flex justify="flex-end">
-              <Button leftIcon={<IconPlus size={20} />} onClick={handleClickAddAsset}>
-                Add Asset
-              </Button>
-            </Flex>
-          ) : null}
+          {selectedDisplayType === 'map' &&
+            (createMode ? (
+              createModeToComponent[createMode]
+            ) : inspectedAsset ? (
+              <InspectAssetCard
+                asset={inspectedAsset}
+                onUpdateAsset={() => mutateAssets()}
+                onClose={() => updateUrl({ asset: undefined })}
+              />
+            ) : (
+              <Flex justify="flex-end">
+                <Menu position="bottom-end">
+                  <Menu.Target>
+                    <Button leftIcon={<IconPlus size={20} />}>Add</Button>
+                  </Menu.Target>
+                  <Menu.Dropdown maw={240}>
+                    <Menu.Label>Create a new</Menu.Label>
+                    <Menu.Item
+                      icon={<IconMapPin size={20} />}
+                      onClick={() => setCreateMode('site')}
+                    >
+                      Site
+                    </Menu.Item>
+                    <Menu.Item
+                      icon={<IconBuilding size={20} />}
+                      onClick={() => setCreateMode('building')}
+                      disabled={!siteId}
+                    >
+                      Building
+                    </Menu.Item>
+                    <Menu.Item
+                      icon={<IconBriefcase size={20} />}
+                      onClick={() => setCreateMode('asset')}
+                      disabled={!assetTypes?.length}
+                    >
+                      Asset
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </Flex>
+            ))}
         </SideBar>
         <ActionBar>
           <Stack spacing="sm">
             <Group>
               <Title order={3}>Assets</Title>
-              <Select
-                icon={<IconMapPin size={20} />}
-                data={siteOptions}
-                value={siteId}
-                onChange={(siteId) => {
-                  const newSite = sites?.find((site) => String(site.id) === siteId);
-                  updateUrl({
-                    site: siteId || undefined,
-                    floor: (newSite?.floors?.length || 0) > 1 ? 'all' : newSite?.floors?.[0]?.id,
-                    asset: undefined,
-                  });
-                }}
-                w={160}
-              />
-              {(selectedSite?.floors.length || 0) > 1 && (
-                <Select
-                  w={160}
-                  icon={<IconStack size={20} />}
-                  data={floorOptions}
-                  value={floorId}
-                  onChange={(floorId) =>
-                    updateUrl({ floor: floorId || undefined, asset: undefined })
-                  }
+              {sites && (
+                <SiteBuildingFloorSelector
+                  sites={sites}
+                  siteId={siteId || undefined}
+                  buildingId={buildingId || undefined}
+                  floorId={floorId || undefined}
+                  onChange={(selections) => updateUrl({ ...selections, asset: undefined })}
                 />
               )}
               <Autocomplete

@@ -99,12 +99,17 @@ class SiteViewSetTest(BaseTestCase):
             "floor_plan_bounds": "{}",
             "address": "123 Main St",
             "floor_plan": generate_upload_image_base64(),
-            "floors": [
+            "buildings": [
                 {
-                    "name": "Floor 1",
-                    "sort_order": 1,
-                    "floor_plan": generate_upload_image_base64(),
-                    "floor_plan_bounds": "{}",
+                    "name": "Building 1",
+                    "floors": [
+                        {
+                            "name": "Floor 1",
+                            "sort_order": 1,
+                            "floor_plan": generate_upload_image_base64(),
+                            "floor_plan_bounds": [1, 2],
+                        }
+                    ],
                 }
             ],
         }
@@ -123,6 +128,12 @@ class SiteViewSetTest(BaseTestCase):
 
         # Check that the organization of the new site is the same as the current user's organization
         self.assertEqual(site.organization.id, self.organization.id)
+
+        buildings = site.buildings.all()
+        self.assertEqual(len(buildings), 1)
+
+        floors = buildings[0].floors.all()
+        self.assertEqual(len(floors), 1)
 
     def test_create_site_with_floor_unstringed_bounds(self):
         # Authenticate the user
@@ -137,12 +148,17 @@ class SiteViewSetTest(BaseTestCase):
             "floor_plan_bounds": "{}",
             "address": "123 Main St",
             "floor_plan": generate_upload_image_base64(),
-            "floors": [
+            "buildings": [
                 {
-                    "name": "Floor 1",
-                    "sort_order": 1,
-                    "floor_plan": generate_upload_image_base64(),
-                    "floor_plan_bounds": [1, 2],
+                    "name": "Building 1",
+                    "floors": [
+                        {
+                            "name": "Floor 1",
+                            "sort_order": 1,
+                            "floor_plan": generate_upload_image_base64(),
+                            "floor_plan_bounds": [1, 2],
+                        }
+                    ],
                 }
             ],
         }
@@ -161,3 +177,9 @@ class SiteViewSetTest(BaseTestCase):
 
         # Check that the organization of the new site is the same as the current user's organization
         self.assertEqual(site.organization.id, self.organization.id)
+
+        buildings = site.buildings.all()
+        self.assertEqual(len(buildings), 1)
+
+        floors = buildings[0].floors.all()
+        self.assertEqual(len(floors), 1)

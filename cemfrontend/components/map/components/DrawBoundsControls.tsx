@@ -39,7 +39,7 @@ export default function DrawBoundsControls({ onUpdateBounds, bounds }: DrawBound
   useEffect(() => {
     if (!map) return;
 
-    map.addControl(draw);
+    map.addControl(draw, 'bottom-right');
 
     if (bounds) {
       draw.add({

@@ -145,10 +145,22 @@ class Site(BaseModel):
         return self.name
 
 
-class Floor(BaseModel):
-    """A floor within a site"""
+class Building(BaseModel):
+    """A building within a site"""
 
-    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="floors")
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="buildings")
+    name = models.CharField(max_length=255)
+
+    def __str__(self) -> str:
+        return self.site.name + ": " + self.name
+
+
+class Floor(BaseModel):
+    """A floor within a building"""
+
+    building = models.ForeignKey(
+        Building, on_delete=models.CASCADE, related_name="floors"
+    )
     name = models.CharField(max_length=255)
     sort_order = models.IntegerField()
 
@@ -156,7 +168,7 @@ class Floor(BaseModel):
     floor_plan_bounds = models.JSONField()
 
     def __str__(self) -> str:
-        return self.site.name + ": " + self.name
+        return self.name
 
 
 class AssetType(BaseModel):

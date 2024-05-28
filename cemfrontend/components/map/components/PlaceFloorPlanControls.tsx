@@ -15,7 +15,6 @@ export interface PlaceFloorPlanControlsProps {
   height: number;
   floorPlanBounds?: Bounds;
   onUpdateFloorPlanBounds: (bounds: Bounds) => void;
-  siteBounds: Bounds;
 }
 
 export default function PlaceFloorPlanControls({
@@ -24,7 +23,6 @@ export default function PlaceFloorPlanControls({
   height,
   floorPlanBounds,
   onUpdateFloorPlanBounds,
-  siteBounds,
 }: PlaceFloorPlanControlsProps) {
   const map = useContext(MapContext);
 
@@ -148,5 +146,5 @@ export default function PlaceFloorPlanControls({
     };
   }, [map]);
 
-  return <BoundsDisplay bounds={siteBounds} />;
+  return null;
 }

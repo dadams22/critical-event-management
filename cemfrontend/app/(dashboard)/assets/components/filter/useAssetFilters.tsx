@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import webpack from 'webpack';
 import { useDisclosure } from '@mantine/hooks';
-import { Asset } from '../../../api/types';
+import { Asset } from '../../../../../api/types';
 import { SelectionMode } from './NextMaintenanceDateFilter';
 
 interface HookParams {}

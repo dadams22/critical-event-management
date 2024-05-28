@@ -15,6 +15,7 @@ from .views import (
     TwilioWebhookView,
     CheckAuthView,
     SiteViewSet,
+    BuildingViewSet,
     PingView,
     FloorViewSet,
     AssetTypeViewSet,
@@ -41,6 +42,7 @@ router.register(r"incident", IncidentReportViewSet, basename="incident")
 router.register(r"alert", AlertViewSet, basename="alert")
 router.register(r"person", PersonViewSet, basename="person")
 router.register(r"site", SiteViewSet, basename="site")
+router.register(r"building", BuildingViewSet, basename="building")
 router.register(r"floor", FloorViewSet, basename="floor")
 router.register(r"asset_type", AssetTypeViewSet, basename="asset_type")
 router.register(r"asset", AssetViewSet, basename="asset")

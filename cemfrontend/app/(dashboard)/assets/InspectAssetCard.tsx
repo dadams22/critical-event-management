@@ -19,8 +19,8 @@ import { Asset } from '../../../api/types';
 import { getAssetIcon } from '../../(icons)/assetTypes';
 import MaintenanceLogModal from './MaintenanceLogModal';
 import Api from '../../../api/Api';
-import AssetStatusPill from './AssetStatusPill';
-import { getUserDisplayName } from './AssetManagerFilter';
+import AssetStatusPill from '../../../components/asset/AssetStatusPill';
+import { getUserDisplayName } from './components/filter/AssetManagerFilter';
 import ExpandableImage from '../../../components/ExpandableImage';
 
 const formatMaintenanceDate = (dateString: string): string => {
