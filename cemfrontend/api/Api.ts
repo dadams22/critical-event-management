@@ -49,7 +49,9 @@ const Api = (() => {
       const response = await axiosInstance.post('auth', { username, password });
 
       if (response.status === 200) {
-        setCookie(AUTH_TOKEN_KEY, response.data.access_token);
+        // Change this to access_token when we use the new backend
+        // setCookie(AUTH_TOKEN_KEY, response.data.access_token);
+        setCookie(AUTH_TOKEN_KEY, response.data.token);
       }
     },
 
