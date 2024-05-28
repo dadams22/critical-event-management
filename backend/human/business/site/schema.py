@@ -46,7 +46,7 @@ class PSite(BaseModel):
     longitude: float
     latitude: float
     bounds: List
-    buildings: List[PBuilding] | None = None
+    buildings: List[PBuilding] = []
     # LEGACY: This is a temporary field to support the old way of storing
     # floor plans for the one site one building case
     floors: List[PFloor] | None = None

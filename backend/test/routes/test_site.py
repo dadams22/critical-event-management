@@ -39,6 +39,28 @@ def test_create_site(client, organization: Organization, mocked_presigned_url: s
     )
 
 
+def test_create_site_no_buildings(
+    client, organization: Organization, mocked_presigned_url: str
+):
+    response = client.post(
+        "/site",
+        json={
+            "organization_id": str(organization.id),
+            "name": "test",
+            "address": "1234 test st",
+            "longitude": 0.0,
+            "latitude": 2.0,
+            "bounds": [[0, 0]],
+        },
+    )
+    assert response.status_code == 200, response.text
+
+    response_data = response.json()
+    print(response_data)
+    assert response_data["name"] == "test"
+    assert len(response_data["buildings"]) == 0
+
+
 def test_get_sites(client, organization: Organization):
     response = client.get(f"/site")
     assert response.status_code == 200, response.text
