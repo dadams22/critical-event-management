@@ -1,4 +1,5 @@
 from human.data.models.base import Organization
+from human.data.models.sites import Site
 from shared.image import generate_upload_image_base64
 
 
@@ -59,6 +60,30 @@ def test_create_site_no_buildings(
     print(response_data)
     assert response_data["name"] == "test"
     assert len(response_data["buildings"]) == 0
+
+
+def test_create_building(client, organization: Organization, site: Site):
+    response = client.post(
+        "/building",
+        json={
+            "site_id": str(site.id),
+            "name": "test building",
+            "floors": [
+                {
+                    "name": "Test floor",
+                    "floor_plan_bounds": [[0, 0]],
+                    "floor_plan": generate_upload_image_base64(),
+                }
+            ],
+        },
+    )
+    assert response.status_code == 200, response.text
+
+    response_data = response.json()
+    print(response_data)
+    assert response_data["name"] == "test building"
+    assert len(response_data["floors"]) == 1
+    assert response_data["floors"][0]["name"] == "Test floor"
 
 
 def test_get_sites(client, organization: Organization):

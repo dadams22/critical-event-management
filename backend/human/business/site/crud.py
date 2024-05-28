@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from human.business.site.schema import (
+    PBuildingCreate,
+    PBuildingResponse,
     PFloor,
     PBuilding,
     PSite,
@@ -37,13 +39,14 @@ def _create_floor(
     building.floors.append(floor_db)
 
 
-def _create_building(
+def _create_building_for_site(
     config: Config,
+    session: Session,
     s3_client: S3Client,
     organization_id: str,
     site: Site,
     building: PBuilding,
-):
+) -> PBuildingResponse:
     building_dict = building.model_dump()
     building_dict["organization_id"] = organization_id
     building_dict["site_id"] = site.id
@@ -54,6 +57,24 @@ def _create_building(
             config, s3_client, organization_id, site, sort_order, building_db, floor
         )
     site.buildings.append(building_db)
+    session.commit()
+    return PBuildingResponse.model_validate(
+        building_db,
+        context=S3ClientPydanticValidationContext(config=config, s3_client=s3_client),
+    )
+
+
+def create_building(
+    config: Config,
+    session: Session,
+    s3_client: S3Client,
+    organization_id: str,
+    building: PBuildingCreate,
+) -> PBuildingResponse:
+    site = session.get(Site, (organization_id, building.site_id))
+    return _create_building_for_site(
+        config, session, s3_client, organization_id, site, building
+    )
 
 
 def create_site(
@@ -75,7 +96,9 @@ def create_site(
         site.buildings = [PBuilding(name="Default Building", floors=site.floors)]
 
     for building in site.buildings:
-        _create_building(config, s3_client, organization_id, site_db, building)
+        _create_building_for_site(
+            config, session, s3_client, organization_id, site_db, building
+        )
 
     session.commit()
     site_db = session.get(Site, (site_db.organization_id, site_db.id))

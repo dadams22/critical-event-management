@@ -18,6 +18,7 @@ class PFloor(BaseModel):
 
     @model_validator(mode="before")
     def presign_floor_plan(cls, data, info: ValidationInfo):
+        print("HERE")
         return presign_model_validator("floor_plan", data, info)
 
 
@@ -33,11 +34,15 @@ class PBuilding(BaseModel):
     floors: List[PFloor]
 
 
+class PBuildingCreate(PBuilding):
+    site_id: UUID
+
+
 class PBuildingResponse(PBuilding):
     organization_id: UUID
     site_id: UUID
     id: UUID
-    floors: List[PFloorResponse]
+    floors: List[PFloorResponse] = []
 
 
 class PSite(BaseModel):

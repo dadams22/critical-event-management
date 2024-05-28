@@ -7,7 +7,14 @@ from human.shared.types import S3Client
 from human.business.auth.auth_manager import AuthManager, TokenInfo
 from human.data.models.databasemanager import DatabaseManager
 from human.shared.config import Config
-from human.business.site.crud import PSite, PSiteResponse, create_site, get_sites
+from human.business.site.crud import create_site, get_sites, create_building
+from human.business.site.schema import (
+    PBuildingCreate,
+    PSite,
+    PSiteResponse,
+    PBuilding,
+    PBuildingResponse,
+)
 
 
 def get_router(
@@ -26,6 +33,16 @@ def get_router(
         with database.create_session() as session:
             return create_site(
                 config, session, s3_client, token_info.organization_id, site
+            )
+
+    @router.post("/building")
+    async def create_building_route(
+        building: PBuildingCreate,
+        token_info: TokenInfo = auth_manager.TokenInfo(),
+    ) -> PBuildingResponse:
+        with database.create_session() as session:
+            return create_building(
+                config, session, s3_client, token_info.organization_id, building
             )
 
     @router.get("/site", response_model=List[PSiteResponse])
